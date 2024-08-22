@@ -45,7 +45,8 @@ public class MainActivity extends AppCompatActivity {
 
     // Definimos dos direcciones IP a las que enviaremos los datos
     private static final String PUBLIC_IP_1 = "186.98.25.124";
-    private static final String PUBLIC_IP_2 = "161.10.145.75"; // Cambia esta por la segunda IP deseada
+    private static final String PUBLIC_IP_2 = "161.10.145.75";
+    private static final String PUBLIC_IP_3 = "181.235.25.147";
     private static final int UDP_PORT = 5000; // Puerto para UDP
     private static final int TCP_PORT = 5001; // Puerto para TCP
 
@@ -111,8 +112,10 @@ public class MainActivity extends AppCompatActivity {
             updateLocationUI();
             sendUDP(PUBLIC_IP_1);
             sendUDP(PUBLIC_IP_2);
+            sendUDP(PUBLIC_IP_3);
             sendTCP(PUBLIC_IP_1);
             sendTCP(PUBLIC_IP_2);
+            sendTCP(PUBLIC_IP_3);
         } else {
             Toast.makeText(MainActivity.this, "It was impossible to obtain the location", Toast.LENGTH_SHORT).show();
         }
