@@ -132,8 +132,7 @@ public class MainActivity extends AppCompatActivity {
         altitudeTextView.setText("Altitude: " + altitude + " meters");
         timeTextView.setText("Time: " + formattedTime);
 
-        locationMessage = "The latitude is " + latitude + ". The longitude is " + longitude +
-                ". The altitude is " + altitude + " meters. The time was " + formattedTime + ".";
+        locationMessage = latitude + ";" + longitude + ";" + formattedTime;
     }
 
     private String resolveDomainName(String hostName) {
