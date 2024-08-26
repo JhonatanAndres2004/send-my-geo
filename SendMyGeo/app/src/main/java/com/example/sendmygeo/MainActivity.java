@@ -43,12 +43,11 @@ public class MainActivity extends AppCompatActivity {
     private LocationRequest locationRequest;
     private Location lastLocation;
 
-    // Definimos dos direcciones IP a las que enviaremos los datos
-    private static final String PUBLIC_IP_1 = "186.98.25.124";
-    private static final String PUBLIC_IP_2 = "161.10.145.75";
-    private static final String PUBLIC_IP_3 = "181.235.25.147";
-    private static final int UDP_PORT = 5000; // Puerto para UDP
-    private static final int TCP_PORT = 5001; // Puerto para TCP
+    private static final String HOST_NAME_1 = "jhrouter.ddns.net";
+    private static final String HOST_NAME_2 = "routereduardo.ddns.net";
+    private static final String HOST_NAME_3 = "kevinrouter.ddns.net";
+    private static final int UDP_PORT = 5000;
+    private static final int TCP_PORT = 5001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,12 +109,12 @@ public class MainActivity extends AppCompatActivity {
     private void updateLocationAndSend() {
         if (lastLocation != null) {
             updateLocationUI();
-            sendUDP(PUBLIC_IP_1);
-            sendUDP(PUBLIC_IP_2);
-            sendUDP(PUBLIC_IP_3);
-            sendTCP(PUBLIC_IP_1);
-            sendTCP(PUBLIC_IP_2);
-            sendTCP(PUBLIC_IP_3);
+            sendUDP(HOST_NAME_1);
+            sendUDP(HOST_NAME_2);
+            sendUDP(HOST_NAME_3);
+            sendTCP(HOST_NAME_1);
+            sendTCP(HOST_NAME_2);
+            sendTCP(HOST_NAME_3);
         } else {
             Toast.makeText(MainActivity.this, "It was impossible to obtain the location", Toast.LENGTH_SHORT).show();
         }
@@ -137,10 +136,25 @@ public class MainActivity extends AppCompatActivity {
                 ". The altitude is " + altitude + " meters. The time was " + formattedTime + ".";
     }
 
-    private void sendUDP(final String ipAddress) {
+    private String resolveDomainName(String hostName) {
+        try {
+            InetAddress inetAddress = InetAddress.getByName(hostName);
+            return inetAddress.getHostAddress();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private void sendUDP(final String hostName) {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                String ipAddress = resolveDomainName(hostName);
+                if (ipAddress == null) {
+                    showToast("Failed to resolve DNS for UDP: " + hostName);
+                    return;
+                }
                 try {
                     DatagramSocket socket = new DatagramSocket();
                     InetAddress address = InetAddress.getByName(ipAddress);
@@ -148,53 +162,47 @@ public class MainActivity extends AppCompatActivity {
                     DatagramPacket packet = new DatagramPacket(buf, buf.length, address, UDP_PORT);
                     socket.send(packet);
                     socket.close();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(MainActivity.this, "Data sent via UDP to " + ipAddress, Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    showToast("Data sent via UDP to " + hostName + " (" + ipAddress + ")");
                 } catch (Exception e) {
-                    e.printStackTrace();runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(MainActivity.this, "Error sending data via UDP to " + ipAddress, Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    e.printStackTrace();
+                    showToast("Error sending data via UDP to " + hostName);
                 }
             }
         }).start();
     }
 
-    private void sendTCP(final String ipAddress) {
+    private void sendTCP(final String hostName) {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                String ipAddress = resolveDomainName(hostName);
+                if (ipAddress == null) {
+                    showToast("Failed to resolve DNS for TCP: " + hostName);
+                    return;
+                }
                 try {
                     Socket socket = new Socket(ipAddress, TCP_PORT);
                     PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                     out.println(locationMessage);
                     out.close();
                     socket.close();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(MainActivity.this, "Data sent via TCP to " + ipAddress, Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    showToast("Data sent via TCP to " + hostName + " (" + ipAddress + ")");
                 } catch (Exception e) {
                     e.printStackTrace();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(MainActivity.this, "Error sending data via TCP to " + ipAddress, Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    showToast("Error sending data via TCP to " + hostName);
                 }
             }
         }).start();
     }
 
+    private void showToast(final String message) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
