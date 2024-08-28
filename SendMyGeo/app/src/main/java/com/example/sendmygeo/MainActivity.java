@@ -4,10 +4,10 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.os.Handler;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,7 +20,6 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -32,7 +31,8 @@ import java.io.PrintWriter;
 
 public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_LOCATION = 124;
-    private Button updateAndSendButton;
+    private ToggleButton startStopButton;
+    private ToggleButton protocolButton;
     private TextView latitudeTextView;
     private TextView longitudeTextView;
     private TextView altitudeTextView;
@@ -42,6 +42,10 @@ public class MainActivity extends AppCompatActivity {
     private LocationCallback locationCallback;
     private LocationRequest locationRequest;
     private Location lastLocation;
+    private Handler handler = new Handler();
+    private Runnable runnable;
+    private boolean isSendingData = true;
+    private boolean usesUDP = true;
 
     private static final String HOST_NAME_1 = "jhrouter.ddns.net";
     private static final String HOST_NAME_2 = "routereduardo.ddns.net";
@@ -54,7 +58,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        updateAndSendButton = findViewById(R.id.updateAndSendButton);
+        startStopButton = findViewById(R.id.startStopButton);
+        protocolButton = findViewById(R.id.protocolButton);
         latitudeTextView = findViewById(R.id.latitudeTextView);
         longitudeTextView = findViewById(R.id.longitudeTextView);
         altitudeTextView = findViewById(R.id.altitudeTextView);
@@ -63,17 +68,43 @@ public class MainActivity extends AppCompatActivity {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         createLocationRequest();
         createLocationCallback();
-
-        updateAndSendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateLocationAndSend();
+        startStopButton.setOnClickListener(view -> {
+            if (isSendingData) {
+                stopSendingData();
+            } else {
+                startSendingData();
             }
         });
-
+        protocolButton.setOnClickListener(view -> {
+            usesUDP = !usesUDP;
+            //protocolButton.setText(usesUDP ? "UDP" : "TCP");
+        });
+        startSendingData();
         startLocationUpdates();
     }
 
+    private void startSendingData() {
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                updateLocationAndSend();
+                handler.postDelayed(this, 10000);
+            }
+        };
+        handler.post(runnable);
+        isSendingData = true;
+    }
+
+    private void stopSendingData() {
+        handler.removeCallbacks(runnable);
+        isSendingData = false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopSendingData();
+    }
     private void createLocationRequest() {
         locationRequest = LocationRequest.create();
         locationRequest.setInterval(1000);
@@ -109,12 +140,15 @@ public class MainActivity extends AppCompatActivity {
     private void updateLocationAndSend() {
         if (lastLocation != null) {
             updateLocationUI();
-            sendUDP(HOST_NAME_1);
-            sendUDP(HOST_NAME_2);
-            sendUDP(HOST_NAME_3);
-            sendTCP(HOST_NAME_1);
-            sendTCP(HOST_NAME_2);
-            sendTCP(HOST_NAME_3);
+            if (usesUDP) {
+                sendUDP(HOST_NAME_1);
+                sendUDP(HOST_NAME_2);
+                sendUDP(HOST_NAME_3);
+            } else {
+                sendTCP(HOST_NAME_1);
+                sendTCP(HOST_NAME_2);
+                sendTCP(HOST_NAME_3);
+            }
         } else {
             Toast.makeText(MainActivity.this, "It was impossible to obtain the location", Toast.LENGTH_SHORT).show();
         }
