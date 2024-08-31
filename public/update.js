@@ -4,8 +4,11 @@ function fetchLatestLocation() {
         .then(data => {
             document.getElementById('latitude').innerText = data.Latitude;
             document.getElementById('longitude').innerText = data.Longitude;
-            document.getElementById('timestamp').innerText =
-                `${convertToLocalTime(data.Timestamp)}`;
+            const timestamp = convertToLocalTime(data.Timestamp);
+            const date = timestamp.split(', ')[0];
+            const time = timestamp.split(', ')[1];
+            document.getElementById('date').innerText = date;
+            document.getElementById('time').innerText = time;
         })
         .catch(err => console.error('Error fetching latest location:', err));
 }
