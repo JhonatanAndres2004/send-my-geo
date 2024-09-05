@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         startStopButton = findViewById(R.id.startStopButton);
-        protocolButton = findViewById(R.id.protocolButton);
         latitudeTextView = findViewById(R.id.latitudeTextView);
         longitudeTextView = findViewById(R.id.longitudeTextView);
         altitudeTextView = findViewById(R.id.altitudeTextView);
@@ -74,10 +73,6 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 startSendingData();
             }
-        });
-        protocolButton.setOnClickListener(view -> {
-            usesUDP = !usesUDP;
-            //protocolButton.setText(usesUDP ? "UDP" : "TCP");
         });
         startSendingData();
         startLocationUpdates();

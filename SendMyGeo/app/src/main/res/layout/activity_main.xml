@@ -45,27 +45,6 @@
         android:textOn="Detener envío"
         android:textSize="19sp" />
 
-    <ToggleButton
-        android:id="@+id/protocolButton"
-        android:layout_width="160dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="25dp"
-        android:background="@drawable/rounded_button"
-        android:checked="false"
-        android:paddingLeft="15dp"
-        android:paddingTop="10dp"
-        android:paddingRight="15dp"
-        android:paddingBottom="10dp"
-        android:shadowColor="#12232121"
-        android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-        android:textColor="@color/white"
-        android:textColorLink="#00FFFFFF"
-        android:textOff="Usar TCP"
-        android:textOn="Usar UDP"
-        android:textSize="19sp" />
-
     <TextView
         android:id="@+id/latitudeTextView"
         android:layout_width="wrap_content"
