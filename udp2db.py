@@ -37,7 +37,10 @@ while True:
     message = data.decode('utf-8')
     
     try:
+
         lat, lon, timestamp = message.split(';')
+        lat = lat.replace(',', '.')
+        lon = lon.replace(',', '.')
         insert_location(lat, lon, timestamp)
         print(f"Inserted location: Latitude={lat}, Longitude={lon}, Timestamp={timestamp}")
     except ValueError:

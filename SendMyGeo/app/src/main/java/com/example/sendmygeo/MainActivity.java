@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
                     DatagramPacket packet = new DatagramPacket(buf, buf.length, address, UDP_PORT);
                     socket.send(packet);
                     socket.close();
-                    showToast("Data sent via UDP to " + hostName + " (" + ipAddress + ")");
+                    //showToast("Data sent via UDP to " + hostName + " (" + ipAddress + ")");
                 } catch (Exception e) {
                     e.printStackTrace();
                     showToast("Error sending data via UDP to " + hostName);

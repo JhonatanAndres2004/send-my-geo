@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Latest Location</title>
     <link rel="stylesheet" href="style.css"> <!-- Link to the external CSS file -->
+    <script async src="https://maps.googleapis.com/maps/api/js?key=<YOUR_API_KEY_HERE>&callback=console.debug&libraries=maps,marker&v=beta">
+    </script>
 </head>
 <body>
     <h1>Latest Location</h1>
@@ -18,6 +20,15 @@
         <span>Time:</span>
         <span id="time">Loading...</span>
     </div>
+    <h3>My Google Maps Demo</h3>
+    <!--The div element for the map -->
+    <div id="map">
+    <gmp-map center="40.12150192260742,-100.45039367675781" zoom="10" map-id="DEMO_MAP_ID">
+      <gmp-advanced-marker title="My location" id="marker"></gmp-advanced-marker>
+    </gmp-map>
+
+    </div>
+
     <script src="update.js"></script> <!-- Link to the external JS file -->
 </body>
 </html>

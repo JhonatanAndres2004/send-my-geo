@@ -3,3 +3,7 @@
     grid-template-columns: 100px 1fr;
     gap: 3px;
 }
+#map {
+    height: 500px; /* The height is 400 pixels */
+    width: 800px; /* The width is the width of the web page */
+}
