@@ -23,6 +23,7 @@ import com.google.android.gms.location.LocationResult;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.net.DatagramSocket;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -100,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         stopSendingData();
     }
+
     private void createLocationRequest() {
         locationRequest = LocationRequest.create();
         locationRequest.setInterval(1000);
@@ -153,15 +155,22 @@ public class MainActivity extends AppCompatActivity {
         String latitude = String.format(Locale.getDefault(), "%.6f", lastLocation.getLatitude());
         String longitude = String.format(Locale.getDefault(), "%.6f", lastLocation.getLongitude());
         String altitude = String.format(Locale.getDefault(), "%.2f", lastLocation.getAltitude());
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        String formattedTime = sdf.format(new Date(lastLocation.getTime()));
+
+        // Local time to show in screen
+        SimpleDateFormat sdfLocal = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        String localTime = sdfLocal.format(new Date(lastLocation.getTime()));
+
+        // UTC time to send
+        SimpleDateFormat sdfUTC = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        sdfUTC.setTimeZone(TimeZone.getTimeZone("UTC"));
+        String utcTime = sdfUTC.format(new Date(lastLocation.getTime()));
 
         latitudeTextView.setText("Latitude: " + latitude);
         longitudeTextView.setText("Longitude: " + longitude);
         altitudeTextView.setText("Altitude: " + altitude + " meters");
-        timeTextView.setText("Time: " + formattedTime);
+        timeTextView.setText("Local Time: " + localTime);
 
-        locationMessage = latitude + ";" + longitude + ";" + formattedTime;
+        locationMessage = latitude + ";" + longitude + ";" + utcTime;
     }
 
     private String resolveDomainName(String hostName) {
