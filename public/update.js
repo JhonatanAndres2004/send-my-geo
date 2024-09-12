@@ -1,6 +1,18 @@
 let map;
 let marker;
-let mapInitialized = false;
+
+function loadMap() {
+    fetch('/api-key')
+        .then(response => response.json())
+        .then(data => {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${data.key}&callback=initMap`;
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+        })
+        .catch(err => console.error('Error fetching API key:', err));
+}
 
 async function initMap() {
     const { Map } = await google.maps.importLibrary("maps");
@@ -22,10 +34,7 @@ async function initMap() {
         position: initialPosition,
         title: "Current Location",
     });
-
-    mapInitialized = true;
-    // Start fetching new locations after map is initialized
-    setInterval(fetchLatestLocation, 1000);
+    fetchLatestLocation(); 
 }
 
 function fetchLatestLocation() {
@@ -33,9 +42,7 @@ function fetchLatestLocation() {
         .then(response => response.json())
         .then(data => {
             updateLocationDisplay(data);
-            if (mapInitialized) {
-                updateMapPosition(data.Latitude, data.Longitude);
-            }
+            updateMapPosition(data.Latitude, data.Longitude);
         })
         .catch(err => console.error('Error fetching latest location:', err));
 }
@@ -73,4 +80,5 @@ function convertToLocalTime(utcDateString) {
 }
 
 // Initialize map when the page loads
-window.onload = initMap;
+loadMap();
+setInterval(fetchLatestLocation, 1000);

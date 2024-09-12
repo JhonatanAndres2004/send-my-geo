@@ -38,9 +38,7 @@ print(f"Listening on UDP port {UDP_PORT}...")
 while True:
     data, addr = sock.recvfrom(1024)  # Buffer size is 1024 bytes
     message = data.decode('utf-8')
-    
     try:
-
         lat, lon, timestamp = message.split(';')
         lat = lat.replace(',', '.')
         lon = lon.replace(',', '.')

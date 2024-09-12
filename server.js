@@ -20,6 +20,10 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+app.get('/api-key', (req, res) => {
+    res.json({ key: process.env.API_KEY });
+});
+
 // API endpoint to get the latest location data
 app.get('/latest-location', (req, res) => {
     const query = `SELECT Latitude, Longitude, Timestamp FROM locations ORDER BY Timestamp DESC LIMIT 1`;
