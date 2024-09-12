@@ -14,6 +14,15 @@ function loadMap() {
         .catch(err => console.error('Error fetching API key:', err));
 }
 
+function loadName() {
+    fetch('/name')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('name').innerText = data.name;
+        })
+        .catch(err => console.error('Error fetching name:', err));
+}
+
 async function initMap() {
     const { Map } = await google.maps.importLibrary("maps");
     const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
@@ -24,7 +33,7 @@ async function initMap() {
     const initialPosition = { lat: initialLat, lng: initialLng };
 
     map = new Map(document.getElementById("map"), {
-        zoom: 10,
+        zoom: 14,
         center: initialPosition,
         mapId: "DEMO_MAP_ID",
     });
@@ -80,5 +89,6 @@ function convertToLocalTime(utcDateString) {
 }
 
 // Initialize map when the page loads
+loadName();
 loadMap();
-setInterval(fetchLatestLocation, 1000);
+setInterval(fetchLatestLocation, 10000);
