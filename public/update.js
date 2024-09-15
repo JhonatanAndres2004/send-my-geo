@@ -1,5 +1,10 @@
 let map;
 let marker;
+let directionsRenderer;
+let directionsService;
+let source;
+let destination;
+
 
 function loadMap() {
     fetch('/api-key')
@@ -26,6 +31,8 @@ function loadName() {
 async function initMap() {
     const { Map } = await google.maps.importLibrary("maps");
     const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+    const { DirectionsService, DirectionsRenderer} = await google.maps.importLibrary("routes")
+
 
     // Get initial position from HTML
     const initialLat = parseFloat(document.getElementById('latitude').innerText) || 0;
@@ -43,6 +50,9 @@ async function initMap() {
         position: initialPosition,
         title: "Current Location",
     });
+    directionsRenderer = new DirectionsRenderer();
+    directionsService = new DirectionsService();
+    directionsRenderer.setMap(map)
     fetchLatestLocation(); 
 }
 
@@ -71,6 +81,14 @@ function updateMapPosition(lat, lng) {
         map.setCenter(newPosition);
         marker.position = newPosition;
     }
+    if (!source){
+        source = newPosition;
+        calcRoute(source,destination)
+    } else{
+        destination = newPosition
+        console.log(destination)
+    }
+    
 }
 
 function convertToLocalTime(utcDateString) {
@@ -86,6 +104,21 @@ function convertToLocalTime(utcDateString) {
         timeZone: 'America/Bogota'
     };   
     return localDate.toLocaleString('en-GB', options);
+}
+
+function calcRoute(source,destination){
+    let request = {
+        origin:source,
+        destination:destination,
+        travelMode:'DRIVING'
+    };
+    directionsService.route(request,function(result,status){
+        if (status === "OK"){
+            directionsRenderer.setDirections(result);
+        } else{
+            console.error('Route request failed due to' + status)
+        }
+    });
 }
 
 // Initialize map when the page loads
