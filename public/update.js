@@ -83,10 +83,10 @@ function updateMapPosition(lat, lng) {
     }
     if (!source){
         source = newPosition;
-        calcRoute(source,destination)
+        
     } else{
         destination = newPosition
-        console.log(destination)
+        calcRoute(source,destination)
     }
     
 }
