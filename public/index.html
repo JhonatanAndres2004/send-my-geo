@@ -5,11 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Latest Location</title>
     <link rel="stylesheet" href="style.css"> <!-- Link to the external CSS file -->
+    <!--
     <script async src="https://maps.googleapis.com/maps/api/js?key=<YOUR_API_KEY_HERE>&callback=console.debug&libraries=maps,marker&v=beta">
     </script>
+    --> <!--Replace with the following if using Leaflet and OpenStreetMap -->
+
+    <!--    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""> 
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script> 
+     
+    <style>
+                #map { height: 860px;
+                        width: 1000px;}
+        </style>
+-->
 </head>
+
 <body>
     <h1>Latest Location</h1>
+    <h2 id="name">Name</h2>
     <div class="location-info">
         <span>Latitude:</span>
         <span id="latitude">Loading...</span>
@@ -23,12 +41,13 @@
     <h3>My Google Maps Demo</h3>
     <!--The div element for the maps -->
     <div id="map">
+        <!--Remove the following if using Leaflet and OpenStreetMap-->
     <gmp-map center="40.12150192260742,-100.45039367675781" zoom="10" map-id="DEMO_MAP_ID">
       <gmp-advanced-marker title="My location" id="marker"></gmp-advanced-marker>
     </gmp-map>
 
     </div>
 
-    <script src="update.js"></script> <!-- Link to the external JS file -->
+    <script src="update.js"></script> <!-- Link to the external JS file  !!!Repace with "updateLF.js" if using Leaflet and OpenStreetMap-->
 </body>
 </html>

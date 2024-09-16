@@ -2,13 +2,14 @@ const express = require('express');
 const app = express();
 const mysql = require('mysql2'); // or pg for PostgreSQL
 const path = require('path');
+require('dotenv').config();
 
 // Create a connection to the database
 const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'user',
-    password: 'password',
-    database: 'sendmygeo'
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME
 });
 
 // Middleware to serve static files
@@ -17,6 +18,13 @@ app.use(express.static('public'));
 // Route to serve the HTML file
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+app.get('/api-key', (req, res) => {
+    res.json({ key: process.env.API_KEY });
+});
+app.get('/name', (req, res) => {
+    res.json({ name: process.env.NAME });
 });
 
 // API endpoint to get the latest location data

@@ -1,0 +1,20 @@
+name: main
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: pm2 stop
+        run: pm2 delete all
+      - name: pm2 start sniffer
+        run: pm2 start udp2db.py
+      - name: pm2 start node.js server
+        run: pm2 start server.js
+      - name: success
+        run: echo "deployment succesful"

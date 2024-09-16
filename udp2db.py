@@ -1,12 +1,15 @@
 import socket
 import pymysql
+import os
+from dotenv import load_dotenv
 
 # Database configuration
+load_dotenv()
 db_config = {
-    'host': 'localhost',  # Replace with your MySQL server host
-    'user': 'user',  # Replace with your MySQL username
-    'password': 'password',  # Replace with your MySQL password
-    'database': 'sendmygeo',
+    'host': os.getenv('DB_HOST'),
+    'user': os.getenv('DB_USER'),
+    'password': os.getenv('DB_PASS'),
+    'database': os.getenv('DB_NAME'),
 }
 
 # UDP configuration
@@ -35,9 +38,7 @@ print(f"Listening on UDP port {UDP_PORT}...")
 while True:
     data, addr = sock.recvfrom(1024)  # Buffer size is 1024 bytes
     message = data.decode('utf-8')
-    
     try:
-
         lat, lon, timestamp = message.split(';')
         lat = lat.replace(',', '.')
         lon = lon.replace(',', '.')
