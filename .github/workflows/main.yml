@@ -19,7 +19,7 @@ jobs:
           pip install python-dotenv
           npm install
       - name: change directory
-        run: cd _work/send-my-geo/send-my-geo/
+        run: cd /home/ubuntu/actions-runner/_work/send-my-geo/send-my-geo/
       - name: start services
         run: |
           pm2 start udp2db.py
