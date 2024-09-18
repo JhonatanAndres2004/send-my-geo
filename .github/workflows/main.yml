@@ -17,11 +17,7 @@ jobs:
       - name: activate python virtual environment
         run: source venv/bin/activate
       - name: install dependencies
-        run: |
-          pip install pymysql
-          pip install cryptography
-          pip install python-dotenv
-          npm install
+        run: npm install
       - name: restart sniffer
         run: sudo pm2 restart udp2db.py
       - name: restart server
