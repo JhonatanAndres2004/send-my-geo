@@ -12,6 +12,10 @@ jobs:
 
       - name: copy .env file
         run : cp ~/project/send-my-geo/.env .
+      - name: create python virtual environment
+        run: python3 -m venv venv
+      - name: activate python virtual environment
+        run: source venv/bin/activate
       - name: install dependencies
         run: |
           pip install pymysql
