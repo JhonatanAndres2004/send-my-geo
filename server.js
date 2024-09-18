@@ -39,3 +39,8 @@ app.get('/latest-location', (req, res) => {
 app.listen(80, () => {
     console.log('Server running on http://localhost:80');
 });
+
+https.createServer({
+    key: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/privkey.pem`),
+    cert: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/fullchain.pem`)
+}, app).listen(443);
