@@ -2,8 +2,9 @@ const express = require('express');
 const app = express();
 const mysql = require('mysql2');
 const https = require('https');
-const http = require('http'); // Add this to redirect HTTP to HTTPS
+const http = require('http');
 const fs = require('fs');
+const WebSocket = require('ws');
 const path = require('path');
 require('dotenv').config();
 
@@ -40,19 +41,33 @@ app.get('/latest-location', (req, res) => {
     });
 });
 
-// HTTPS server setup
-https.createServer({
+const credentials = {
     key: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/privkey.pem`),
     cert: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/fullchain.pem`)
-}, app).listen(443, () => {
-    console.log('HTTPS server running on https://localhost:443');
+};
+
+const httpsServer = https.createServer(credentials, app);
+
+const wss = new WebSocket.Server({ server: httpsServer });
+
+wss.on('connection', (ws) => {
+    console.log('New WebSocket connection');
+    ws.on('message', (message) => {
+        console.log('Received:', message);
+    });
 });
 
-// HTTP to HTTPS redirection (port 80)
-http.createServer((req, res) => {
-    // Redirect all HTTP requests to HTTPS
-    res.writeHead(301, { "Location": `https://${req.headers.host}${req.url}` });
-    res.end();
-}).listen(80, () => {
-    console.log('HTTP server running and redirecting to HTTPS');
+
+httpsServer.listen(443, '0.0.0.0', () => {
+    console.log(`HTTPS Server running at https://localhost:443`);
+});
+
+const httpApp = express();
+httpApp.use((req, res) => {
+    res.redirect(`https://${req.headers.host}${req.url}`);
+});
+
+const httpServer = http.createServer(httpApp);
+httpServer.listen(443, '0.0.0.0', () => {
+    console.log(`HTTP Server running at http://localhost:80 and redirecting to HTTPS`);
 });
