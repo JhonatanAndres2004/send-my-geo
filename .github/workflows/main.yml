@@ -16,6 +16,8 @@ jobs:
         run: python3 -m venv venv
       - name: activate python virtual environment
         run: source venv/bin/activate
+      - name: check current directory
+        run: echo $PWD
       - name: install npm dependencies
         run:  npm install
       - name: install python dependencies
