@@ -5,7 +5,7 @@ on:
       - main
 
 jobs:
-  build:
+  build-kevin:
     runs-on: kevin
     steps:
       - uses: actions/checkout@v2
@@ -16,9 +16,11 @@ jobs:
         run: python3 -m venv venv
       - name: activate python virtual environment
         run: source venv/bin/activate
-      - name: install dependencies
-        run: npm install
+      - name: install npm dependencies
+        run:  npm install
+      - name: install python dependencies
+        run:  pip install -r requirements.txt
       - name: restart sniffer
-        run: sudo pm2 restart udp2db.py
+        run: pm2 restart udp2db.py
       - name: restart server
         run: sudo pm2 restart server.js
