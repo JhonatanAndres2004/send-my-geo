@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
-const mysql = require('mysql2'); // or pg for PostgreSQL
+const mysql = require('mysql2');
+const https = require('https');
+const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
