@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const mysql = require('mysql2');
 const https = require('https');
+const http = require('http'); // Add this to redirect HTTP to HTTPS
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
@@ -25,6 +26,7 @@ app.get('/', (req, res) => {
 app.get('/api-key', (req, res) => {
     res.json({ key: process.env.API_KEY });
 });
+
 app.get('/name', (req, res) => {
     res.json({ name: process.env.NAME });
 });
@@ -38,11 +40,19 @@ app.get('/latest-location', (req, res) => {
     });
 });
 
-app.listen(80, () => {
-    console.log('Server running on http://localhost:80');
-});
-
+// HTTPS server setup
 https.createServer({
     key: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/privkey.pem`),
     cert: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/fullchain.pem`)
-}, app).listen(443);
+}, app).listen(443, () => {
+    console.log('HTTPS server running on https://localhost:443');
+});
+
+// HTTP to HTTPS redirection (port 80)
+http.createServer((req, res) => {
+    // Redirect all HTTP requests to HTTPS
+    res.writeHead(301, { "Location": `https://${req.headers.host}${req.url}` });
+    res.end();
+}).listen(80, () => {
+    console.log('HTTP server running and redirecting to HTTPS');
+});
