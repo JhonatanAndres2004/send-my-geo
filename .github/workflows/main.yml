@@ -12,16 +12,15 @@ jobs:
 
       - name: copy .env file
         run : cp ~/project/send-my-geo/.env .
-      - name: create python virtual environment
-        run: python3 -m venv venv
-      - name: activate python virtual environment
-        run: source venv/bin/activate
+      - name: Set up Python environment
+        run: |
+          python3 -m venv venv
+          . venv/bin/activate
+          pip install -r requirements.txt      
       - name: check current directory
         run: echo $PWD
       - name: install npm dependencies
         run:  npm install
-      - name: install python dependencies
-        run:  pip install -r requirements.txt
       - name: restart sniffer
         run: pm2 restart udp2db.py
       - name: restart server
