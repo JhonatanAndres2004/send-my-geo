@@ -5,24 +5,23 @@ on:
       - main
 
 jobs:
-  build:
-    runs-on: self-hosted
+  build-kevin:
+    runs-on: kevin
     steps:
       - uses: actions/checkout@v2
 
-      - name: pm2 stop
-        run: pm2 delete all
-      - name: install dependencies
+      - name: copy .env file
+        run : cp ~/project/send-my-geo/.env .
+      - name: Set up Python environment
         run: |
-          pip install pymysql
-          pip install cryptography
-          pip install python-dotenv
-          npm install
-      - name: change directory and pull changes
-        run: cd ~/project/send-my-geo && git pull
-      - name: start services
-        run: |
-          pm2 start udp2db.py
-          pm2 start server.js
-      - name: check services running correctly
-        run: pm2 list
+          python3 -m venv venv
+          . venv/bin/activate
+          pip install -r requirements.txt      
+      - name: check current directory
+        run: echo $PWD
+      - name: install npm dependencies
+        run:  npm install
+      - name: restart sniffer
+        run: pm2 restart udp2db.py
+      - name: restart server
+        run: sudo pm2 restart server.js
