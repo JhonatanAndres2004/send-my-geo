@@ -23,6 +23,9 @@ app.get('/', (req, res) => {
 app.get('/api-key', (req, res) => {
     res.json({ key: process.env.API_KEY });
 });
+app.get('/name', (req, res) => {
+    res.json({ name: process.env.NAME });
+});
 
 // API endpoint to get the latest location data
 app.get('/latest-location', (req, res) => {
