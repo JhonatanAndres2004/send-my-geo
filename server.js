@@ -45,6 +45,7 @@ https.createServer({
     key: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/privkey.pem`),
     cert: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/fullchain.pem`)
 }, app).listen(443, () => {
+    
     console.log('HTTPS Server running on https://localhost:443');
 });
 

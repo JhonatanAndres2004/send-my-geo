@@ -173,6 +173,21 @@ function convertToLocalTime(utcDateString) {
     return localDate.toLocaleString('en-GB', options);
 }
 
+function calcRoute(source,destination){
+    let request = {
+        origin:source,
+        destination:destination,
+        travelMode:'DRIVING'
+    };
+    directionsService.route(request,function(result,status){
+        if (status === "OK"){
+            directionsRenderer.setDirections(result);
+        } else{
+            console.error('Route request failed due to' + status)
+        }
+    });
+}
+
 // Initialize map when the page loads
 loadName();
 loadMap();
