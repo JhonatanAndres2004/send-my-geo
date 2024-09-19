@@ -48,9 +48,9 @@ public class MainActivity extends AppCompatActivity {
     private boolean isSendingData = true;
     private boolean usesUDP = true;
 
-    private static final String HOST_NAME_1 = "jhrouter.ddns.net";
-    private static final String HOST_NAME_2 = "routereduardo.ddns.net";
-    private static final String HOST_NAME_3 = "kevinrouter.ddns.net";
+    private static final String HOST_NAME_1 = "sendmygeo-k.ddns.net";
+    private static final String HOST_NAME_2 = "sendmygeo-j.ddns.net";
+    private static final String HOST_NAME_3 = "sendmygeo-e.ddns.net";
     private static final int UDP_PORT = 5000;
     private static final int TCP_PORT = 5001;
 
