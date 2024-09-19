@@ -1,0 +1,46 @@
+name: main
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-kevin:
+    runs-on: kevin
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: copy .env file
+        run : cp ~/env-variables/.env .
+      - name: Set up Python environment and restart sniffer
+        run: |
+          python3 -m venv venv
+          . venv/bin/activate
+          pip install -r requirements.txt      
+          sudo pm2 restart udp2db.py
+      - name: install npm dependencies
+        run:  npm install
+      - name: restart server
+        run: sudo pm2 restart server.js
+      - name: verify server and sniffer are running
+        run: sudo pm2 list
+
+  build-eduardo:
+    runs-on: eduardo
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: copy .env file
+        run : cp ~/env-variables/.env .
+      - name: Set up Python environment and restart sniffer
+        run: |
+          python3 -m venv venv
+          . venv/bin/activate
+          pip install -r requirements.txt      
+          sudo pm2 restart udp2db.py
+      - name: install npm dependencies
+        run:  npm install
+      - name: restart server
+        run: sudo pm2 restart server.js
+      - name: verify server and sniffer are running
+        run: sudo pm2 list
