@@ -12,16 +12,15 @@ jobs:
 
       - name: copy .env file
         run : cp ~/project/send-my-geo/.env .
-      - name: Set up Python environment
+      - name: Set up Python environment and restart sniffer
         run: |
           python3 -m venv venv
           . venv/bin/activate
           pip install -r requirements.txt      
+          pm2 restart udp2db.py
       - name: check current directory
         run: echo $PWD
       - name: install npm dependencies
         run:  npm install
-      - name: restart sniffer
-        run: pm2 restart udp2db.py
       - name: restart server
         run: sudo pm2 restart server.js
