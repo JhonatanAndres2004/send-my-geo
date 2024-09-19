@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: copy .env file
-        run : cp ~/project/send-my-geo/.env .
+        run : cp ~/env-variables/.env .
       - name: Set up Python environment and restart sniffer
         run: |
           python3 -m venv venv
