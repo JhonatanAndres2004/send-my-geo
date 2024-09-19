@@ -1,9 +1,124 @@
+/* Reset some basic elements */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#title {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+#logo {
+    width: 20%;
+    height: 20%;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 2.5rem;
+    color: #6e00b3;
+    margin-left: 10px;
+}
+
+h2 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 40px;
+    justify-content: center;
+}
+
 .location-info {
     display: grid;
-    grid-template-columns: 100px 1fr;
-    gap: 3px;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    font-size: 1.2rem;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 100px;
+    margin-bottom: 30px;
+    width: 30%;
+    max-width: 800px;
+    height: 30%;
+    justify-content: center;
 }
+
+.location-info span {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    color: #555;
+}
+
+.location-info span:nth-child(odd){
+    text-align: left;
+}
+.location-info span:nth-child(even){
+    text-align: right;
+}
+
+h3 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+#map-container {
+    width: 60%;
+    height: 450px;
+    margin-bottom: 40px;
+}
+
 #map {
-    height: 500px; /* The height is 400 pixels */
-    width: 800px; /* The width is the width of the web page */
+    height: 400px;
+    width: 800px;
+    border-radius: 10px;
+}
+
+/* Media query for smaller devices */
+@media (max-width: 768px) {
+    .location-info {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    #map {
+        height: 500px;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    h2, h3 {
+        font-size: 1.4rem;
+    }
 }
