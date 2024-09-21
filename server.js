@@ -40,19 +40,36 @@ app.get('/latest-location', (req, res) => {
     });
 });
 
-// HTTPS server configuration
-https.createServer({
-    key: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/privkey.pem`),
-    cert: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/fullchain.pem`)
-}, app).listen(443, () => {
-    
-    console.log('HTTPS Server running on https://localhost:443');
+//Handled GET request to the '/historics' endpoint
+app.get('/historics', (req, res) => {
+    const { startDate, endDate } = req.query;
+
+    // Validate that both start date and end date are provided
+    if (!startDate || !endDate) {
+        return res.status(400).json({ error: 'Please provide both hora1 and hora2 query parameters.' });
+    }
+    // Construct SQL query to retrieve locations within the specified data range
+    const query = `SELECT * FROM locations WHERE Timestamp BETWEEN '${startDate}' AND '${endDate}'`;
+    connection.query(query, (err, results) => {
+        if (err) throw err;
+        res.json(results)
+    });
 });
 
+// HTTPS server configuration
+//https.createServer({
+ //   key: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/privkey.pem`),
+ //   cert: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/fullchain.pem`)
+//}, app).listen(443, () => {
+    
+//    console.log('HTTPS Server running on https://localhost:443');
+//});
+
 // HTTP to HTTPS redirection (listen on port 80)
-http.createServer((req, res) => {
-    res.writeHead(301, { "Location": `https://${req.headers.host}${req.url}` });
-    res.end();
-}).listen(80, () => {
+//http.createServer((req, res) => {
+//    res.writeHead(301, { "Location": `https://${req.headers.host}${req.url}` });
+//    res.end();
+//}).
+app.listen(80, () => {
     console.log('HTTP server redirecting to HTTPS on port 80');
 });

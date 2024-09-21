@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Send My Geo</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 </head>
 
 <body>
@@ -34,7 +37,20 @@
         </div>
     </div>
 
+    <label for="start-date">start date</label>
+    <input type="text" id="start-date" placeholder="Select a date" name="start-date">
+    <label for="end-date">end date</label>
+    <input type="text" id="end-date" placeholder="Select a date" name="end-date">
+    
+
+    <!-- Button to save the date -->
+    <button id="fetch-data">Save Date</button>
+    <!-- Button to fetch last data-->
+    <button id="restore">Live mode</button>
 
     <script src="update.js"></script>
+  
+
+
 </body>
 </html>

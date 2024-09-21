@@ -1,3 +1,4 @@
+
 let map;
 let marker;
 let directionsService;
@@ -5,6 +6,7 @@ let directionsRenderers = [];
 let routeCoordinates = [];
 let lastTimestamp = null;
 let colorIndex = 0;
+let live;
 const colors = ['#FF0000','#e67e22', '#FFFF00','#2ecc71','#3498db','#8e44ad']; 
 
 function loadMap() {
@@ -19,6 +21,34 @@ function loadMap() {
         })
         .catch(err => console.error('Error fetching API key:', err));
 }
+
+
+//load date picker for startd date
+flatpickr("#start-date", {
+    dateFormat: "Y-m-d H:i",
+    maxDate: new Date(),
+    mod: "multiple",
+    enableTime: true,
+    onClose: function(selectedDates, dateStr, instance) {
+        date1 = dateStr; // Save the selected date to the variable
+        console.log(date1)
+        }
+    }
+  );
+
+  //load date picker for end date
+  flatpickr("#end-date", {
+    dateFormat: "Y-m-d H:i",
+    maxDate: new Date(),
+    mod: "multiple",
+    enableTime: true,
+    onClose: function(selectedDates, dateStr, instance) {
+        date2 = dateStr; // Save the selected date to the variable
+        console.log(date2)
+        }
+    }
+  );
+
 
 function loadName() {
     fetch('/name')
@@ -49,10 +79,10 @@ async function initMap() {
         position: initialPosition,
         title: "Current Location",
     });
-
+    
     // Fetch initial location and start updates
     fetchLatestLocation();
-    setInterval(fetchLatestLocation, 10000);
+    live = setInterval(fetchLatestLocation, 10000);
 }
 
 function fetchLatestLocation() {
@@ -187,6 +217,77 @@ function calcRoute(source,destination){
         }
     });
 }
+function convertToGlobalTime(localTime){
+    
+        const utcDate = new Date(localTime)
+        const options ={
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false,
+            timeZone: 'UTC'
+        };
+        return utcDate.toLocaleDateString('en-GB',options)
+        
+        
+}
+function formatDateTime(dateTime){
+    const [date, time] = dateTime.split(', ');
+    const [day, month, year] = date.split('/');
+    return `${year}-${month}-${day} ${time}`;
+}
+
+function checkDates(dateStart,dateEnd){
+    let start = new Date(dateStart)
+    let end = new Date(dateEnd)
+    return start < end;
+}
+document.getElementById('restore').addEventListener('click', () => {
+    initMap(); //start fetching last data 
+
+})
+document.getElementById('fetch-data').addEventListener('click', () => {
+    //Stop fetching data
+    clearInterval(live)
+
+    let startDate = document.getElementById('start-date').value;
+    let endDate = document.getElementById('end-date').value;
+
+    const correctDates =checkDates(startDate, endDate) //check if start date is earlier than end date
+    if (startDate && endDate && correctDates) {
+        
+        startDate = convertToGlobalTime(startDate); //Convert date to UTC time zone
+        endDate = convertToGlobalTime(endDate); //Convert date to UTC time zone
+
+        date1 = formatDateTime(startDate); // Convert the dates to the desired format YYYY/MM/DD HH:MM:SS
+        date2 =  formatDateTime(endDate); // Convert the dates to the desired format YYYY/MM/DD HH:MM:SS
+
+        // Construct the URL with encoded date parameters for fetching historical data
+        const url = `/historics?starDate=${encodeURIComponent(date1)}&endDate=${encodeURIComponent(date2)}`;
+
+        console.log("Encoded URL:", url);  
+        fetch(`/historics?startDate=${encodeURIComponent(date1)}&endDate=${encodeURIComponent(date2)}`) 
+
+            .then(response => response.json())
+            .then(data => {
+                console.log('Data fetched:', data); //for debuging reasons
+                // Process the received data 
+                data.forEach(data =>{ //execute for every object in JSON
+                    updateLocationDisplay(data);
+                    updateMapAndRoute(data.Latitude, data.Longitude,data.Timestamp);
+                })
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    } else {
+        alert("Ensure dates are provided and the start date is earlier than the end date.");
+    }
+});
+
 
 // Initialize map when the page loads
 loadName();
