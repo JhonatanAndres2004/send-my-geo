@@ -153,6 +153,40 @@ function updateMapAndRoute(lat, lng, timestamp) {
     }
 }
 
+function updateMapAndRouteHistorics(lat, lng, timestamp) {
+    const newPosition = { lat: parseFloat(lat), lng: parseFloat(lng) };
+    const newTimestamp = new Date(timestamp);
+    
+    // Always update HTML display and marker position
+    marker.position = newPosition;
+    map.panTo(newPosition);
+    
+    if (routeCoordinates.length === 0) {
+        routeCoordinates.push(newPosition);
+        lastTimestamp = newTimestamp;
+    } else {
+        const lastPosition = routeCoordinates[routeCoordinates.length - 1];
+        const distance = calculateDistance(lastPosition.lat, lastPosition.lng, newPosition.lat, newPosition.lng);
+        const timeDiff = (newTimestamp - lastTimestamp) / (1000 * 60); // time difference in minutes
+        
+        if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 1) {
+            routeCoordinates.push(newPosition);
+            drawPolylineHistorics(lastPosition, newPosition);
+            //colorIndex = (colorIndex + 1) % colors.length; 
+        } else if (distance > 1 || timeDiff >= 1) {
+            // If distance is greater than 1 kilometer or the time difference is greater (or equal) than 1 minute, 
+            // Start a new route from that point
+            routeCoordinates = [newPosition];
+            // Clear the previous drawn polylines
+            //polylines.forEach(polyline => polyline.setMap(null));
+            polylines = [];
+        }
+
+        lastTimestamp = newTimestamp;
+    }
+}
+
+
 function drawPolyline(origin, destination) {
     const path = [
         new google.maps.LatLng(origin.lat, origin.lng),
@@ -165,6 +199,25 @@ function drawPolyline(origin, destination) {
         strokeColor: colors[colorIndex],
         strokeOpacity: 1.0,
         strokeWeight: 4
+    });
+
+    polyline.setMap(map);
+    polylines.push(polyline);
+    console.log("Polyline drawn successfully");
+}
+
+function drawPolylineHistorics(origin, destination) {
+    const path = [
+        new google.maps.LatLng(origin.lat, origin.lng),
+        new google.maps.LatLng(destination.lat, destination.lng)
+    ];
+
+    const polyline = new google.maps.Polyline({
+        path: path,
+        geodesic: true,
+        strokeColor:'#3498db' ,
+        strokeOpacity: 0.8,
+        strokeWeight: 3
     });
 
     polyline.setMap(map);
@@ -262,7 +315,7 @@ document.getElementById('fetch-data').addEventListener('click', () => {
                 // Process the received data 
                 data.forEach(data =>{ //execute for every object in JSON
                     updateLocationDisplay(data);
-                    updateMapAndRoute(data.Latitude, data.Longitude,data.Timestamp);
+                    updateMapAndRouteHistorics(data.Latitude, data.Longitude,data.Timestamp);
                 })
             })
             .catch(error => {
