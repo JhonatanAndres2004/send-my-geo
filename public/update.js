@@ -1,27 +1,23 @@
-
 let map;
 let marker;
-let directionsService;
-let directionsRenderers = [];
+let polylines = [];
 let routeCoordinates = [];
 let lastTimestamp = null;
 let colorIndex = 0;
-let live;
 const colors = ['#FF0000','#e67e22', '#FFFF00','#2ecc71','#3498db','#8e44ad']; 
-
+let live
 function loadMap() {
     fetch('/api-key')
         .then(response => response.json())
         .then(data => {
             const script = document.createElement('script');
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${data.key}&callback=initMap&libraries=directions`;
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${data.key}&callback=initMap`;
             script.async = true;
             script.defer = true;
             document.head.appendChild(script);
         })
         .catch(err => console.error('Error fetching API key:', err));
 }
-
 
 //load date picker for startd date
 flatpickr("#start-date", {
@@ -63,12 +59,9 @@ async function initMap() {
     const { Map } = await google.maps.importLibrary("maps");
     const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
 
-    directionsService = new google.maps.DirectionsService();
-
     const initialPosition = { lat: 0, lng: 0 };
 
     map = new Map(document.getElementById("map"), {
-        zoom: 14,
         zoom: 14,
         center: initialPosition,
         mapId: "DEMO_MAP_ID",
@@ -79,10 +72,10 @@ async function initMap() {
         position: initialPosition,
         title: "Current Location",
     });
-    
+
     // Fetch initial location and start updates
     fetchLatestLocation();
-    live = setInterval(fetchLatestLocation, 10000);
+    live=setInterval(fetchLatestLocation, 10000);
 }
 
 function fetchLatestLocation() {
@@ -141,18 +134,18 @@ function updateMapAndRoute(lat, lng, timestamp) {
         const lastPosition = routeCoordinates[routeCoordinates.length - 1];
         const distance = calculateDistance(lastPosition.lat, lastPosition.lng, newPosition.lat, newPosition.lng);
         const timeDiff = (newTimestamp - lastTimestamp) / (1000 * 60); // time difference in minutes
-        console.log(timeDiff)
+        
         if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 1) {
             routeCoordinates.push(newPosition);
-            calculateAndDisplayRoute(lastPosition, newPosition);
-            colorIndex = (colorIndex + 1) % colors.length; // chose the next color
+            drawPolyline(lastPosition, newPosition);
+            colorIndex = (colorIndex + 1) % colors.length; // choose the next color
         } else if (distance > 1 || timeDiff >= 1) {
             // If distance is greater than 1 kilometer or the time difference is greater (or equal) than 1 minute, 
             // Start a new route from that point
             routeCoordinates = [newPosition];
-            // Cleanse of the previous drawn routes
-            directionsRenderers.forEach(renderer => renderer.setMap(null));
-            directionsRenderers = [];
+            // Clear the previous drawn polylines
+            polylines.forEach(polyline => polyline.setMap(null));
+            polylines = [];
             colorIndex = 0; // reset color index
         }
 
@@ -160,32 +153,76 @@ function updateMapAndRoute(lat, lng, timestamp) {
     }
 }
 
-function calculateAndDisplayRoute(origin, destination) {
-    directionsService.route(
-        {
-            origin: origin,
-            destination: destination,
-            travelMode: google.maps.TravelMode.DRIVING,
-        },
-        (response, status) => {
-            if (status === "OK") {
-                const newRenderer = new google.maps.DirectionsRenderer({
-                    map: map,
-                    suppressMarkers: true,
-                    preserveViewport: true,
-                    polylineOptions: {
-                        strokeColor: colors[colorIndex],
-                        strokeWeight: 4
-                    }
-                });
-                newRenderer.setDirections(response);
-                directionsRenderers.push(newRenderer);
-                console.log("Route calculated successfully");
-            } else {
-                console.error("Directions request failed due to " + status);
-            }
+function updateMapAndRouteHistorics(lat, lng, timestamp) {
+    const newPosition = { lat: parseFloat(lat), lng: parseFloat(lng) };
+    const newTimestamp = new Date(timestamp);
+    
+    // Always update HTML display and marker position
+    marker.position = newPosition;
+    map.panTo(newPosition);
+    
+    if (routeCoordinates.length === 0) {
+        routeCoordinates.push(newPosition);
+        lastTimestamp = newTimestamp;
+    } else {
+        const lastPosition = routeCoordinates[routeCoordinates.length - 1];
+        const distance = calculateDistance(lastPosition.lat, lastPosition.lng, newPosition.lat, newPosition.lng);
+        const timeDiff = (newTimestamp - lastTimestamp) / (1000 * 60); // time difference in minutes
+        
+        if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 1) {
+            routeCoordinates.push(newPosition);
+            drawPolylineHistorics(lastPosition, newPosition);
+            //colorIndex = (colorIndex + 1) % colors.length; 
+        } else if (distance > 1 || timeDiff >= 1) {
+            // If distance is greater than 1 kilometer or the time difference is greater (or equal) than 1 minute, 
+            // Start a new route from that point
+            routeCoordinates = [newPosition];
+            // Clear the previous drawn polylines
+            //polylines.forEach(polyline => polyline.setMap(null));
+            polylines = [];
         }
-    );
+
+        lastTimestamp = newTimestamp;
+    }
+}
+
+
+function drawPolyline(origin, destination) {
+    const path = [
+        new google.maps.LatLng(origin.lat, origin.lng),
+        new google.maps.LatLng(destination.lat, destination.lng)
+    ];
+
+    const polyline = new google.maps.Polyline({
+        path: path,
+        geodesic: true,
+        strokeColor: colors[colorIndex],
+        strokeOpacity: 1.0,
+        strokeWeight: 4
+    });
+
+    polyline.setMap(map);
+    polylines.push(polyline);
+    console.log("Polyline drawn successfully");
+}
+
+function drawPolylineHistorics(origin, destination) {
+    const path = [
+        new google.maps.LatLng(origin.lat, origin.lng),
+        new google.maps.LatLng(destination.lat, destination.lng)
+    ];
+
+    const polyline = new google.maps.Polyline({
+        path: path,
+        geodesic: true,
+        strokeColor:'#3498db' ,
+        strokeOpacity: 0.8,
+        strokeWeight: 3
+    });
+
+    polyline.setMap(map);
+    polylines.push(polyline);
+    console.log("Polyline drawn successfully");
 }
 
 function convertToLocalTime(utcDateString) {
@@ -202,6 +239,7 @@ function convertToLocalTime(utcDateString) {
     };   
     return localDate.toLocaleString('en-GB', options);
 }
+
 
 function calcRoute(source,destination){
     let request = {
@@ -277,7 +315,7 @@ document.getElementById('fetch-data').addEventListener('click', () => {
                 // Process the received data 
                 data.forEach(data =>{ //execute for every object in JSON
                     updateLocationDisplay(data);
-                    updateMapAndRoute(data.Latitude, data.Longitude,data.Timestamp);
+                    updateMapAndRouteHistorics(data.Latitude, data.Longitude,data.Timestamp);
                 })
             })
             .catch(error => {
@@ -287,6 +325,7 @@ document.getElementById('fetch-data').addEventListener('click', () => {
         alert("Ensure dates are provided and the start date is earlier than the end date.");
     }
 });
+
 
 
 // Initialize map when the page loads
