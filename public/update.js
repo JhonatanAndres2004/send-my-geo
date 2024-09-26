@@ -20,6 +20,28 @@ function loadMap() {
         .catch(err => console.error('Error fetching API key:', err));
 }
 
+function showTab(tab) {
+    var realTimeTab = document.getElementById("realtime");
+    var historyTab = document.getElementById("history");
+    
+    if (tab === "realtime") {
+        realTimeTab.style.visibility = "visible";
+        realTimeTab.style.opacity = "1";
+        realTimeTab.style.position = "relative"; // Ensure it's visible
+        historyTab.style.visibility = "hidden";
+        historyTab.style.opacity = "0";
+        historyTab.style.position = "absolute"; // Hide it off-screen but keep structure intact
+    } else if (tab === "history") {
+        historyTab.style.visibility = "visible";
+        historyTab.style.opacity = "1";
+        historyTab.style.position = "relative"; // Ensure it's visible
+        realTimeTab.style.visibility = "hidden";
+        realTimeTab.style.opacity = "0";
+        realTimeTab.style.position = "absolute"; // Hide it off-screen but keep structure intact
+    }
+}
+
+
 //load date picker for start date
 flatpickr("#start-date", {
     dateFormat: "Y-m-d H:i",
@@ -268,11 +290,6 @@ function clearMap() {
     colorIndex = 0;
 }
 
-document.getElementById('restore').addEventListener('click', () => {
-    clearMap();
-    initMap(); //start fetching last data 
-});
-
 document.getElementById('fetch-data').addEventListener('click', () => {
     //Stop fetching data
     clearInterval(live);
@@ -316,3 +333,5 @@ document.getElementById('fetch-data').addEventListener('click', () => {
 // Initialize map when the page loads
 loadName();
 loadMap();
+initMap();
+showTab("realtime");
