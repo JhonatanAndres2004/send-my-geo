@@ -5,7 +5,8 @@ let routeCoordinates = [];
 let lastTimestamp = null;
 let colorIndex = 0;
 const colors = ['#FF0000','#e67e22', '#FFFF00','#2ecc71','#3498db','#8e44ad']; 
-let live
+let live;
+
 function loadMap() {
     fetch('/api-key')
         .then(response => response.json())
@@ -19,7 +20,7 @@ function loadMap() {
         .catch(err => console.error('Error fetching API key:', err));
 }
 
-//load date picker for startd date
+//load date picker for start date
 flatpickr("#start-date", {
     dateFormat: "Y-m-d H:i",
     maxDate: new Date(),
@@ -28,12 +29,11 @@ flatpickr("#start-date", {
     onClose: function(selectedDates, dateStr, instance) {
         date1 = dateStr; // Save the selected date to the variable
         console.log(date1)
-        }
     }
-  );
+});
 
-  //load date picker for end date
-  flatpickr("#end-date", {
+//load date picker for end date
+flatpickr("#end-date", {
     dateFormat: "Y-m-d H:i",
     maxDate: new Date(),
     mod: "multiple",
@@ -41,10 +41,8 @@ flatpickr("#start-date", {
     onClose: function(selectedDates, dateStr, instance) {
         date2 = dateStr; // Save the selected date to the variable
         console.log(date2)
-        }
     }
-  );
-
+});
 
 function loadName() {
     fetch('/name')
@@ -75,7 +73,7 @@ async function initMap() {
 
     // Fetch initial location and start updates
     fetchLatestLocation();
-    live=setInterval(fetchLatestLocation, 10000);
+    live = setInterval(fetchLatestLocation, 10000);
 }
 
 function fetchLatestLocation() {
@@ -172,20 +170,15 @@ function updateMapAndRouteHistorics(lat, lng, timestamp) {
         if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 1) {
             routeCoordinates.push(newPosition);
             drawPolylineHistorics(lastPosition, newPosition);
-            //colorIndex = (colorIndex + 1) % colors.length; 
         } else if (distance > 1 || timeDiff >= 1) {
             // If distance is greater than 1 kilometer or the time difference is greater (or equal) than 1 minute, 
             // Start a new route from that point
             routeCoordinates = [newPosition];
-            // Clear the previous drawn polylines
-            //polylines.forEach(polyline => polyline.setMap(null));
-            polylines = [];
         }
 
         lastTimestamp = newTimestamp;
     }
 }
-
 
 function drawPolyline(origin, destination) {
     const path = [
@@ -215,7 +208,7 @@ function drawPolylineHistorics(origin, destination) {
     const polyline = new google.maps.Polyline({
         path: path,
         geodesic: true,
-        strokeColor:'#3498db' ,
+        strokeColor: '#3498db',
         strokeOpacity: 0.8,
         strokeWeight: 3
     });
@@ -240,83 +233,77 @@ function convertToLocalTime(utcDateString) {
     return localDate.toLocaleString('en-GB', options);
 }
 
-
-function calcRoute(source,destination){
-    let request = {
-        origin:source,
-        destination:destination,
-        travelMode:'DRIVING'
+function convertToGlobalTime(localTime) {
+    const utcDate = new Date(localTime);
+    const options = {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+        timeZone: 'UTC'
     };
-    directionsService.route(request,function(result,status){
-        if (status === "OK"){
-            directionsRenderer.setDirections(result);
-        } else{
-            console.error('Route request failed due to' + status)
-        }
-    });
+    return utcDate.toLocaleDateString('en-GB', options);
 }
-function convertToGlobalTime(localTime){
-    
-        const utcDate = new Date(localTime)
-        const options ={
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: false,
-            timeZone: 'UTC'
-        };
-        return utcDate.toLocaleDateString('en-GB',options)
-        
-        
-}
-function formatDateTime(dateTime){
+
+function formatDateTime(dateTime) {
     const [date, time] = dateTime.split(', ');
     const [day, month, year] = date.split('/');
     return `${year}-${month}-${day} ${time}`;
 }
 
-function checkDates(dateStart,dateEnd){
-    let start = new Date(dateStart)
-    let end = new Date(dateEnd)
+function checkDates(dateStart, dateEnd) {
+    let start = new Date(dateStart);
+    let end = new Date(dateEnd);
     return start < end;
 }
-document.getElementById('restore').addEventListener('click', () => {
-    initMap(); //start fetching last data 
 
-})
+function clearMap() {
+    polylines.forEach(polyline => polyline.setMap(null));
+    polylines = [];
+    routeCoordinates = [];
+    lastTimestamp = null;
+    colorIndex = 0;
+}
+
+document.getElementById('restore').addEventListener('click', () => {
+    clearMap();
+    initMap(); //start fetching last data 
+});
+
 document.getElementById('fetch-data').addEventListener('click', () => {
     //Stop fetching data
-    clearInterval(live)
+    clearInterval(live);
 
     let startDate = document.getElementById('start-date').value;
     let endDate = document.getElementById('end-date').value;
 
-    const correctDates =checkDates(startDate, endDate) //check if start date is earlier than end date
+    const correctDates = checkDates(startDate, endDate); //check if start date is earlier than end date
     if (startDate && endDate && correctDates) {
-        
         startDate = convertToGlobalTime(startDate); //Convert date to UTC time zone
         endDate = convertToGlobalTime(endDate); //Convert date to UTC time zone
 
         date1 = formatDateTime(startDate); // Convert the dates to the desired format YYYY/MM/DD HH:MM:SS
-        date2 =  formatDateTime(endDate); // Convert the dates to the desired format YYYY/MM/DD HH:MM:SS
+        date2 = formatDateTime(endDate); // Convert the dates to the desired format YYYY/MM/DD HH:MM:SS
+
+        // Clear the map before fetching new data
+        clearMap();
 
         // Construct the URL with encoded date parameters for fetching historical data
         const url = `/historics?starDate=${encodeURIComponent(date1)}&endDate=${encodeURIComponent(date2)}`;
 
         console.log("Encoded URL:", url);  
         fetch(`/historics?startDate=${encodeURIComponent(date1)}&endDate=${encodeURIComponent(date2)}`) 
-
             .then(response => response.json())
             .then(data => {
-                console.log('Data fetched:', data); //for debuging reasons
+                console.log('Data fetched:', data); //for debugging reasons
                 // Process the received data 
-                data.forEach(data =>{ //execute for every object in JSON
+                data.forEach(data => { //execute for every object in JSON
                     updateLocationDisplay(data);
-                    updateMapAndRouteHistorics(data.Latitude, data.Longitude,data.Timestamp);
-                })
+                    updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp);
+                });
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
@@ -325,8 +312,6 @@ document.getElementById('fetch-data').addEventListener('click', () => {
         alert("Ensure dates are provided and the start date is earlier than the end date.");
     }
 });
-
-
 
 // Initialize map when the page loads
 loadName();

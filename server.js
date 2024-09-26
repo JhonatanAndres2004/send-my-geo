@@ -1,8 +1,8 @@
 const express = require('express');
 const app = express();
 const mysql = require('mysql2');
-const https = require('https');
-const http = require('http');  // Added for HTTP redirection
+// const https = require('https');  // Comentado
+// const http = require('http');    // Comentado
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
@@ -43,7 +43,7 @@ app.get('/latest-location', (req, res) => {
 //Handled GET request to the '/historics' endpoint
 app.get('/historics', (req, res) => {
     const { startDate, endDate } = req.query;
-
+    
     // Validate that both start date and end date are provided
     if (!startDate || !endDate) {
         return res.status(400).json({ error: 'Please provide both hora1 and hora2 query parameters.' });
@@ -56,19 +56,7 @@ app.get('/historics', (req, res) => {
     });
 });
 
-// HTTPS server configuration
-https.createServer({
-    key: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/privkey.pem`),
-    cert: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/fullchain.pem`)
-}, app).listen(443, () => {
-    
-    console.log('HTTPS Server running on https://localhost:443');
-});
-
-// HTTP to HTTPS redirection (listen on port 80)
-http.createServer((req, res) => {
-    res.writeHead(301, { "Location": `https://${req.headers.host}${req.url}` });
-    res.end();
-}).listen(80, () => {
-    console.log('HTTP server redirecting to HTTPS on port 80');
+// Usar HTTP para desarrollo local
+app.listen(3000, () => {
+    console.log('Server running on http://localhost:3000');
 });
