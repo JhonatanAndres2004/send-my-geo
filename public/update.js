@@ -299,11 +299,17 @@ document.getElementById('fetch-data').addEventListener('click', () => {
             .then(response => response.json())
             .then(data => {
                 console.log('Data fetched:', data); //for debugging reasons
-                // Process the received data 
-                data.forEach(data => { //execute for every object in JSON
-                    updateLocationDisplay(data);
-                    updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp);
-                });
+                console.log(data.length);
+                if (data.length == 0){
+                    alert("no routes found")
+                } else{// Process the received data 
+                    data.forEach(data => { //execute for every object in JSON
+                        updateLocationDisplay(data);
+                        updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp);
+    
+                       
+                    });}
+                
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
