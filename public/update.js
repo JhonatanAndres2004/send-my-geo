@@ -31,6 +31,8 @@ function showTab(tab) {
         historyTab.style.visibility = "hidden";
         historyTab.style.opacity = "0";
         historyTab.style.position = "absolute"; // Hide it off-screen but keep structure intact
+        clearMap();
+        initMap();
     } else if (tab === "history") {
         historyTab.style.visibility = "visible";
         historyTab.style.opacity = "1";
