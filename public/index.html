@@ -16,8 +16,14 @@
         <h1>Send My Geo</h1>
     </div>
     <h2 id="name">Name</h2>
+
+    <div class="tab-buttons">
+        <button class="tab-btn" onclick="showTab('realtime')">Real-Time</button>
+        <button class="tab-btn" onclick="showTab('history')">Historical Data</button>
+    </div>
+
     <div class="wrapper">
-        <div class="location-info">
+        <div id="realtime" class="location-info tab-content">
             <span><b>Latitude:</b></span>
             <span id="latitude">Loading...</span>
             <span><b>Longitude:</b></span>
@@ -26,6 +32,14 @@
             <span id="date">Loading...</span>
             <span><b>Time:</b></span>
             <span id="time">Loading...</span>
+        </div>
+        <div id="history" class="tab-content">
+            <label for="start-date"><b>Start Date</b></label>
+            <input type="text" id="start-date" placeholder="Select a date" name="start-date">
+            <label for="end-date"><b>End Date</b></label>
+            <input type="text" id="end-date" placeholder="Select a date" name="end-date">
+            
+            <button id="fetch-data">See Data</button>
         </div>
         <div id="map-container">
             <h3>Google Maps</h3>
@@ -36,17 +50,6 @@
             </div>
         </div>
     </div>
-
-    <label for="start-date">start date</label>
-    <input type="text" id="start-date" placeholder="Select a date" name="start-date">
-    <label for="end-date">end date</label>
-    <input type="text" id="end-date" placeholder="Select a date" name="end-date">
-    
-
-    <!-- Button to save the date -->
-    <button id="fetch-data">Save Date</button>
-    <!-- Button to fetch last data-->
-    <button id="restore">Live mode</button>
 
     <script src="update.js"></script>
   
