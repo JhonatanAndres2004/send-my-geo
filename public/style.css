@@ -16,7 +16,7 @@
     width: 20%;
     height: 20%;
     object-fit: cover;
-    margin-right: 10px;
+    margin-right: 20px;
 }
 
 body {
@@ -87,14 +87,13 @@ h3 {
 }
 
 #map-container {
-    width: 60%;
-    height: 450px;
-    margin-bottom: 10px;
+    width: 900px;
+    height: 400px;
 }
 
 #map {
     height: 400px;
-    width: 800px;
+    width: 900px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -102,7 +101,7 @@ h3 {
 .tab-buttons {
     display: flex;
     justify-content: center;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .tab-btn {
