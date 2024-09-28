@@ -11,18 +11,18 @@
 </head>
 
 <body>
-    <div id="title">
-        <img id="logo" src="images/logogeosend.png" alt="Send My Geo logo">
-        <h1>Send My Geo</h1>
-    </div>
+    <div id="title-buttons-and-info">
+        <div id="title">
+            <img id="logo" src="images/logogeosend.png" alt="Send My Geo logo">
+            <h1>Send My Geo</h1>
+        </div>
+    
+        <div class="tab-buttons">
+            <button id="realtime-button" class="tab-btn" onclick="showTab('realtime')">Real Time</button>
+            <button id="history-button" class="tab-btn" onclick="showTab('history')">Historical Data</button>
+            <button id="location-history-button" class="tab-btn" onclick="showTab('location-history')">Location History</button>
+        </div>
 
-    <div class="tab-buttons">
-        <button id="realtime-button" class="tab-btn" onclick="showTab('realtime')">Real Time</button>
-        <button id="history-button" class="tab-btn" onclick="showTab('history')">Historical Data</button>
-        <button id="location-history-button" class="tab-btn" onclick="showTab('location-history')">Location History</button>
-    </div>
-
-    <div class="wrapper">
         <div id="realtime" class="location-info tab-content">
             <span><b>Latitude:</b></span>
             <span id="latitude">Loading...</span>
@@ -46,12 +46,12 @@
             <input type="text" id="location-input" placeholder="Input a location" name="start-date-location">
             <button id="fetch-location">See Location</button>
         </div>
-        <div id="map-container">
-            <div id="map">
-                <gmp-map center="40.12150192260742,-100.45039367675781" zoom="10" map-id="DEMO_MAP_ID">
-                <gmp-advanced-marker title="My location" id="marker"></gmp-advanced-marker>
-                </gmp-map>
-            </div>
+    </div>
+    <div id="map-container">
+        <div id="map">  
+            <gmp-map center="40.12150192260742,-100.45039367675781" zoom="10" map-id="DEMO_MAP_ID">
+            <gmp-advanced-marker title="My location" id="marker"></gmp-advanced-marker>
+            </gmp-map>
         </div>
     </div>
 
