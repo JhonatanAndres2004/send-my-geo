@@ -31,6 +31,8 @@ function showTab(tab) {
         historyTab.style.visibility = "hidden";
         historyTab.style.opacity = "0";
         historyTab.style.position = "absolute"; // Hide it off-screen but keep structure intact
+        document.getElementById('realtime-button').disabled = true;
+        document.getElementById('history-button').disabled = false;
         clearMap();
         initMap();
     } else if (tab === "history") {
@@ -40,6 +42,10 @@ function showTab(tab) {
         realTimeTab.style.visibility = "hidden";
         realTimeTab.style.opacity = "0";
         realTimeTab.style.position = "absolute"; // Hide it off-screen but keep structure intact
+        document.getElementById('realtime-button').disabled = false;
+        document.getElementById('history-button').disabled = true;
+        document.getElementById('start-date').value = "";
+        document.getElementById('end-date').value = "";
     }
 }
 
