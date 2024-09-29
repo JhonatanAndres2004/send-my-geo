@@ -67,7 +67,7 @@ function showTab(tab) {
         historyTab.style.position = "absolute";
         document.getElementById('realtime-button').disabled = false;
         document.getElementById('history-button').disabled = false;
-        document.getElementById('location-history-button').disabled = true;s
+        document.getElementById('location-history-button').disabled = true;
 
     }
 }
