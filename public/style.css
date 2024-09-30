@@ -106,6 +106,25 @@ button:disabled {
     flex: auto;
 }
 
+.dropdown {
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%;
+    display: none;
+}
+
+.dropdown-item {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.dropdown-item:hover {
+    background-color: #f0f0f0;
+}
+
 #fetch-data, #fetch-location {
     justify-self: center; 
     padding: 5px 10px;

@@ -6,6 +6,7 @@ let lastTimestamp = null;
 let colorIndex = 0;
 const colors = ['#FF0000','#e67e22', '#FFFF00','#2ecc71','#3498db','#8e44ad']; 
 let live;
+let autocomplete;
 
 function loadMap() {
     fetch('/api-key')
@@ -366,6 +367,58 @@ document.getElementById('fetch-data').addEventListener('click', () => {
         alert("Ensure dates are provided and the start date is earlier than the end date.");
     }
 });
+
+document.getElementById('fetch-location').addEventListener("click", () =>
+    geocode({ address: document.getElementById('location-input').value }),
+);
+
+document.getElementById('location-input').addEventListener("keydown", (e) => {
+    if (!autocomplete) {
+        initializeAutocomplete();
+    }
+});
+
+async function initializeAutocomplete() {
+    const { Autocomplete } = await google.maps.importLibrary("places");
+    const input = document.getElementById('location-input');
+    autocomplete = new Autocomplete(input);
+    autocomplete.bindTo("bounds", map);
+
+    const infowindow = new google.maps.InfoWindow();
+    const infowindowContent = document.getElementById("infowindow-content");
+    infowindow.setContent(infowindowContent);
+
+    autocomplete.addListener('place_changed', () => {
+        const place = autocomplete.getPlace();
+        if (!place.geometry || !place.geometry.location) {
+            return;
+        }
+    });
+}
+
+async function showGeocodedRoutes() {
+    const {Geocoder} = await google.maps.importLibrary("geocoding");
+    const geocoder = new Geocoder();
+}
+
+function geocode(request) {
+    clearInterval(live);
+    const geocoder = new google.maps.Geocoder();
+    clearMap();
+    geocoder
+        .geocode(request)
+        .then((result) => {
+            const { results } = result;
+
+            map.setCenter(results[0].geometry.location);
+            marker.position = results[0].geometry.location;
+            marker.setMap(map);
+            return results;
+        })
+        .catch((e) => {
+            alert("Geocode was not successful for the following reason: " + e);
+        });
+}
 
 // Initialize map when the page loads
 loadName();
