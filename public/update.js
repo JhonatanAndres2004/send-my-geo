@@ -6,6 +6,9 @@ let lastTimestamp = null;
 let colorIndex = 0;
 const colors = ['#FF0000','#e67e22', '#FFFF00','#2ecc71','#3498db','#8e44ad']; 
 let live;
+let autocomplete;
+let mapThemeId = 'c81689827509e41a';
+let circle;
 
 function loadMap() {
     fetch('/api-key')
@@ -23,23 +26,54 @@ function loadMap() {
 function showTab(tab) {
     var realTimeTab = document.getElementById("realtime");
     var historyTab = document.getElementById("history");
+    var locationHistoryTab = document.getElementById("location-history");
     
     if (tab === "realtime") {
         realTimeTab.style.visibility = "visible";
         realTimeTab.style.opacity = "1";
-        realTimeTab.style.position = "relative"; // Ensure it's visible
+        realTimeTab.style.position = "relative";
         historyTab.style.visibility = "hidden";
         historyTab.style.opacity = "0";
-        historyTab.style.position = "absolute"; // Hide it off-screen but keep structure intact
+        historyTab.style.position = "absolute";
+        locationHistoryTab.style.visibility = "hidden";
+        locationHistoryTab.style.opacity = "0";
+        locationHistoryTab.style.position = "absolute";
+        document.getElementById('realtime-button').disabled = true;
+        document.getElementById('history-button').disabled = false;
+        document.getElementById('location-history-button').disabled = false;
         clearMap();
         initMap();
+        startLiveLocation();
     } else if (tab === "history") {
         historyTab.style.visibility = "visible";
         historyTab.style.opacity = "1";
-        historyTab.style.position = "relative"; // Ensure it's visible
+        historyTab.style.position = "relative";
         realTimeTab.style.visibility = "hidden";
         realTimeTab.style.opacity = "0";
-        realTimeTab.style.position = "absolute"; // Hide it off-screen but keep structure intact
+        realTimeTab.style.position = "absolute";
+        locationHistoryTab.style.visibility = "hidden";
+        locationHistoryTab.style.opacity = "0";
+        locationHistoryTab.style.position = "absolute";
+        document.getElementById('realtime-button').disabled = false;
+        document.getElementById('history-button').disabled = true;
+        document.getElementById('location-history-button').disabled = false;
+        document.getElementById('start-date').value = "";
+        document.getElementById('end-date').value = "";
+        stopLiveLocation();
+    } else if (tab === "location-history") {
+        locationHistoryTab.style.visibility = "visible";
+        locationHistoryTab.style.opacity = "1";
+        locationHistoryTab.style.position = "relative";
+        realTimeTab.style.visibility = "hidden";
+        realTimeTab.style.opacity = "0";
+        realTimeTab.style.position = "absolute";
+        historyTab.style.visibility = "hidden";
+        historyTab.style.opacity = "0";
+        historyTab.style.position = "absolute";
+        document.getElementById('realtime-button').disabled = false;
+        document.getElementById('history-button').disabled = false;
+        document.getElementById('location-history-button').disabled = true;
+        stopLiveLocation();
     }
 }
 
@@ -84,12 +118,20 @@ async function initMap() {
     const { Map } = await google.maps.importLibrary("maps");
     const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
 
-    const initialPosition = { lat: 0, lng: 0 };
-
+    let initialPosition = { lat: 0, lng: 0 };
+    
+    try {
+        const response = await fetch('/latest-location');
+        const data = await response.json();
+        initialPosition = { lat: parseFloat(data.Latitude), lng: parseFloat(data.Longitude) };  
+    } catch (err) {
+        console.error('Error fetching latest location:', err);
+    }
+    
     map = new Map(document.getElementById("map"), {
         zoom: 14,
         center: initialPosition,
-        mapId: "DEMO_MAP_ID",
+        mapId: mapThemeId
     });
 
     marker = new AdvancedMarkerElement({
@@ -97,10 +139,14 @@ async function initMap() {
         position: initialPosition,
         title: "Current Location",
     });
+}
 
-    // Fetch initial location and start updates
-    fetchLatestLocation();
+function startLiveLocation() {
     live = setInterval(fetchLatestLocation, 10000);
+}
+
+function stopLiveLocation() {
+    clearInterval(live);
 }
 
 function fetchLatestLocation() {
@@ -288,6 +334,7 @@ function checkDates(dateStart, dateEnd) {
 }
 
 function clearMap() {
+    if (circle) circle.setMap(null);    
     polylines.forEach(polyline => polyline.setMap(null));
     polylines = [];
     routeCoordinates = [];
@@ -342,8 +389,103 @@ document.getElementById('fetch-data').addEventListener('click', () => {
     }
 });
 
+document.getElementById('fetch-location').addEventListener("click", () => {
+    const radiusInput = document.getElementById('radius-input');
+    const radius = parseFloat(radiusInput.value);
+    if (radius > 0) {
+        geocode({ address: document.getElementById('location-input').value });
+    } else {
+        radiusInput.value = "";
+    }
+});
+
+document.getElementById('location-input').addEventListener("keydown", (e) => {
+    if (!autocomplete) {
+        initializeAutocomplete();
+    }
+});
+
+async function initializeAutocomplete() {
+    const { Autocomplete } = await google.maps.importLibrary("places");
+    const input = document.getElementById('location-input');
+    autocomplete = new Autocomplete(input);
+    autocomplete.bindTo("bounds", map);
+
+    const infowindow = new google.maps.InfoWindow();
+    const infowindowContent = document.getElementById("infowindow-content");
+    infowindow.setContent(infowindowContent);
+
+    autocomplete.addListener('place_changed', () => {
+        const place = autocomplete.getPlace();
+        if (!place.geometry || !place.geometry.location) {
+            return;
+        }
+    });
+}
+
+async function showGeocodedRoutes() {
+    const {Geocoder} = await google.maps.importLibrary("geocoding");
+    const geocoder = new Geocoder();
+}
+
+function geocode(request) {
+    clearInterval(live);
+    const geocoder = new google.maps.Geocoder();
+    clearMap();
+    geocoder
+        .geocode(request)
+        .then((result) => {
+            clearMap();
+            const { results } = result;
+            const center = results[0].geometry.location;
+            const radius = parseFloat(document.getElementById('radius-input').value);
+            map.setCenter(center);
+            marker.position = center;
+            marker.setMap(map);
+            circle = new google.maps.Circle({
+                strokeColor: "#6d00b3",
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: "#6d00b3",
+                fillOpacity: 0.35,
+                map,
+                center: center,
+                radius: radius
+            });
+            return results;
+        })
+        .catch((e) => {
+            alert("Geocode was not successful for the following reason: " + e);
+        });
+}
+
+function calculateBoundingBoxArea(south, north, west, east) {
+    // Calculate the height of the bounding box (distance between south and north along the same longitude)
+    const height = calculateDistance(south, west, north, west);
+  
+    // Calculate the width of the bounding box (distance between west and east along the same latitude)
+    const width = calculateDistance(south, west, south, east);
+  
+    // Area of the rectangle
+    const area = height * width;
+  
+    return area; // Area in square meters
+  }  
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    const darkModeToggle = document.getElementById("darkModeToggle");
+
+    darkModeToggle.addEventListener("change", function() {
+        document.body.classList.toggle("dark-mode", darkModeToggle.checked);
+        //document.getElementById('title-buttons-and-info').classList.toggle("dark-mode", darkModeToggle.checked);
+        mapThemeId = darkModeToggle.checked ? 'a43cc08dd4e3e26d' : 'c81689827509e41a';
+        initMap();
+    });
+});
 // Initialize map when the page loads
 loadName();
 loadMap();
 initMap();
 showTab("realtime");
+

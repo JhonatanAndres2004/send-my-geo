@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="name">Send My Geo</title>
+    <link rel="icon" href="images/logogeosend.png" type="image/png">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -11,17 +12,24 @@
 </head>
 
 <body>
-    <div id="title">
-        <img id="logo" src="images/logogeosend.png" alt="Send My Geo logo">
-        <h1>Send My Geo</h1>
+    <div id="dark-mode-switch">
+        <label class="switch">
+            <input type="checkbox" id="darkModeToggle">
+            <span class="slider round"></span>
+        </label>
     </div>
+    <div id="title-buttons-and-info">
+        <div id="title">
+            <img id="logo" src="images/logogeosend.png" alt="Send My Geo logo">
+            <h1>Send My Geo</h1>
+        </div>
+    
+        <div class="tab-buttons">
+            <button id="realtime-button" class="tab-btn" onclick="showTab('realtime')">Real Time</button>
+            <button id="history-button" class="tab-btn" onclick="showTab('history')">Historical Data</button>
+            <button id="location-history-button" class="tab-btn" onclick="showTab('location-history')">Location History</button>
+        </div>
 
-    <div class="tab-buttons">
-        <button class="tab-btn" onclick="showTab('realtime')">Real-Time</button>
-        <button class="tab-btn" onclick="showTab('history')">Historical Data</button>
-    </div>
-
-    <div class="wrapper">
         <div id="realtime" class="location-info tab-content">
             <span><b>Latitude:</b></span>
             <span id="latitude">Loading...</span>
@@ -40,13 +48,20 @@
             
             <button id="fetch-data">See Data</button>
         </div>
-        <div id="map-container">
-            <h3>Google Maps</h3>
-            <div id="map">
-                <gmp-map center="40.12150192260742,-100.45039367675781" zoom="10" map-id="DEMO_MAP_ID">
-                <gmp-advanced-marker title="My location" id="marker"></gmp-advanced-marker>
-                </gmp-map>
-            </div>
+        <div id="location-history" class="tab-content">
+            <label for="location-input" id="location-input-label"><b>Location</b></label>
+            <input type="text" id="location-input" placeholder="Enter location" name="start-date-location">
+            <label for="radius-input" id="radius-input-label"><b>Radius</b></label>
+            <input type="number" id="radius-input" placeholder="(meters)" name="radius" min="0">    
+            <div id="dropdown-container" class="dropdown"></div>
+            <button id="fetch-location">Submit</button>
+        </div>
+    </div>
+    <div id="map-container">
+        <div id="map">  
+            <gmp-map center="40.12150192260742,-100.45039367675781" zoom="10" map-id="DEMO_MAP_ID">
+            <gmp-advanced-marker title="My location" id="marker"></gmp-advanced-marker>
+            </gmp-map>
         </div>
     </div>
 
