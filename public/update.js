@@ -45,19 +45,21 @@ function showTab(tab) {
 
 
 //load date picker for start date
-flatpickr("#start-date", {
+let startdate = flatpickr("#start-date", {
     dateFormat: "Y-m-d H:i",
     maxDate: new Date(),
     mod: "multiple",
     enableTime: true,
     onClose: function(selectedDates, dateStr, instance) {
-        date1 = dateStr; // Save the selected date to the variable
-        console.log(date1)
+        dateMin = dateStr; // Save the selected date to the variable
+        console.log(dateMin)
+        enddate.set('minDate',dateStr)
     }
 });
 
+
 //load date picker for end date
-flatpickr("#end-date", {
+let enddate = flatpickr("#end-date", {
     dateFormat: "Y-m-d H:i",
     maxDate: new Date(),
     mod: "multiple",
@@ -65,6 +67,7 @@ flatpickr("#end-date", {
     onClose: function(selectedDates, dateStr, instance) {
         date2 = dateStr; // Save the selected date to the variable
         console.log(date2)
+        startdate.set('maxDate',dateStr)
     }
 });
 
@@ -295,6 +298,7 @@ function clearMap() {
 document.getElementById('fetch-data').addEventListener('click', () => {
     //Stop fetching data
     clearInterval(live);
+    console.log(dateMin);
 
     let startDate = document.getElementById('start-date').value;
     let endDate = document.getElementById('end-date').value;
