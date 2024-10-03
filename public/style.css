@@ -116,25 +116,6 @@ button:disabled {
     flex: auto;
 }
 
-.dropdown {
-    position: absolute;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    max-height: 200px;
-    overflow-y: auto;
-    width: 100%;
-    display: none;
-}
-
-.dropdown-item {
-    padding: 10px;
-    cursor: pointer;
-}
-
-.dropdown-item:hover {
-    background-color: #f0f0f0;
-}
-
 #fetch-data, #fetch-location {
     justify-self: center; 
     padding: 5px 10px;
@@ -244,6 +225,22 @@ body.dark-mode .tab-content label,
 body.dark-mode .tab-content input {
     background-color: #333;
     color: #e2e2e2;
+}
+
+body.dark-mode .pac-container {
+    background-color: #282828;
+    color: #EEE;
+}
+body.dark-mode .pac-item{
+    color: #AAA;
+    border-top: 1px solid #333;
+}
+body.dark-mode .pac-item-query {
+    color: #EEE;
+}
+body.dark-mode .pac-item:hover {
+    background-color: #333;
+    color: #EEE;
 }
 
 body.dark-mode #map {
