@@ -289,6 +289,8 @@ function drawPolylineHistorics(origin, destination) {
     polyline.setMap(map);
     polylines.push(polyline);
     console.log("Polyline drawn successfully");
+    console.log(`Origin: ${origin.lat}, ${origin.lng}`);
+    console.log(`Destination: ${destination.lat}, ${destination.lng}`);
 }
 
 function convertToLocalTime(utcDateString) {
@@ -394,6 +396,25 @@ document.getElementById('fetch-location').addEventListener("click", () => {
     const radius = parseFloat(radiusInput.value);
     if (radius > 0) {
         geocode({ address: document.getElementById('location-input').value });
+        const lat = marker.position.lat;
+        const lng = marker.position.lng;
+        console.log(`/location-request?lat=${lat}&lon=${lng}&radius=${radius}`);
+        fetch(`/location-request?lat=${lat}&lon=${lng}&radius=${radius}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Data fetched:', data);
+                if (data.length == 0){
+                    alert("no routes found")
+                } else{
+                    data.forEach(data => {
+                        updateLocationDisplay(data);
+                        updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
     } else {
         radiusInput.value = "";
     }
@@ -429,7 +450,6 @@ async function showGeocodedRoutes() {
 }
 
 function geocode(request) {
-    clearInterval(live);
     const geocoder = new google.maps.Geocoder();
     clearMap();
     geocoder
@@ -452,26 +472,11 @@ function geocode(request) {
                 center: center,
                 radius: radius
             });
-            return results;
         })
         .catch((e) => {
             alert("Geocode was not successful for the following reason: " + e);
         });
 }
-
-function calculateBoundingBoxArea(south, north, west, east) {
-    // Calculate the height of the bounding box (distance between south and north along the same longitude)
-    const height = calculateDistance(south, west, north, west);
-  
-    // Calculate the width of the bounding box (distance between west and east along the same latitude)
-    const width = calculateDistance(south, west, south, east);
-  
-    // Area of the rectangle
-    const area = height * width;
-  
-    return area; // Area in square meters
-  }  
-
 
 document.addEventListener("DOMContentLoaded", function() {
     const darkModeToggle = document.getElementById("darkModeToggle");

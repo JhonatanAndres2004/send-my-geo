@@ -66,9 +66,9 @@ app.get('/location-request', (req, res) => {
 
     // Construct SQL query to retrieve locations within the specified radius
     const query = `SELECT *, 
-        (6371 * ACOS(COS(RADIANS(${lat})) * COS(RADIANS(latitude)) * COS(RADIANS(longitude) - RADIANS(${lon})) + SIN(RADIANS(${lat})) * SIN(RADIANS(latitude)))) AS distance
-        FROM your_table
-        WHERE (6371 * ACOS(COS(RADIANS(${lat})) * COS(RADIANS(latitude)) * COS(RADIANS(longitude) - RADIANS(${lon})) + SIN(RADIANS(${lat})) * SIN(RADIANS(latitude)))) <= ${radius};
+        (6371000 * ACOS(COS(RADIANS(${lat})) * COS(RADIANS(Latitude)) * COS(RADIANS(Longitude) - RADIANS(${lon})) + SIN(RADIANS(${lat})) * SIN(RADIANS(Latitude)))) AS distance
+        FROM locations
+        WHERE (63710000 * ACOS(COS(RADIANS(${lat})) * COS(RADIANS(Latitude)) * COS(RADIANS(Longitude) - RADIANS(${lon})) + SIN(RADIANS(${lat})) * SIN(RADIANS(Latitude)))) <= ${radius};
     `;
     connection.query(query, (err, results) => {
         if (err) throw err;
