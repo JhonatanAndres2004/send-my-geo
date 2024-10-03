@@ -200,18 +200,17 @@ input:checked + .slider:before {
 }
 
 body.dark-mode {
-    background-color: #090909;
+    background-color: #282828;
     color: #e2e2e2;
+}
+
+body.dark-mode h1 {
+    color: white;
 }
 
 body.dark-mode .tab-content {
     background-color: #1e1e1e;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-}
-
-body.dark-mode .tab-btn {
-    background-color: #4b0082;
-    color: #fff;
 }
 
 body.dark-mode #fetch-data,
@@ -249,4 +248,13 @@ body.dark-mode #map {
 
 body.dark-mode #dark-mode-toggle{
     background-color: #4b0082;
+}
+
+body.dark-mode .gm-style .gm-style-iw-d::-webkit-scrollbar-track, 
+.gm-style .gm-style-iw-d::-webkit-scrollbar-track-piece,
+.gm-style .gm-style-iw-c,
+.gm-style .gm-style-iw-t::after,
+.gm-style .gm-style-iw-tc::after { 
+  background: #282828;
+
 }
