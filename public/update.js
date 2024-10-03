@@ -9,6 +9,8 @@ let live;
 let autocomplete;
 let mapThemeId = 'c81689827509e41a';
 let circle;
+let infowindows = [];
+let infoWindowMarkers = [];
 
 function loadMap() {
     fetch('/api-key')
@@ -224,13 +226,14 @@ function updateMapAndRoute(lat, lng, timestamp) {
     }
 }
 
-function updateMapAndRouteHistorics(lat, lng, timestamp) {
+function updateMapAndRouteHistorics(lat, lng, timestamp, searchByLocation = false) {
     const newPosition = { lat: parseFloat(lat), lng: parseFloat(lng) };
     const newTimestamp = new Date(timestamp);
     
-    // Always update HTML display and marker position
-    marker.position = newPosition;
-    map.panTo(newPosition);
+    if (!searchByLocation) {
+        marker.position = newPosition;
+        map.panTo(newPosition);
+    }
     
     if (routeCoordinates.length === 0) {
         routeCoordinates.push(newPosition);
@@ -281,16 +284,13 @@ function drawPolylineHistorics(origin, destination) {
     const polyline = new google.maps.Polyline({
         path: path,
         geodesic: true,
-        strokeColor: '#3498db',
+        strokeColor: '#6d00b3',
         strokeOpacity: 0.8,
-        strokeWeight: 3
+        strokeWeight: 5
     });
 
     polyline.setMap(map);
     polylines.push(polyline);
-    console.log("Polyline drawn successfully");
-    console.log(`Origin: ${origin.lat}, ${origin.lng}`);
-    console.log(`Destination: ${destination.lat}, ${destination.lng}`);
 }
 
 function convertToLocalTime(utcDateString) {
@@ -336,7 +336,11 @@ function checkDates(dateStart, dateEnd) {
 }
 
 function clearMap() {
-    if (circle) circle.setMap(null);    
+    if (circle) circle.setMap(null);
+    infoWindowMarkers.forEach(marker => marker.setMap(null));
+    infowindows.forEach(infowindow => infowindow.close());
+    infoWindowMarkers = [];
+    infowindows = []; 
     polylines.forEach(polyline => polyline.setMap(null));
     polylines = [];
     routeCoordinates = [];
@@ -345,8 +349,6 @@ function clearMap() {
 }
 
 document.getElementById('fetch-data').addEventListener('click', () => {
-    //Stop fetching data
-    clearInterval(live);
     console.log(dateMin);
 
     let startDate = document.getElementById('start-date').value;
@@ -396,25 +398,6 @@ document.getElementById('fetch-location').addEventListener("click", () => {
     const radius = parseFloat(radiusInput.value);
     if (radius > 0) {
         geocode({ address: document.getElementById('location-input').value });
-        const lat = marker.position.lat;
-        const lng = marker.position.lng;
-        console.log(`/location-request?lat=${lat}&lon=${lng}&radius=${radius}`);
-        fetch(`/location-request?lat=${lat}&lon=${lng}&radius=${radius}`)
-            .then(response => response.json())
-            .then(data => {
-                console.log('Data fetched:', data);
-                if (data.length == 0){
-                    alert("no routes found")
-                } else{
-                    data.forEach(data => {
-                        updateLocationDisplay(data);
-                        updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp);
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
     } else {
         radiusInput.value = "";
     }
@@ -432,10 +415,6 @@ async function initializeAutocomplete() {
     autocomplete = new Autocomplete(input);
     autocomplete.bindTo("bounds", map);
 
-    const infowindow = new google.maps.InfoWindow();
-    const infowindowContent = document.getElementById("infowindow-content");
-    infowindow.setContent(infowindowContent);
-
     autocomplete.addListener('place_changed', () => {
         const place = autocomplete.getPlace();
         if (!place.geometry || !place.geometry.location) {
@@ -444,9 +423,33 @@ async function initializeAutocomplete() {
     });
 }
 
-async function showGeocodedRoutes() {
-    const {Geocoder} = await google.maps.importLibrary("geocoding");
-    const geocoder = new Geocoder();
+async function setInfoWindow(lat, lng, timestamp) {
+    const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
+    
+    const pin = new PinElement({
+        scale: 0.8,
+        background: '#6F2F9E',
+        borderColor: 'white',
+        glyph: '!',
+        glyphColor: 'white'
+    });
+    
+    const infoWindowMarker = new AdvancedMarkerElement({
+        map: map,
+        position: { lat: parseFloat(lat), lng: parseFloat(lng) },
+        content: pin.element
+    });
+    infoWindowMarkers.push(infoWindowMarker);
+
+    const infoWindow = new google.maps.InfoWindow({
+        content: `<b>Location: (${lat}, ${lng})</b> <br> Time: ${convertToLocalTime(timestamp)}`,
+    });
+    infowindows.push(infoWindow);
+
+    infoWindowMarker.addListener('click', () => {
+        infowindows.forEach(infowindow => infowindow.close());
+        infoWindow.open(map, infoWindowMarker);
+    });
 }
 
 function geocode(request) {
@@ -454,8 +457,7 @@ function geocode(request) {
     clearMap();
     geocoder
         .geocode(request)
-        .then((result) => {
-            clearMap();
+        .then((result) => { 
             const { results } = result;
             const center = results[0].geometry.location;
             const radius = parseFloat(document.getElementById('radius-input').value);
@@ -467,11 +469,33 @@ function geocode(request) {
                 strokeOpacity: 0.8,
                 strokeWeight: 2,
                 fillColor: "#6d00b3",
-                fillOpacity: 0.35,
+                fillOpacity: 0.15,
                 map,
                 center: center,
                 radius: radius
             });
+
+            // Fetch data after the marker's position is updated
+            const lat = center.lat();
+            const lng = center.lng();
+            console.log(`/location-request?lat=${lat}&lon=${lng}&radius=${radius}`);
+            fetch(`/location-request?lat=${lat}&lon=${lng}&radius=${radius}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Data fetched:', data);
+                    if (data.length == 0) {
+                        alert("no routes found");
+                    } else {
+                        data.forEach(data => {
+                            updateLocationDisplay(data);
+                            updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp, true);
+                            setInfoWindow(data.Latitude, data.Longitude, data.Timestamp);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
         })
         .catch((e) => {
             alert("Geocode was not successful for the following reason: " + e);
