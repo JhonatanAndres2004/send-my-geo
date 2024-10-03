@@ -6,6 +6,11 @@ let lastTimestamp = null;
 let colorIndex = 0;
 const colors = ['#FF0000','#e67e22', '#FFFF00','#2ecc71','#3498db','#8e44ad']; 
 let live;
+let autocomplete;
+let mapThemeId = 'c81689827509e41a';
+let circle;
+let infowindows = [];
+let infoWindowMarkers = [];
 
 function loadMap() {
     fetch('/api-key')
@@ -23,23 +28,54 @@ function loadMap() {
 function showTab(tab) {
     var realTimeTab = document.getElementById("realtime");
     var historyTab = document.getElementById("history");
+    var locationHistoryTab = document.getElementById("location-history");
     
     if (tab === "realtime") {
         realTimeTab.style.visibility = "visible";
         realTimeTab.style.opacity = "1";
-        realTimeTab.style.position = "relative"; // Ensure it's visible
+        realTimeTab.style.position = "relative";
         historyTab.style.visibility = "hidden";
         historyTab.style.opacity = "0";
-        historyTab.style.position = "absolute"; // Hide it off-screen but keep structure intact
+        historyTab.style.position = "absolute";
+        locationHistoryTab.style.visibility = "hidden";
+        locationHistoryTab.style.opacity = "0";
+        locationHistoryTab.style.position = "absolute";
+        document.getElementById('realtime-button').disabled = true;
+        document.getElementById('history-button').disabled = false;
+        document.getElementById('location-history-button').disabled = false;
         clearMap();
         initMap();
+        startLiveLocation();
     } else if (tab === "history") {
         historyTab.style.visibility = "visible";
         historyTab.style.opacity = "1";
-        historyTab.style.position = "relative"; // Ensure it's visible
+        historyTab.style.position = "relative";
         realTimeTab.style.visibility = "hidden";
         realTimeTab.style.opacity = "0";
-        realTimeTab.style.position = "absolute"; // Hide it off-screen but keep structure intact
+        realTimeTab.style.position = "absolute";
+        locationHistoryTab.style.visibility = "hidden";
+        locationHistoryTab.style.opacity = "0";
+        locationHistoryTab.style.position = "absolute";
+        document.getElementById('realtime-button').disabled = false;
+        document.getElementById('history-button').disabled = true;
+        document.getElementById('location-history-button').disabled = false;
+        document.getElementById('start-date').value = "";
+        document.getElementById('end-date').value = "";
+        stopLiveLocation();
+    } else if (tab === "location-history") {
+        locationHistoryTab.style.visibility = "visible";
+        locationHistoryTab.style.opacity = "1";
+        locationHistoryTab.style.position = "relative";
+        realTimeTab.style.visibility = "hidden";
+        realTimeTab.style.opacity = "0";
+        realTimeTab.style.position = "absolute";
+        historyTab.style.visibility = "hidden";
+        historyTab.style.opacity = "0";
+        historyTab.style.position = "absolute";
+        document.getElementById('realtime-button').disabled = false;
+        document.getElementById('history-button').disabled = false;
+        document.getElementById('location-history-button').disabled = true;
+        stopLiveLocation();
     }
 }
 
@@ -84,12 +120,20 @@ async function initMap() {
     const { Map } = await google.maps.importLibrary("maps");
     const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
 
-    const initialPosition = { lat: 0, lng: 0 };
-
+    let initialPosition = { lat: 0, lng: 0 };
+    
+    try {
+        const response = await fetch('/latest-location');
+        const data = await response.json();
+        initialPosition = { lat: parseFloat(data.Latitude), lng: parseFloat(data.Longitude) };  
+    } catch (err) {
+        console.error('Error fetching latest location:', err);
+    }
+    
     map = new Map(document.getElementById("map"), {
         zoom: 14,
         center: initialPosition,
-        mapId: "DEMO_MAP_ID",
+        mapId: mapThemeId
     });
 
     marker = new AdvancedMarkerElement({
@@ -97,10 +141,14 @@ async function initMap() {
         position: initialPosition,
         title: "Current Location",
     });
+}
 
-    // Fetch initial location and start updates
-    fetchLatestLocation();
+function startLiveLocation() {
     live = setInterval(fetchLatestLocation, 10000);
+}
+
+function stopLiveLocation() {
+    clearInterval(live);
 }
 
 function fetchLatestLocation() {
@@ -178,13 +226,14 @@ function updateMapAndRoute(lat, lng, timestamp) {
     }
 }
 
-function updateMapAndRouteHistorics(lat, lng, timestamp) {
+function updateMapAndRouteHistorics(lat, lng, timestamp, searchByLocation = false) {
     const newPosition = { lat: parseFloat(lat), lng: parseFloat(lng) };
     const newTimestamp = new Date(timestamp);
     
-    // Always update HTML display and marker position
-    marker.position = newPosition;
-    map.panTo(newPosition);
+    if (!searchByLocation) {
+        marker.position = newPosition;
+        map.panTo(newPosition);
+    }
     
     if (routeCoordinates.length === 0) {
         routeCoordinates.push(newPosition);
@@ -235,14 +284,13 @@ function drawPolylineHistorics(origin, destination) {
     const polyline = new google.maps.Polyline({
         path: path,
         geodesic: true,
-        strokeColor: '#3498db',
+        strokeColor: '#6d00b3',
         strokeOpacity: 0.8,
-        strokeWeight: 3
+        strokeWeight: 5
     });
 
     polyline.setMap(map);
     polylines.push(polyline);
-    console.log("Polyline drawn successfully");
 }
 
 function convertToLocalTime(utcDateString) {
@@ -288,6 +336,11 @@ function checkDates(dateStart, dateEnd) {
 }
 
 function clearMap() {
+    if (circle) circle.setMap(null);
+    infoWindowMarkers.forEach(marker => marker.setMap(null));
+    infowindows.forEach(infowindow => infowindow.close());
+    infoWindowMarkers = [];
+    infowindows = []; 
     polylines.forEach(polyline => polyline.setMap(null));
     polylines = [];
     routeCoordinates = [];
@@ -296,8 +349,6 @@ function clearMap() {
 }
 
 document.getElementById('fetch-data').addEventListener('click', () => {
-    //Stop fetching data
-    clearInterval(live);
     console.log(dateMin);
 
     let startDate = document.getElementById('start-date').value;
@@ -342,8 +393,128 @@ document.getElementById('fetch-data').addEventListener('click', () => {
     }
 });
 
+document.getElementById('fetch-location').addEventListener("click", () => {
+    const radiusInput = document.getElementById('radius-input');
+    const radius = parseFloat(radiusInput.value);
+    if (radius > 0) {
+        geocode({ address: document.getElementById('location-input').value });
+    } else {
+        radiusInput.value = "";
+    }
+});
+
+document.getElementById('location-input').addEventListener("keydown", (e) => {
+    if (!autocomplete) {
+        initializeAutocomplete();
+    }
+});
+
+async function initializeAutocomplete() {
+    const { Autocomplete } = await google.maps.importLibrary("places");
+    const input = document.getElementById('location-input');
+    autocomplete = new Autocomplete(input);
+    autocomplete.bindTo("bounds", map);
+
+    autocomplete.addListener('place_changed', () => {
+        const place = autocomplete.getPlace();
+        if (!place.geometry || !place.geometry.location) {
+            return;
+        }
+    });
+}
+
+async function setInfoWindow(lat, lng, timestamp) {
+    const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
+    
+    const pin = new PinElement({
+        scale: 0.8,
+        background: '#6F2F9E',
+        borderColor: 'white',
+        glyph: '!',
+        glyphColor: 'white'
+    });
+    
+    const infoWindowMarker = new AdvancedMarkerElement({
+        map: map,
+        position: { lat: parseFloat(lat), lng: parseFloat(lng) },
+        content: pin.element
+    });
+    infoWindowMarkers.push(infoWindowMarker);
+
+    const infoWindow = new google.maps.InfoWindow({
+        content: `<b>Location: (${lat}, ${lng})</b> <br> Time: ${convertToLocalTime(timestamp)}`,
+    });
+    infowindows.push(infoWindow);
+
+    infoWindowMarker.addListener('click', () => {
+        infowindows.forEach(infowindow => infowindow.close());
+        infoWindow.open(map, infoWindowMarker);
+    });
+}
+
+function geocode(request) {
+    const geocoder = new google.maps.Geocoder();
+    clearMap();
+    geocoder
+        .geocode(request)
+        .then((result) => { 
+            const { results } = result;
+            const center = results[0].geometry.location;
+            const radius = parseFloat(document.getElementById('radius-input').value);
+            map.setCenter(center);
+            marker.position = center;
+            marker.setMap(map);
+            circle = new google.maps.Circle({
+                strokeColor: "#6d00b3",
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: "#6d00b3",
+                fillOpacity: 0.15,
+                map,
+                center: center,
+                radius: radius
+            });
+
+            // Fetch data after the marker's position is updated
+            const lat = center.lat();
+            const lng = center.lng();
+            console.log(`/location-request?lat=${lat}&lon=${lng}&radius=${radius}`);
+            fetch(`/location-request?lat=${lat}&lon=${lng}&radius=${radius}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Data fetched:', data);
+                    if (data.length == 0) {
+                        alert("no routes found");
+                    } else {
+                        data.forEach(data => {
+                            updateLocationDisplay(data);
+                            updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp, true);
+                            setInfoWindow(data.Latitude, data.Longitude, data.Timestamp);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        })
+        .catch((e) => {
+            alert("Geocode was not successful for the following reason: " + e);
+        });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    const darkModeToggle = document.getElementById("darkModeToggle");
+
+    darkModeToggle.addEventListener("change", function() {
+        document.body.classList.toggle("dark-mode", darkModeToggle.checked);
+        //document.getElementById('title-buttons-and-info').classList.toggle("dark-mode", darkModeToggle.checked);
+        mapThemeId = darkModeToggle.checked ? 'a43cc08dd4e3e26d' : 'c81689827509e41a';
+        initMap();
+    });
+});
 // Initialize map when the page loads
 loadName();
 loadMap();
 initMap();
 showTab("realtime");
+

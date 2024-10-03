@@ -56,6 +56,26 @@ app.get('/historics', (req, res) => {
     });
 });
 
+app.get('/location-request', (req, res) => {
+    const { lat, lon, radius } = req.query;
+
+    // Validate that all required query parameters are provided
+    if (!lat || !lon || !radius) {
+        return res.status(400).json({ error: 'Please provide lat, lon, and radius query parameters.' });
+    }
+
+    // Construct SQL query to retrieve locations within the specified radius
+    const query = `SELECT *, 
+        (6371000 * ACOS(COS(RADIANS(${lat})) * COS(RADIANS(Latitude)) * COS(RADIANS(Longitude) - RADIANS(${lon})) + SIN(RADIANS(${lat})) * SIN(RADIANS(Latitude)))) AS distance
+        FROM locations
+        WHERE (6371000 * ACOS(COS(RADIANS(${lat})) * COS(RADIANS(Latitude)) * COS(RADIANS(Longitude) - RADIANS(${lon})) + SIN(RADIANS(${lat})) * SIN(RADIANS(Latitude)))) <= ${radius};
+    `;
+    connection.query(query, (err, results) => {
+        if (err) throw err;
+        res.json(results);
+    });
+});
+
 // HTTPS server configuration
 https.createServer({
     key: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/privkey.pem`),
