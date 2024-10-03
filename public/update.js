@@ -11,6 +11,7 @@ let mapThemeId = 'c81689827509e41a';
 let circle;
 let infowindows = [];
 let infoWindowMarkers = [];
+let polylineColor = '#6d00b3';
 
 function loadMap() {
     fetch('/api-key')
@@ -284,7 +285,7 @@ function drawPolylineHistorics(origin, destination) {
     const polyline = new google.maps.Polyline({
         path: path,
         geodesic: true,
-        strokeColor: '#6d00b3',
+        strokeColor: polylineColor,
         strokeOpacity: 0.8,
         strokeWeight: 5
     });
@@ -428,7 +429,7 @@ async function setInfoWindow(lat, lng, timestamp) {
     
     const pin = new PinElement({
         scale: 0.8,
-        background: '#6F2F9E',
+        background: polylineColor,
         borderColor: 'white',
         glyph: '!',
         glyphColor: 'white'
@@ -465,10 +466,10 @@ function geocode(request) {
             marker.position = center;
             marker.setMap(map);
             circle = new google.maps.Circle({
-                strokeColor: "#6d00b3",
+                strokeColor: polylineColor,
                 strokeOpacity: 0.8,
                 strokeWeight: 2,
-                fillColor: "#6d00b3",
+                fillColor: polylineColor,
                 fillOpacity: 0.15,
                 map,
                 center: center,
@@ -509,6 +510,7 @@ document.addEventListener("DOMContentLoaded", function() {
         document.body.classList.toggle("dark-mode", darkModeToggle.checked);
         //document.getElementById('title-buttons-and-info').classList.toggle("dark-mode", darkModeToggle.checked);
         mapThemeId = darkModeToggle.checked ? 'a43cc08dd4e3e26d' : 'c81689827509e41a';
+        polylineColor = darkModeToggle.checked ? '#ff7008' : '#6d00b3';
         initMap();
     });
 });
