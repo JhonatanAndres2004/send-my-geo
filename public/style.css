@@ -102,7 +102,17 @@ button:disabled {
 }
 
 #location-input {
-    width: 400px;
+    width: 300px;
+    flex: auto;
+}
+
+#radius-input-label {
+    width: 70px;
+    flex: auto;
+}
+
+#radius-input {
+    width: 80px;
     flex: auto;
 }
 
