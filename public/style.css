@@ -6,6 +6,11 @@
 
 body{
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
 #title-buttons-and-info {
@@ -59,6 +64,7 @@ h1 {
     cursor: pointer;
     transition: background-color 0.3s ease;
     border-radius: 7px;
+    font-size: 15px;
 }
 
 .tab-btn:hover {
@@ -116,71 +122,17 @@ button:disabled {
     flex: 1;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 /* Ajuste del mapa para que sea responsive */
 #map-container {
     height: 78vh;
+    left: 20px;
     transition: height 0.3s ease;
 }
 
-/* Media query para pantallas menores a 650px */
-@media screen and (max-width: 650px) {
-    .location-info.tab-content {
-        flex-direction: row;
-        flex-wrap: wrap;
-        align-items: flex-start;
-    }
 
-    .info-item {
-        width: calc(50% - 10px); /* 10px es la mitad del gap */
-        max-width: 150px;
-        justify-content: space-between;
-        margin: 0 5px;
-    }
 
-    /* Reorganizar Time y Date */
-    .info-item:nth-child(3),
-    .info-item:nth-child(4) {
-        order: 1;
-    }
-
-    .info-item:nth-child(1),
-    .info-item:nth-child(2) {
-        order: 0;
-    }
-
-    /* Ajustar altura del mapa según el contenido */
-    #map-container {
-        height: calc(78vh - 60px); /* Reducir altura para dar espacio a elementos adicionales */
-    }
-}
-
-/* Media query para pantallas muy pequeñas */
-@media screen and (max-width: 400px) {
-    .info-item {
-        width: 100%;
-        max-width: 150px;
-    }
-
-    #map-container {
-        height: calc(78vh - 120px); /* Reducir aún más la altura */
-        width: 85%;
-    }
-
-    #title-buttons-and-info {
-        margin-bottom: 20px; /* Dar más espacio al contenido */
-    }
-}
-
-/* Asegurar que el contenedor principal tenga suficiente espacio */
-#title-buttons-and-info {
-    min-height: fit-content;
-    margin-bottom: 15px;
-}
-
-/* Ajustar el espaciado general */
 body {
     display: flex;
     flex-direction: column;
@@ -196,25 +148,8 @@ body {
     text-align: right;
 }
 
-#location-input-label {
-    width: 70px;
-    flex: auto;
-}
 
-#location-input {
-    width: 300px;
-    flex: auto;
-}
 
-#radius-input-label {
-    width: 70px;
-    flex: auto;
-}
-
-#radius-input {
-    width: 80px;
-    flex: auto;
-}
 
 #fetch-data, #fetch-location {
     justify-self: center; 
@@ -224,12 +159,13 @@ body {
     border: none;
     border-radius: 10px;
     cursor: pointer;
+    font-size: 15px;
 }
 
 #map-container {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     width: 95vw;
     height: 78vh;
 }
@@ -358,3 +294,227 @@ body.dark-mode .gm-style .gm-style-iw-d::-webkit-scrollbar-track,
   background: #282828;
 
 }
+
+.pop-up-menu{
+    height: 60px;
+    width: 60px;
+    background-color:#6e00b3;
+    color: white;
+    position: absolute;
+    z-index: 100;
+    cursor: pointer;
+    font-size: 2vw;
+    text-align: center;
+    border-radius: 20%;
+    margin: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    visibility: hidden;
+    
+}
+.pop-up-menu span{
+    font-size: 28px;
+}
+.pop-up-menu:hover{
+    background-color: #4b0082;
+    transition-duration: 1s;
+}
+
+#location-history{
+    z-index: 102;
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    height: 150px;
+
+}
+
+.info-item-historics-location{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+.info-item-historics-location{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.info-item-historics-location label{
+width: 20%;
+max-width: 100%;
+min-width: 70px;
+}
+.info-item-historics-location input{
+    width: 100%;
+    min-width: 65%;
+}
+
+.submit-location-button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#location-history div{
+    width: 100%;
+    display: flex;
+    flex-direction:row;
+}
+#close-popup-container{
+    visibility: hidden;
+    opacity: 0;
+    cursor: pointer;
+    text-align: center;
+    display: flex;
+    width: 90%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+#close-popup-container h3{
+    width: 30px !important;
+    height: 30px !important;
+    background-color: #6e00b3;
+    border-radius: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+#close-popup-container h3 :hover{
+    background-color: #4b0082;
+}
+
+#pop-up-info{
+    width: 80%;
+}
+/* Media query para pantallas menores a 650px */
+@media screen and (max-width: 650px) {
+    .location-info.tab-content {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: flex-start;
+    }
+    .tab-content{
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: flex-start;
+    }
+
+    .info-item {
+        width: calc(50% - 10px); 
+        max-width: 150px;
+        justify-content: space-between;
+        margin: 0 5px;
+    }
+    .info-item-historics{
+        display: flex;
+        width: 100%;
+        min-width: 300px;
+        max-width: 420px;
+        justify-content: center;
+        align-items: center;
+        margin: 0 5px;
+    }
+    .info-item-historics label {
+        min-width: 120px;
+    }
+    .info-item-historics input {
+        min-width: 205px;
+    }
+
+    /* Reorganizar Time y Date */
+    .info-item:nth-child(3),
+    .info-item:nth-child(4) {
+        order: 1;
+    }
+
+    .info-item:nth-child(1),
+    .info-item:nth-child(2) {
+        order: 0;
+    }
+
+    /* Ajustar altura del mapa según el contenido */
+    #map-container {
+        height: calc(78vh - 60px); /* Reducir altura para dar espacio a elementos adicionales */
+    }
+}
+
+@media screen and (max-width: 550px) {
+    #location-history{
+    width: 50%;
+    height: 200px;
+    }
+    .info-item-historics-location{
+        justify-content: center;
+        align-items: center;
+    }
+
+    #location-input-label{
+        width: 100vw;
+    }
+    #radius-input-label{
+        width: 100vw;
+    }
+    
+}
+
+/* Media query para pantallas muy pequeñas */
+@media screen and (max-width: 400px) {
+    .info-item {
+        width: 100%;
+        max-width: 150px;
+    }
+
+    #map-container {
+        height: calc(84vh - 120px); /* Reducir aún más la altura */
+        width: 95%;
+    }
+
+    #title-buttons-and-info {
+        margin-bottom: 20px; /* Dar más espacio al contenido */
+    }
+    .pop-up-menu{
+        height: 15vw;
+        width: 15vw;
+    }
+    .pop-up-menu{
+        font-size: 100%;
+    }
+ #close-popup-container p{
+    min-width: 40vw !important;
+ }
+ #close-popup-container h3{
+    width: 25px !important;
+    height: 25px !important;
+ }
+}
+
+@media screen and (max-width: 360px) {
+    .info-item-historics{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .info-item-historics label, .info-item-historics input{
+        width: 80%;
+        min-width: 200px;
+        text-align: center;
+    }
+    #map-container {
+        height: calc(78vh - 120px); /* Reducir aún más la altura */
+    }
+}
+
+
+#title-buttons-and-info {
+    min-height: fit-content;
+    margin-bottom: 15px;
+}
+

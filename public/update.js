@@ -12,7 +12,10 @@ let circle;
 let infowindows = [];
 let infoWindowMarkers = [];
 let polylineColor = '#ff7008';
-
+let popUpMenu=document.getElementById('emergent-pop-up');
+let locationHistoryTab = document.getElementById("location-history");
+let closeButtonContainer=document.getElementById("close-popup-container")
+let closeButton=document.getElementById("close-popup")
 function loadMap() {
     fetch('/api-key')
         .then(response => response.json())
@@ -29,9 +32,9 @@ function loadMap() {
 function showTab(tab) {
     var realTimeTab = document.getElementById("realtime");
     var historyTab = document.getElementById("history");
-    var locationHistoryTab = document.getElementById("location-history");
     
     if (tab === "realtime") {
+        popUpMenu.style.visibility='hidden'
         realTimeTab.style.visibility = "visible";
         realTimeTab.style.opacity = "1";
         realTimeTab.style.position = "relative";
@@ -54,14 +57,10 @@ function showTab(tab) {
         realTimeTab.style.visibility = "hidden";
         realTimeTab.style.opacity = "0";
         realTimeTab.style.position = "absolute";
-        locationHistoryTab.style.visibility = "hidden";
-        locationHistoryTab.style.opacity = "0";
-        locationHistoryTab.style.position = "absolute";
         document.getElementById('realtime-button').disabled = false;
         document.getElementById('history-button').disabled = true;
-        document.getElementById('location-history-button').disabled = false;
         document.getElementById('start-date').value = "";
-        document.getElementById('end-date').value = "";
+        document.getElementById('end-date').value = "";   
         stopLiveLocation();
     } else if (tab === "location-history") {
         locationHistoryTab.style.visibility = "visible";
@@ -134,7 +133,9 @@ async function initMap() {
     map = new Map(document.getElementById("map"), {
         zoom: 14,
         center: initialPosition,
-        mapId: mapThemeId
+        mapId: mapThemeId,
+        mapTypeControl: false,
+
     });
 
     marker = new AdvancedMarkerElement({
@@ -400,7 +401,6 @@ document.getElementById('fetch-data').addEventListener('click', () => {
 
     let startDate = document.getElementById('start-date').value;
     let endDate = document.getElementById('end-date').value;
-
     const correctDates = checkDates(startDate, endDate); //check if start date is earlier than end date
     if (startDate && endDate && correctDates) {
         startDate = convertToGlobalTime(startDate); //Convert date to UTC time zone
@@ -424,6 +424,7 @@ document.getElementById('fetch-data').addEventListener('click', () => {
                 if (data.length == 0){
                     alert("no routes found")
                 } else{// Process the received data 
+                    popUpMenu.style.visibility='visible';
                     data.forEach(data => { //execute for every object in JSON
                         updateLocationDisplay(data);
                         updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp);
@@ -553,6 +554,19 @@ function geocode(request) {
 }
 
 
+popUpMenu.addEventListener("click", () => {
+    locationHistoryTab.style.visibility = "visible";
+    locationHistoryTab.style.opacity=1;
+    closeButtonContainer.style.visibility="visible";
+    closeButtonContainer.style.opacity=1;
+});
+
+closeButton.addEventListener('click',()=>{
+    locationHistoryTab.style.visibility = "hidden";
+    locationHistoryTab.style.opacity=0;
+    closeButtonContainer.style.visibility="hidden";
+    closeButtonContainer.style.opacity=0;
+})
 // Initialize map when the page loads
 loadName();
 loadMap();
