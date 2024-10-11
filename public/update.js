@@ -4,14 +4,14 @@ let polylines = [];
 let routeCoordinates = [];
 let lastTimestamp = null;
 let colorIndex = 0;
-const colors = ['#FF0000','#e67e22', '#FFFF00','#2ecc71','#3498db','#8e44ad']; 
+const colors = ['#FF0000']; 
 let live;
 let autocomplete;
-let mapThemeId = 'c81689827509e41a';
+let mapThemeId = 'a43cc08dd4e3e26d';
 let circle;
 let infowindows = [];
 let infoWindowMarkers = [];
-let polylineColor = '#6d00b3';
+let polylineColor = '#ff7008';
 
 function loadMap() {
     fetch('/api-key')
@@ -212,7 +212,7 @@ function updateMapAndRoute(lat, lng, timestamp) {
         if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 1) {
             routeCoordinates.push(newPosition);
             drawPolyline(lastPosition, newPosition);
-            colorIndex = (colorIndex + 1) % colors.length; // choose the next color
+            //colorIndex = (colorIndex + 1) % colors.length; // choose the next color
         } else if (distance > 1 || timeDiff >= 1) {
             // If distance is greater than 1 kilometer or the time difference is greater (or equal) than 1 minute, 
             // Start a new route from that point
@@ -281,15 +281,61 @@ function drawPolylineHistorics(origin, destination) {
         new google.maps.LatLng(origin.lat, origin.lng),
         new google.maps.LatLng(destination.lat, destination.lng)
     ];
+    
+    // Configuración base de la flecha
+    const lineSymbol = {
+        path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+        scale: 1,
+        strokeColor: polylineColor,
+        strokeWeight: 2
+    };
 
     const polyline = new google.maps.Polyline({
         path: path,
         geodesic: true,
         strokeColor: polylineColor,
         strokeOpacity: 0.8,
-        strokeWeight: 5
+        strokeWeight: 5,
+        icons: [{
+            icon: lineSymbol,
+            repeat: "200px"
+        }]
     });
 
+    // Función para actualizar las flechas según el zoom
+    function updateArrowsByZoom() {
+        const zoom = map.getZoom();
+        let repeat, scale;
+        if (zoom <= 16) {
+            polyline.setOptions({
+                icons: [] 
+            });
+            return;
+        }
+
+        if (zoom > 16) {
+            scale = 3; 
+        } 
+
+        polyline.setOptions({
+            icons: [{
+                icon: {
+                    ...lineSymbol,
+                    scale: scale
+                },
+                offset: "100%",
+                repeat: repeat
+            }]
+        });
+    }
+
+    // Añadir listener para el cambio de zoom
+    google.maps.event.addListener(map, 'zoom_changed', updateArrowsByZoom);
+
+    // Establecer configuración inicial
+    updateArrowsByZoom();
+
+    // Añadir la polilínea al mapa
     polyline.setMap(map);
     polylines.push(polyline);
 }
@@ -414,6 +460,9 @@ async function initializeAutocomplete() {
     const { Autocomplete } = await google.maps.importLibrary("places");
     const input = document.getElementById('location-input');
     autocomplete = new Autocomplete(input);
+    autocomplete.setComponentRestrictions({
+        country: ["col"],
+      });
     autocomplete.bindTo("bounds", map);
 
     autocomplete.addListener('place_changed', () => {
@@ -503,17 +552,7 @@ function geocode(request) {
         });
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-    const darkModeToggle = document.getElementById("darkModeToggle");
 
-    darkModeToggle.addEventListener("change", function() {
-        document.body.classList.toggle("dark-mode", darkModeToggle.checked);
-        //document.getElementById('title-buttons-and-info').classList.toggle("dark-mode", darkModeToggle.checked);
-        mapThemeId = darkModeToggle.checked ? 'a43cc08dd4e3e26d' : 'c81689827509e41a';
-        polylineColor = darkModeToggle.checked ? '#ff7008' : '#6d00b3';
-        initMap();
-    });
-});
 // Initialize map when the page loads
 loadName();
 loadMap();

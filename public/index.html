@@ -11,13 +11,8 @@
 
 </head>
 
-<body>
-    <div id="dark-mode-switch">
-        <label class="switch">
-            <input type="checkbox" id="darkModeToggle">
-            <span class="slider round"></span>
-        </label>
-    </div>
+<body class="dark-mode">
+
     <div id="title-buttons-and-info">
         <div id="title">
             <img id="logo" src="images/logogeosend.png" alt="Send My Geo logo">
@@ -30,15 +25,24 @@
             <button id="location-history-button" class="tab-btn" onclick="showTab('location-history')">Location History</button>
         </div>
 
+
         <div id="realtime" class="location-info tab-content">
-            <span><b>Latitude:</b></span>
-            <span id="latitude">Loading...</span>
-            <span><b>Longitude:</b></span>
-            <span id="longitude">Loading...</span>
-            <span><b>Date:</b></span>
-            <span id="date">Loading...</span>
-            <span><b>Time:</b></span>
-            <span id="time">Loading...</span>
+            <div class="info-item">
+                <span><b>Latitude:</b></span>
+                <span id="latitude">Loading...</span>
+            </div>
+            <div class="info-item">
+                <span><b>Longitude:</b></span>
+                <span id="longitude">Loading...</span>
+            </div>
+            <div class="info-item">
+                <span><b>Date:</b></span>
+                <span id="date">Loading...</span>
+            </div>
+            <div class="info-item">
+                <span><b>Time:</b></span>
+                <span id="time">Loading...</span>
+            </div>
         </div>
         <div id="history" class="tab-content">
             <label for="start-date"><b>Start Date</b></label>
