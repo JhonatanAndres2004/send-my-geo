@@ -1,6 +1,9 @@
 const express = require('express');
 const app = express();
 const mysql = require('mysql2');
+const https = require('https');
+const http = require('http');  // Added for HTTP redirection
+const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
@@ -73,8 +76,19 @@ app.get('/location-request', (req, res) => {
     });
 });
 
-// Simple HTTP server on port 3000 for local development
-const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+// HTTPS server configuration
+https.createServer({
+    key: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/privkey.pem`),
+    cert: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/fullchain.pem`)
+}, app).listen(443, () => {
+    
+    console.log('HTTPS Server running on https://localhost:443');
+});
+
+// HTTP to HTTPS redirection (listen on port 80)
+http.createServer((req, res) => {
+    res.writeHead(301, { "Location": `https://${req.headers.host}${req.url}` });
+    res.end();
+}).listen(80, () => {
+    console.log('HTTP server redirecting to HTTPS on port 80');
 });
