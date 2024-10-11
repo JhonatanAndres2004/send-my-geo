@@ -1,15 +1,39 @@
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+
 }
 
+body{
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    height: 100vh;
+    background: url("images/background.jpg")  center / cover no-repeat fixed; 
+
+}
+.container{
+    height: 95vh;
+    width: 95vw;
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(15px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: absolute;
+    top: 20px;
+}
 #title-buttons-and-info {
-    height: 17vh;
+    height: 20vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 10px;
+    height: auto;
 }
 
 #title {
@@ -55,6 +79,7 @@ h1 {
     cursor: pointer;
     transition: background-color 0.3s ease;
     border-radius: 7px;
+    font-size: 15px;
 }
 
 .tab-btn:hover {
@@ -71,23 +96,68 @@ button:disabled {
     flex-direction: row;
     gap: 10px;
     background-color: #fff;
-    padding: 7px;
+    padding: 10px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 620px;
+    width: 100%;
     justify-content: center;
     margin-bottom: 0px;
 }
 
-.tab-content span, .tab-content label, .tab-content input {
+.tab-content div span, .tab-content label, .tab-content input {
     flex: 1;
     padding: 5px;
     border: 1px solid #ddd;
     border-radius: 5px;
     background-color: #f9f9f9;
     color: #555;
-    font-size: small;
+    font-size: 12px;
 }
+
+
+/* Estilos base para la sección de Real Time */
+.location-info.tab-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px;
+    width: 50vw;
+    max-width: 1200px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: row;
+    min-width: 180px;
+    flex: 1;
+    max-width: 220px;
+}
+
+.info-item span {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/* Ajuste del mapa para que sea responsive */
+#map-container {
+    height: 70vh !important;
+    width: 93vw !important;
+    left: 20px;
+    transition: height 0.3s ease;
+    top:-25px
+}
+
+
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    gap: 10px;
+}
+
 
 .tab-content span:nth-child(odd), .tab-content label {
     text-align: left;
@@ -96,40 +166,28 @@ button:disabled {
     text-align: right;
 }
 
-#location-input-label {
-    width: 70px;
-    flex: auto;
-}
 
-#location-input {
-    width: 300px;
-    flex: auto;
-}
 
-#radius-input-label {
-    width: 70px;
-    flex: auto;
-}
-
-#radius-input {
-    width: 80px;
-    flex: auto;
-}
 
 #fetch-data, #fetch-location {
     justify-self: center; 
     padding: 5px 10px;
-    background-color: #6e00b3;
+    background-color: #6e00b3 !important;
     color: white;
     border: none;
     border-radius: 10px;
     cursor: pointer;
+    font-size: 15px;
+}
+#fetch-data:hover, #fetch-location:hover, h3:hover{
+    background-color: #4b0082 !important;
+    transition: 0.3s;
 }
 
 #map-container {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     width: 95vw;
     height: 78vh;
 }
@@ -258,3 +316,267 @@ body.dark-mode .gm-style .gm-style-iw-d::-webkit-scrollbar-track,
   background: #282828;
 
 }
+
+.pop-up-menu{
+    height: 60px;
+    width: 60px;
+    background-color:#6e00b3;
+    color: white;
+    position: absolute;
+    z-index: 100;
+    cursor: pointer;
+    font-size: 2vw;
+    text-align: center;
+    border-radius: 20%;
+    margin: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    visibility: hidden;
+    
+}
+.pop-up-menu span{
+    font-size: 28px;
+}
+.pop-up-menu:hover{
+    background-color: #4b0082;
+    transition-duration: 1s;
+}
+
+#location-history{
+    z-index: 102;
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    height: 150px;
+    margin-top: 5px;
+    margin-left: 5px;
+
+}
+
+.info-item-historics-location{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+.info-item-historics-location{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.info-item-historics-location label{
+width: 20%;
+max-width: 100%;
+min-width: 70px;
+}
+.info-item-historics-location input{
+    width: 100%;
+    min-width: 65%;
+}
+
+.submit-location-button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#location-history div{
+    width: 100%;
+    display: flex;
+    flex-direction:row;
+}
+#close-popup-container{
+    visibility: hidden;
+    opacity: 0;
+    cursor: pointer;
+    text-align: center;
+    display: flex;
+    width: 90%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+#close-popup-container h3{
+    width: 30px !important;
+    height: 30px !important;
+    background-color: #6e00b3;
+    border-radius: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+#close-popup-container h3 :hover{
+    background-color: #4b0082;
+}
+
+#pop-up-info{
+    width: 80%;
+}
+
+@media screen and (max-width: 750px) {
+
+    #realtime{
+        width: 80%;
+    }
+}
+
+/* Media query para pantallas menores a 650px */
+@media screen and (max-width: 650px) {
+    .location-info.tab-content {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: flex-start;
+    }
+    .tab-content{
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        width: 80%;
+    }
+
+    .info-item {
+        width: calc(50% - 10px); 
+        max-width: 150px;
+        justify-content: space-between;
+        margin: 0 5px;
+    }
+    .info-item-historics{
+        display: flex;
+        width: 100%;
+        max-width: 420px;
+        justify-content: center;
+        align-items: center;
+        margin: 0 5px;
+    }
+    .info-item-historics label {
+        min-width: 120px;
+    }
+    .info-item-historics input {
+        min-width: 205px;
+    }
+    .info-item:nth-child(3),
+    .info-item:nth-child(4) {
+        order: 1;
+    }
+
+    .info-item:nth-child(1),
+    .info-item:nth-child(2) {
+        order: 0;
+    }
+#map-container{
+    height: 68vh !important;
+}
+
+
+}
+
+@media screen and (max-width: 550px) {
+    #location-history{
+    width: 50%;
+    height: 200px;
+    }
+    .info-item-historics-location{
+        justify-content: center;
+        align-items: center;
+    }
+
+    #location-input-label{
+        width: 100vw;
+    }
+    #radius-input-label{
+        width: 100vw;
+    }
+    .info-item-historics{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .info-item-historics label, .info-item-historics input{
+        width: 80%;
+        min-width: 200px;
+        text-align: center;
+    }
+
+    
+}
+
+@media screen and (max-width:510px){
+    #map-container{
+        height: 60vh !important;
+    }
+}
+
+
+
+/* Media query para pantallas muy pequeñas */
+@media screen and (max-width: 400px) {
+    .info-item {
+        width: 100%;
+        max-width: 150px;
+    }
+
+
+    #title-buttons-and-info {
+        margin-bottom: 20px; /* Dar más espacio al contenido */
+    }
+    .pop-up-menu{
+        height: 15vw;
+        width: 15vw;
+    }
+    .pop-up-menu{
+        font-size: 100%;
+    }
+ #close-popup-container p{
+    min-width: 40vw !important;
+ }
+ #close-popup-container h3{
+    width: 25px !important;
+    height: 25px !important;
+ }
+ .info-item-historics{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.info-item-historics label, .info-item-historics input{
+    width: 80%;
+    min-width: 200px;
+    text-align: center;
+}
+}
+
+@media screen and (max-width: 360px) {
+    .info-item-historics{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .info-item-historics label, .info-item-historics input{
+        width: 80%;
+        min-width: 200px;
+        text-align: center;
+    }
+    img{
+        height: 25px;
+        width: 25px;
+    }
+    h1{
+        font-size: 1.5em;
+    }
+
+}
+
+
+#title-buttons-and-info {
+    min-height: fit-content;
+    margin-bottom: 15px;
+}
+

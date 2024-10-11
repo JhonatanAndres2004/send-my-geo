@@ -8,16 +8,14 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=menu" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </head>
 
-<body>
-    <div id="dark-mode-switch">
-        <label class="switch">
-            <input type="checkbox" id="darkModeToggle">
-            <span class="slider round"></span>
-        </label>
-    </div>
+<body class="dark-mode">
+    <div class="container">
+        
     <div id="title-buttons-and-info">
         <div id="title">
             <img id="logo" src="images/logogeosend.png" alt="Send My Geo logo">
@@ -27,36 +25,68 @@
         <div class="tab-buttons">
             <button id="realtime-button" class="tab-btn" onclick="showTab('realtime')">Real Time</button>
             <button id="history-button" class="tab-btn" onclick="showTab('history')">Historical Data</button>
-            <button id="location-history-button" class="tab-btn" onclick="showTab('location-history')">Location History</button>
         </div>
 
+
         <div id="realtime" class="location-info tab-content">
-            <span><b>Latitude:</b></span>
-            <span id="latitude">Loading...</span>
-            <span><b>Longitude:</b></span>
-            <span id="longitude">Loading...</span>
-            <span><b>Date:</b></span>
-            <span id="date">Loading...</span>
-            <span><b>Time:</b></span>
-            <span id="time">Loading...</span>
+            <div class="info-item">
+                <span><b>Latitude:</b></span>
+                <span id="latitude">Loading...</span>
+            </div>
+            <div class="info-item">
+                <span><b>Longitude:</b></span>
+                <span id="longitude">Loading...</span>
+            </div>
+            <div class="info-item">
+                <span><b>Date:</b></span>
+                <span id="date">Loading...</span>
+            </div>
+            <div class="info-item">
+                <span><b>Time:</b></span>
+                <span id="time">Loading...</span>
+            </div>
         </div>
         <div id="history" class="tab-content">
-            <label for="start-date"><b>Start Date</b></label>
-            <input type="text" id="start-date" placeholder="Select a date" name="start-date">
-            <label for="end-date"><b>End Date</b></label>
-            <input type="text" id="end-date" placeholder="Select a date" name="end-date">
-            
-            <button id="fetch-data">See Data</button>
+            <div class="info-item-historics">
+                <label for="start-date"><b>Start Date</b></label>
+                <input type="text" id="start-date" placeholder="Select a date" name="start-date">
+            </div>
+            <div class="info-item-historics">
+                <label for="end-date"><b>End Date</b></label>
+                <input type="text" id="end-date" placeholder="Select a date" name="end-date">    
+            </div>
+            <div class="info-item-historics">
+                <button id="fetch-data">See Data</button>
+
+            </div>
         </div>
-        <div id="location-history" class="tab-content">
-            <label for="location-input" id="location-input-label"><b>Location</b></label>
-            <input type="text" id="location-input" placeholder="Enter location" name="start-date-location">
+
+    </div>
+
+    <div id="map-container">
+        <div class="pop-up-menu" id="emergent-pop-up">
+            <span class="material-symbols-outlined">
+                menu
+            </span>
+        </div>
+        <div id="location-history" class="tab-content" >
+            <div id="close-popup-container">
+                <p id="pop-up-info"><b>Specify a location</b></p>
+                <h3 id="close-popup">X</h3>
+            </div>
+            <div class="info-item-historics-location">
+                <label for="location-input" id="location-input-label"><b>Location</b></label>
+                <input type="text" id="location-input" placeholder="Enter location" name="start-date-location">
+            </div>
+        <div class="info-item-historics-location">
             <label for="radius-input" id="radius-input-label"><b>Radius</b></label>
-            <input type="number" id="radius-input" placeholder="(meters)" name="radius" min="0">
+            <input type="number" id="radius-input" placeholder="(meters)" name="radius"  step="10" min="0">
+        </div>
+        <div class="info-item-historics-location submit-location-button">
             <button id="fetch-location">Submit</button>
         </div>
-    </div>
-    <div id="map-container">
+
+        </div>
         <div id="map">  
             <gmp-map center="40.12150192260742,-100.45039367675781" zoom="10" map-id="DEMO_MAP_ID">
             <gmp-advanced-marker title="My location" id="marker"></gmp-advanced-marker>
@@ -68,5 +98,6 @@
   
 
 
+    </div>
 </body>
 </html>

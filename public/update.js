@@ -4,15 +4,46 @@ let polylines = [];
 let routeCoordinates = [];
 let lastTimestamp = null;
 let colorIndex = 0;
-const colors = ['#FF0000','#e67e22', '#FFFF00','#2ecc71','#3498db','#8e44ad']; 
+const colors = ['#FF0000']; 
 let live;
 let autocomplete;
-let mapThemeId = 'c81689827509e41a';
+let mapThemeId = 'a43cc08dd4e3e26d';
 let circle;
 let infowindows = [];
 let infoWindowMarkers = [];
-let polylineColor = '#6d00b3';
+let polylineColor = '#ff7008';
+let popUpMenu=document.getElementById('emergent-pop-up');
+let locationHistoryTab = document.getElementById("location-history");
+let closeButtonContainer=document.getElementById("close-popup-container")
+let closeButton=document.getElementById("close-popup")
 
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    iconColor:"#6e00b3",
+    didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+    }
+});
+
+
+const style = document.createElement('style');
+style.textContent = `
+    .custom-toast-popup {
+        padding: 10px 20px;
+    }
+    .custom-toast-title {
+        font-size: 14px;
+    }
+    .swal2-timer-progress-bar {
+        background: #6e00b3;
+    }
+`;
+document.head.appendChild(style);
 function loadMap() {
     fetch('/api-key')
         .then(response => response.json())
@@ -29,9 +60,9 @@ function loadMap() {
 function showTab(tab) {
     var realTimeTab = document.getElementById("realtime");
     var historyTab = document.getElementById("history");
-    var locationHistoryTab = document.getElementById("location-history");
     
     if (tab === "realtime") {
+        popUpMenu.style.visibility='hidden'
         realTimeTab.style.visibility = "visible";
         realTimeTab.style.opacity = "1";
         realTimeTab.style.position = "relative";
@@ -43,7 +74,6 @@ function showTab(tab) {
         locationHistoryTab.style.position = "absolute";
         document.getElementById('realtime-button').disabled = true;
         document.getElementById('history-button').disabled = false;
-        document.getElementById('location-history-button').disabled = false;
         clearMap();
         initMap();
         startLiveLocation();
@@ -54,14 +84,10 @@ function showTab(tab) {
         realTimeTab.style.visibility = "hidden";
         realTimeTab.style.opacity = "0";
         realTimeTab.style.position = "absolute";
-        locationHistoryTab.style.visibility = "hidden";
-        locationHistoryTab.style.opacity = "0";
-        locationHistoryTab.style.position = "absolute";
         document.getElementById('realtime-button').disabled = false;
         document.getElementById('history-button').disabled = true;
-        document.getElementById('location-history-button').disabled = false;
         document.getElementById('start-date').value = "";
-        document.getElementById('end-date').value = "";
+        document.getElementById('end-date').value = "";   
         stopLiveLocation();
     } else if (tab === "location-history") {
         locationHistoryTab.style.visibility = "visible";
@@ -134,7 +160,9 @@ async function initMap() {
     map = new Map(document.getElementById("map"), {
         zoom: 14,
         center: initialPosition,
-        mapId: mapThemeId
+        mapId: mapThemeId,
+        mapTypeControl: false,
+
     });
 
     marker = new AdvancedMarkerElement({
@@ -212,7 +240,7 @@ function updateMapAndRoute(lat, lng, timestamp) {
         if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 1) {
             routeCoordinates.push(newPosition);
             drawPolyline(lastPosition, newPosition);
-            colorIndex = (colorIndex + 1) % colors.length; // choose the next color
+            //colorIndex = (colorIndex + 1) % colors.length; // choose the next color
         } else if (distance > 1 || timeDiff >= 1) {
             // If distance is greater than 1 kilometer or the time difference is greater (or equal) than 1 minute, 
             // Start a new route from that point
@@ -281,15 +309,61 @@ function drawPolylineHistorics(origin, destination) {
         new google.maps.LatLng(origin.lat, origin.lng),
         new google.maps.LatLng(destination.lat, destination.lng)
     ];
+    
+    // Configuración base de la flecha
+    const lineSymbol = {
+        path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+        scale: 1,
+        strokeColor: polylineColor,
+        strokeWeight: 2
+    };
 
     const polyline = new google.maps.Polyline({
         path: path,
         geodesic: true,
         strokeColor: polylineColor,
         strokeOpacity: 0.8,
-        strokeWeight: 5
+        strokeWeight: 5,
+        icons: [{
+            icon: lineSymbol,
+            repeat: "200px"
+        }]
     });
 
+    // Función para actualizar las flechas según el zoom
+    function updateArrowsByZoom() {
+        const zoom = map.getZoom();
+        let repeat, scale;
+        if (zoom <= 16) {
+            polyline.setOptions({
+                icons: [] 
+            });
+            return;
+        }
+
+        if (zoom > 16) {
+            scale = 3; 
+        } 
+
+        polyline.setOptions({
+            icons: [{
+                icon: {
+                    ...lineSymbol,
+                    scale: scale
+                },
+                offset: "100%",
+                repeat: repeat
+            }]
+        });
+    }
+
+    // Añadir listener para el cambio de zoom
+    google.maps.event.addListener(map, 'zoom_changed', updateArrowsByZoom);
+
+    // Establecer configuración inicial
+    updateArrowsByZoom();
+
+    // Añadir la polilínea al mapa
     polyline.setMap(map);
     polylines.push(polyline);
 }
@@ -354,7 +428,6 @@ document.getElementById('fetch-data').addEventListener('click', () => {
 
     let startDate = document.getElementById('start-date').value;
     let endDate = document.getElementById('end-date').value;
-
     const correctDates = checkDates(startDate, endDate); //check if start date is earlier than end date
     if (startDate && endDate && correctDates) {
         startDate = convertToGlobalTime(startDate); //Convert date to UTC time zone
@@ -376,8 +449,12 @@ document.getElementById('fetch-data').addEventListener('click', () => {
                 console.log('Data fetched:', data); //for debugging reasons
                 console.log(data.length);
                 if (data.length == 0){
-                    alert("no routes found")
+                    Toast.fire({
+                        icon: 'warning',
+                        title: 'No data found for the selected period'
+                    });
                 } else{// Process the received data 
+                    popUpMenu.style.visibility='visible';
                     data.forEach(data => { //execute for every object in JSON
                         updateLocationDisplay(data);
                         updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp);
@@ -390,7 +467,10 @@ document.getElementById('fetch-data').addEventListener('click', () => {
                 console.error('Error fetching data:', error);
             });
     } else {
-        alert("Ensure dates are provided and the start date is earlier than the end date.");
+        Toast.fire({
+            icon: 'error',
+            title: 'Ensure dates are provided and the start date is earlier than the end date.'
+        });
     }
 });
 
@@ -414,6 +494,9 @@ async function initializeAutocomplete() {
     const { Autocomplete } = await google.maps.importLibrary("places");
     const input = document.getElementById('location-input');
     autocomplete = new Autocomplete(input);
+    autocomplete.setComponentRestrictions({
+        country: ["col"],
+      });
     autocomplete.bindTo("bounds", map);
 
     autocomplete.addListener('place_changed', () => {
@@ -485,7 +568,10 @@ function geocode(request) {
                 .then(data => {
                     console.log('Data fetched:', data);
                     if (data.length == 0) {
-                        alert("no routes found");
+                        Toast.fire({
+                            icon: 'warming',
+                            title: 'No routes were found'
+                        });
                     } else {
                         data.forEach(data => {
                             updateLocationDisplay(data);
@@ -499,21 +585,27 @@ function geocode(request) {
                 });
         })
         .catch((e) => {
-            alert("Geocode was not successful for the following reason: " + e);
+            Toast.fire({
+                icon: 'info',
+                title: 'It was impossible to use geocoding for this location'
+            });
         });
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-    const darkModeToggle = document.getElementById("darkModeToggle");
 
-    darkModeToggle.addEventListener("change", function() {
-        document.body.classList.toggle("dark-mode", darkModeToggle.checked);
-        //document.getElementById('title-buttons-and-info').classList.toggle("dark-mode", darkModeToggle.checked);
-        mapThemeId = darkModeToggle.checked ? 'a43cc08dd4e3e26d' : 'c81689827509e41a';
-        polylineColor = darkModeToggle.checked ? '#ff7008' : '#6d00b3';
-        initMap();
-    });
+popUpMenu.addEventListener("click", () => {
+    locationHistoryTab.style.visibility = "visible";
+    locationHistoryTab.style.opacity=1;
+    closeButtonContainer.style.visibility="visible";
+    closeButtonContainer.style.opacity=1;
 });
+
+closeButton.addEventListener('click',()=>{
+    locationHistoryTab.style.visibility = "hidden";
+    locationHistoryTab.style.opacity=0;
+    closeButtonContainer.style.visibility="hidden";
+    closeButtonContainer.style.opacity=0;
+})
 // Initialize map when the page loads
 loadName();
 loadMap();
