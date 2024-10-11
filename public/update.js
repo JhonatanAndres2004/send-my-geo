@@ -16,6 +16,34 @@ let popUpMenu=document.getElementById('emergent-pop-up');
 let locationHistoryTab = document.getElementById("location-history");
 let closeButtonContainer=document.getElementById("close-popup-container")
 let closeButton=document.getElementById("close-popup")
+
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    iconColor:"#6e00b3",
+    didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+    }
+});
+
+
+const style = document.createElement('style');
+style.textContent = `
+    .custom-toast-popup {
+        padding: 10px 20px;
+    }
+    .custom-toast-title {
+        font-size: 14px;
+    }
+    .swal2-timer-progress-bar {
+        background: #6e00b3;
+    }
+`;
+document.head.appendChild(style);
 function loadMap() {
     fetch('/api-key')
         .then(response => response.json())
@@ -46,7 +74,6 @@ function showTab(tab) {
         locationHistoryTab.style.position = "absolute";
         document.getElementById('realtime-button').disabled = true;
         document.getElementById('history-button').disabled = false;
-        document.getElementById('location-history-button').disabled = false;
         clearMap();
         initMap();
         startLiveLocation();
@@ -422,7 +449,10 @@ document.getElementById('fetch-data').addEventListener('click', () => {
                 console.log('Data fetched:', data); //for debugging reasons
                 console.log(data.length);
                 if (data.length == 0){
-                    alert("no routes found")
+                    Toast.fire({
+                        icon: 'warning',
+                        title: 'No data found for the selected period'
+                    });
                 } else{// Process the received data 
                     popUpMenu.style.visibility='visible';
                     data.forEach(data => { //execute for every object in JSON
@@ -437,7 +467,10 @@ document.getElementById('fetch-data').addEventListener('click', () => {
                 console.error('Error fetching data:', error);
             });
     } else {
-        alert("Ensure dates are provided and the start date is earlier than the end date.");
+        Toast.fire({
+            icon: 'error',
+            title: 'Ensure dates are provided and the start date is earlier than the end date.'
+        });
     }
 });
 
@@ -535,7 +568,10 @@ function geocode(request) {
                 .then(data => {
                     console.log('Data fetched:', data);
                     if (data.length == 0) {
-                        alert("no routes found");
+                        Toast.fire({
+                            icon: 'warming',
+                            title: 'No routes were found'
+                        });
                     } else {
                         data.forEach(data => {
                             updateLocationDisplay(data);
@@ -549,7 +585,10 @@ function geocode(request) {
                 });
         })
         .catch((e) => {
-            alert("Geocode was not successful for the following reason: " + e);
+            Toast.fire({
+                icon: 'info',
+                title: 'It was impossible to use geocoding for this location'
+            });
         });
 }
 
