@@ -80,16 +80,15 @@ app.get('/location-request', (req, res) => {
     });
 });
 
-// HTTPS server configuration
-https.createServer({
-    key: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/privkey.pem`),
-    cert: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/fullchain.pem`)
-}, app).listen(port, () => {
-    
-    console.log(`HTTPS Server running on https://localhost:${port}`);
-});
-
 if (port === 443) {
+    // HTTPS server configuration
+    https.createServer({
+        key: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/privkey.pem`),
+        cert: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/fullchain.pem`)
+    }, app).listen(port, () => {
+        
+        console.log(`HTTPS Server running on https://localhost:${port}`);
+    });
     // HTTP to HTTPS redirection (listen on port 80)
     http.createServer((req, res) => {
         res.writeHead(301, { "Location": `https://${req.headers.host}${req.url}` });
