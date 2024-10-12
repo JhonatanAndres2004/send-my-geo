@@ -15,6 +15,9 @@ const connection = mysql.createConnection({
     database: process.env.DB_NAME
 });
 
+// Get the port from environment variables, default to 443
+const port = process.env.PORT || 443;
+
 // Middleware to serve static files
 app.use(express.static('public'));
 
@@ -90,6 +93,14 @@ https.createServer({
 http.createServer((req, res) => {
     res.writeHead(301, { "Location": `https://${req.headers.host}${req.url}` });
     res.end();
-}).listen(80, () => {
-    console.log('HTTP server redirecting to HTTPS on port 80');
+}).listen(port, () => {
+    console.log(`HTTP server redirecting to HTTPS on port ${port}`);
+});
+
+// HTTPS server configuration for Testing branch
+https.createServer({
+    key: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/privkey.pem`),
+    cert: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/fullchain.pem`)
+}, app).listen(9000, () => {
+    console.log('Testing branch HTTPS Server running on https://localhost:9000');
 });
