@@ -138,7 +138,7 @@ function loadName() {
     fetch('/name')
         .then(response => response.json())
         .then(data => {
-            document.getElementById('name').innerText = data.name;
+            document.getElementById('name').innerText = `SendMyGeo (${data.name})`;
         })
         .catch(err => console.error('Error fetching name:', err));
 }

@@ -26,15 +26,17 @@ jobs:
         run: sudo pm2 list
 
   build-test-kevin: # update server when test branch is updated
-    runs-on: kevin
+    runs-on: kevin-test
     if: github.ref == 'refs/heads/kevin'
-    env:
-      PORT: 9000
     steps:
       - uses: actions/checkout@v2
 
       - name: copy .env file
         run : cp ~/env-variables/.env .
+      - name: change server port
+        run: echo "PORT=9000" >> .env
+      - name: change name
+        run: sed -i 's/NAME=Kevin/NAME=Kevin - Testing Environment/' .env
       - name: install npm dependencies
         run:  npm install
       - name: restart server

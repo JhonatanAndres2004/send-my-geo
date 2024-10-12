@@ -89,7 +89,6 @@ if (port === 443) {
         
         console.log(`HTTPS Server running on https://localhost:${port}`);
     });
-
     // HTTP to HTTPS redirection (listen on port 80)
     http.createServer((req, res) => {
         res.writeHead(301, { "Location": `https://${req.headers.host}${req.url}` });
