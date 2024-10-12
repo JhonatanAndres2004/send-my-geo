@@ -46,7 +46,7 @@ app.get('/historics', (req, res) => {
 
     // Validate that both start date and end date are provided
     if (!startDate || !endDate) {
-        return res.status(400).json({ error: 'Please provide both hora1 and hora2 query parameters.' });
+        return res.status(400).json({ error: 'Please provide both startDate and endDate query parameters.' });
     }
     // Construct SQL query to retrieve locations within the specified data range
     const query = `SELECT * FROM locations WHERE Timestamp BETWEEN '${startDate}' AND '${endDate}'`;
@@ -57,18 +57,19 @@ app.get('/historics', (req, res) => {
 });
 
 app.get('/location-request', (req, res) => {
-    const { lat, lon, radius } = req.query;
+    const { startDate, endDate, lat, lon, radius } = req.query;
 
     // Validate that all required query parameters are provided
-    if (!lat || !lon || !radius) {
-        return res.status(400).json({ error: 'Please provide lat, lon, and radius query parameters.' });
+    if (!startDate || !endDate || !lat || !lon || !radius) {
+        return res.status(400).json({ error: 'Please provide all required query parameters.' });
     }
 
     // Construct SQL query to retrieve locations within the specified radius
     const query = `SELECT *, 
         (6371000 * ACOS(COS(RADIANS(${lat})) * COS(RADIANS(Latitude)) * COS(RADIANS(Longitude) - RADIANS(${lon})) + SIN(RADIANS(${lat})) * SIN(RADIANS(Latitude)))) AS distance
         FROM locations
-        HAVING distance <= ${radius};
+        WHERE Timestamp BETWEEN '${startDate}' AND '${endDate}'
+        HAVING distance <= ${radius}
     `;
     connection.query(query, (err, results) => {
         if (err) throw err;
