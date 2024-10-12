@@ -1,28 +1,45 @@
-name: main
+name: CI/CD Pipeline
 on:
   push:
     branches:
       - main
+      - kevin
+      - Jhonatan
+      - Eduardo
 
 jobs:
-  build-kevin:
+  build-main-kevin: # update server when main branch is updated
     runs-on: kevin
+    if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v2
 
       - name: copy .env file
         run : cp ~/env-variables/.env .
-      - name: Set up Python environment and restart sniffer
-        run: |
-          python3 -m venv venv
-          . venv/bin/activate
-          pip install -r requirements.txt      
-          sudo pm2 restart udp2db.py
+      - name: Restart sniffer
+        run: sudo pm2 restart udp2db.py
       - name: install npm dependencies
         run:  npm install
       - name: restart server
-        run: sudo pm2 restart server.js
-      - name: verify server and sniffer are running
+        run: sudo pm2 restart main-server
+      - name: verify all services are running
+        run: sudo pm2 list
+
+  build-test-kevin: # update server when test branch is updated
+    runs-on: kevin
+    if: github.ref == 'refs/heads/kevin'
+    env:
+      PORT: 9000
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: copy .env file
+        run : cp ~/env-variables/.env .
+      - name: install npm dependencies
+        run:  npm install
+      - name: restart server
+        run: sudo pm2 restart test-server
+      - name: verify verify all services are running
         run: sudo pm2 list
 
   build-eduardo:
@@ -32,12 +49,8 @@ jobs:
 
       - name: copy .env file
         run : cp ~/env-variables/.env .
-      - name: Set up Python environment and restart sniffer
-        run: |
-          python3 -m venv venv
-          . venv/bin/activate
-          pip install -r requirements.txt      
-          sudo pm2 restart udp2db.py
+      - name: Restart sniffer
+        run: sudo pm2 restart udp2db.py
       - name: install npm dependencies
         run:  npm install
       - name: restart server
@@ -52,12 +65,8 @@ jobs:
 
       - name: copy .env file
         run : cp ~/env-variables/.env .
-      - name: Set up Python environment and restart sniffer
-        run: |
-          python3 -m venv venv
-          . venv/bin/activate
-          pip install -r requirements.txt      
-          sudo pm2 restart udp2db.py
+      - name: Restart sniffer
+        run: sudo pm2 restart udp2db.py
       - name: install npm dependencies
         run:  npm install
       - name: restart server

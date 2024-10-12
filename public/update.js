@@ -475,10 +475,17 @@ document.getElementById('fetch-data').addEventListener('click', () => {
 });
 
 document.getElementById('fetch-location').addEventListener("click", () => {
+    let startDate = document.getElementById('start-date').value;
+    let endDate = document.getElementById('end-date').value;
+    startDate = convertToGlobalTime(startDate);
+    endDate = convertToGlobalTime(endDate);
+
+    date1 = formatDateTime(startDate);
+    date2 = formatDateTime(endDate);
     const radiusInput = document.getElementById('radius-input');
     const radius = parseFloat(radiusInput.value);
     if (radius > 0) {
-        geocode({ address: document.getElementById('location-input').value });
+        geocode({ address: document.getElementById('location-input').value }, date1, date2, radius);
     } else {
         radiusInput.value = "";
     }
@@ -536,7 +543,7 @@ async function setInfoWindow(lat, lng, timestamp) {
     });
 }
 
-function geocode(request) {
+function geocode(request, startDate, endDate, radius) {
     const geocoder = new google.maps.Geocoder();
     clearMap();
     geocoder
@@ -544,7 +551,6 @@ function geocode(request) {
         .then((result) => { 
             const { results } = result;
             const center = results[0].geometry.location;
-            const radius = parseFloat(document.getElementById('radius-input').value);
             map.setCenter(center);
             marker.position = center;
             marker.setMap(map);
@@ -562,8 +568,8 @@ function geocode(request) {
             // Fetch data after the marker's position is updated
             const lat = center.lat();
             const lng = center.lng();
-            console.log(`/location-request?lat=${lat}&lon=${lng}&radius=${radius}`);
-            fetch(`/location-request?lat=${lat}&lon=${lng}&radius=${radius}`)
+            console.log(`/location-request?startDate=${startDate}&endDate=${endDate}&lat=${lat}&lon=${lng}&radius=${radius}`);
+            fetch(`/location-request?startDate=${startDate}&endDate=${endDate}&lat=${lat}&lon=${lng}&radius=${radius}`)
                 .then(response => response.json())
                 .then(data => {
                     console.log('Data fetched:', data);
