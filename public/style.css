@@ -263,7 +263,7 @@ body.dark-mode {
 }
 
 body.dark-mode h1 {
-    color: white;
+    color: white; 
 }
 
 body.dark-mode .tab-content {
