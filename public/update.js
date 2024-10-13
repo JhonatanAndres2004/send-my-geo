@@ -452,7 +452,7 @@ function clearMap() {
 
 document.getElementById('fetch-data').addEventListener('click', () => {
     console.log(dateMin);
-    showTab("slider")
+    showTab("reproducer");
     let startDate = document.getElementById('start-date').value;
     let endDate = document.getElementById('end-date').value;
     const correctDates = checkDates(startDate, endDate); //check if start date is earlier than end date
