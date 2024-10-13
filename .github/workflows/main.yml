@@ -19,7 +19,7 @@ jobs:
       - name: Restart sniffer
         run: sudo pm2 restart udp2db.py
       - name: install npm dependencies
-        run:  npm install
+        run:  npm install --verbose
       - name: restart server
         run: sudo pm2 restart main-server
       - name: verify all services are running
