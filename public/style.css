@@ -258,12 +258,12 @@ input:checked + .slider:before {
 }
 
 body.dark-mode {
-    background-color: #282828;
+    background-color: #282828; /**/
     color: #e2e2e2;
 }
 
 body.dark-mode h1 {
-    color: white;
+    color: rgb(255, 0, 0); /*white*/
 }
 
 body.dark-mode .tab-content {
