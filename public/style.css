@@ -267,7 +267,7 @@ body.dark-mode h1 {
 }
 
 body.dark-mode .tab-content {
-    background-color: #1e1e1e;
+    background-color: #ff0000; /*1e1e1e*/
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
