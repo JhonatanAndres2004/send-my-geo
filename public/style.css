@@ -258,16 +258,16 @@ input:checked + .slider:before {
 }
 
 body.dark-mode {
-    background-color: #282828; /**/
+    background-color: #282828;
     color: #e2e2e2;
 }
 
 body.dark-mode h1 {
-    color: rgb(255, 0, 0); /*white*/
+    color: white; 
 }
 
 body.dark-mode .tab-content {
-    background-color: #ff0000; /*1e1e1e*/
+    background-color: #1e1e1e;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
