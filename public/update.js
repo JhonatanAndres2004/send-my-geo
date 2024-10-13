@@ -60,6 +60,7 @@ function loadMap() {
 function showTab(tab) {
     var realTimeTab = document.getElementById("realtime");
     var historyTab = document.getElementById("history");
+    var slider = document.getElementById("reproducer");
     
     if (tab === "realtime") {
         popUpMenu.style.visibility='hidden'
@@ -103,6 +104,8 @@ function showTab(tab) {
         document.getElementById('history-button').disabled = false;
         document.getElementById('location-history-button').disabled = true;
         stopLiveLocation();
+    } else if (tab === "reproducer"){
+        
     }
 }
 
