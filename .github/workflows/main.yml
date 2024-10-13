@@ -19,7 +19,7 @@ jobs:
       - name: Restart sniffer
         run: sudo pm2 restart udp2db.py
       - name: install npm dependencies
-        run:  npm install
+        run:  npm install --verbose
       - name: restart server
         run: sudo pm2 restart main-server
       - name: verify all services are running
@@ -38,7 +38,7 @@ jobs:
       - name: change name
         run: sed -i 's/NAME=Kevin/NAME=Kevin - Testing Environment/' .env
       - name: install npm dependencies
-        run:  npm install
+        run:  npm install --verbose
       - name: restart server
         run: sudo pm2 restart test-server
       - name: verify verify all services are running
