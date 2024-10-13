@@ -98,7 +98,11 @@ if (port === 443) {
     });
 } else {
     // HTTP server configuration
-    app.listen(port, () => {
-        console.log(`HTTP Testing Server running on http://localhost:${port}`);
+    https.createServer({
+        key: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/privkey.pem`),
+        cert: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/fullchain.pem`)
+    }, app).listen(port, () => {
+        
+        console.log(`HTTPS Testing Server running on https://localhost:${port}`);
     });
 }
