@@ -75,6 +75,9 @@ function showTab(tab) {
         locationHistoryTab.style.position = "absolute";
         document.getElementById('realtime-button').disabled = true;
         document.getElementById('history-button').disabled = false;
+        slider.style.visibility = "hidden";
+        slider.style.opacity = "0";
+        slider.style.position = "absolute";
         clearMap();
         initMap();
         startLiveLocation();
@@ -88,7 +91,10 @@ function showTab(tab) {
         document.getElementById('realtime-button').disabled = false;
         document.getElementById('history-button').disabled = true;
         document.getElementById('start-date').value = "";
-        document.getElementById('end-date').value = "";   
+        document.getElementById('end-date').value = "";
+        slider.style.visibility = "hidden";
+        slider.style.opacity = "0";
+        slider.style.position = "absolute";   
         stopLiveLocation();
     } else if (tab === "location-history") {
         locationHistoryTab.style.visibility = "visible";
@@ -100,12 +106,29 @@ function showTab(tab) {
         historyTab.style.visibility = "hidden";
         historyTab.style.opacity = "0";
         historyTab.style.position = "absolute";
+        slider.style.visibility = "hidden";
+        slider.style.opacity = "0";
+        slider.style.position = "absolute";
         document.getElementById('realtime-button').disabled = false;
         document.getElementById('history-button').disabled = false;
         document.getElementById('location-history-button').disabled = true;
         stopLiveLocation();
     } else if (tab === "reproducer"){
-        
+        locationHistoryTab.style.visibility = "hidden";
+        locationHistoryTab.style.opacity = "0";
+        locationHistoryTab.style.position = "absolute";
+        realTimeTab.style.visibility = "hidden";
+        realTimeTab.style.opacity = "0";
+        realTimeTab.style.position = "absolute";
+        historyTab.style.visibility = "hidden";
+        historyTab.style.opacity = "0";
+        historyTab.style.position = "absolute";
+        slider.style.visibility = "visible";
+        slider.style.opacity = "1";
+        slider.style.position = "relative";
+        document.getElementById('realtime-button').disabled = false;
+        document.getElementById('history-button').disabled = false;
+        document.getElementById('location-history-button').disabled = true;
     }
 }
 
