@@ -126,6 +126,7 @@ function showTab(tab) {
         slider.style.visibility = "visible";
         slider.style.opacity = "1";
         slider.style.position = "relative";
+        popUpMenu.style.visibility='visible';
         document.getElementById('realtime-button').disabled = false;
         document.getElementById('history-button').disabled = false;
         document.getElementById('location-history-button').disabled = true;
@@ -451,7 +452,7 @@ function clearMap() {
 
 document.getElementById('fetch-data').addEventListener('click', () => {
     console.log(dateMin);
-
+    showTab("slider")
     let startDate = document.getElementById('start-date').value;
     let endDate = document.getElementById('end-date').value;
     const correctDates = checkDates(startDate, endDate); //check if start date is earlier than end date
