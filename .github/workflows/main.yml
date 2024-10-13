@@ -44,8 +44,9 @@ jobs:
       - name: verify verify all services are running
         run: sudo pm2 list
 
-  build-eduardo:
+  build-main-eduardo:
     runs-on: eduardo
+    if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v2
 
@@ -56,12 +57,32 @@ jobs:
       - name: install npm dependencies
         run:  npm install
       - name: restart server
-        run: sudo pm2 restart server.js
-      - name: verify server and sniffer are running
+        run: sudo pm2 restart main-server
+      - name: verify all services are running
         run: sudo pm2 list
 
-  build-jhonatan:
+  build-test-eduardo: # update server when test branch is updated
+    runs-on: eduardo-test
+    if: github.ref == 'refs/heads/Eduardo'
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: copy .env file
+        run : cp ~/env-variables/.env .
+      - name: change server port
+        run: echo "PORT=9000" >> .env
+      - name: change name
+        run: sed -i 's/NAME=Eduardo/NAME=Eduardo - Testing Environment/' .env
+      - name: install npm dependencies
+        run:  npm install
+      - name: restart server
+        run: sudo pm2 restart test-server
+      - name: verify verify all services are running
+        run: sudo pm2 list
+
+  build-main-jhonatan:
     runs-on: jhonatan
+    if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v2
 
@@ -72,6 +93,25 @@ jobs:
       - name: install npm dependencies
         run:  npm install
       - name: restart server
-        run: sudo pm2 restart server.js
-      - name: verify server and sniffer are running
+        run: sudo pm2 restart main-server
+      - name: verify all services are running
+        run: sudo pm2 list
+
+  build-test-jhonatan: # update server when test branch is updated
+    runs-on: jhonatan-test
+    if: github.ref == 'refs/heads/Jhonatan'
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: copy .env file
+        run : cp ~/env-variables/.env .
+      - name: change server port
+        run: echo "PORT=9000" >> .env
+      - name: change name
+        run: sed -i 's/NAME=Jhonatan/NAME=Jhonatan - Testing Environment/' .env
+      - name: install npm dependencies
+        run:  npm install
+      - name: restart server
+        run: sudo pm2 restart test-server
+      - name: verify verify all services are running
         run: sudo pm2 list
