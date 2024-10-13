@@ -44,7 +44,7 @@ jobs:
       - name: verify verify all services are running
         run: sudo pm2 list
 
-  build-eduardo:
+  build-main-eduardo:
     runs-on: eduardo
     if: github.ref == 'refs/heads/main'
     steps:
@@ -80,8 +80,9 @@ jobs:
       - name: verify verify all services are running
         run: sudo pm2 list
 
-  build-jhonatan:
+  build-main-jhonatan:
     runs-on: jhonatan
+    if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v2
 
