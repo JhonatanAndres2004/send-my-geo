@@ -452,7 +452,6 @@ function clearMap() {
 
 document.getElementById('fetch-data').addEventListener('click', () => {
     console.log(dateMin);
-    showTab("reproducer");
     let startDate = document.getElementById('start-date').value;
     let endDate = document.getElementById('end-date').value;
     const correctDates = checkDates(startDate, endDate); //check if start date is earlier than end date
@@ -502,6 +501,7 @@ document.getElementById('fetch-data').addEventListener('click', () => {
 });
 
 document.getElementById('fetch-location').addEventListener("click", () => {
+    showTab("reproducer");
     let startDate = document.getElementById('start-date').value;
     let endDate = document.getElementById('end-date').value;
     startDate = convertToGlobalTime(startDate);
@@ -513,6 +513,7 @@ document.getElementById('fetch-location').addEventListener("click", () => {
     const radius = parseFloat(radiusInput.value);
     if (radius > 0) {
         geocode({ address: document.getElementById('location-input').value }, date1, date2, radius);
+        console.log(outeCoordinates)
     } else {
         radiusInput.value = "";
     }
@@ -616,6 +617,7 @@ function geocode(request, startDate, endDate, radius) {
                 .catch(error => {
                     console.error('Error fetching data:', error);
                 });
+                
         })
         .catch((e) => {
             Toast.fire({
