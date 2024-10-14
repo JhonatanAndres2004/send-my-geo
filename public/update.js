@@ -501,7 +501,7 @@ document.getElementById('fetch-data').addEventListener('click', () => {
 });
 
 document.getElementById('fetch-location').addEventListener("click", () => {
-    showTab("reproducer");
+    
     let startDate = document.getElementById('start-date').value;
     let endDate = document.getElementById('end-date').value;
     startDate = convertToGlobalTime(startDate);
@@ -517,6 +517,7 @@ document.getElementById('fetch-location').addEventListener("click", () => {
     } else {
         radiusInput.value = "";
     }
+    showTab("reproducer");
 });
 
 document.getElementById('location-input').addEventListener("keydown", (e) => {
