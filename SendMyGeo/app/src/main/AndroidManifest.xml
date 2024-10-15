@@ -9,6 +9,7 @@
     <!--
      SENS_SMS Y TELEPHONY ARE REQUIRED TO ENABLE SMS COMMUNICATION
      -->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <!--
     COARSE TO OBTAIN APPROXIMATED POSITION,
