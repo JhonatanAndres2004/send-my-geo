@@ -28,16 +28,17 @@
             <!--<button id="slider" class="tab-btn" onclick="showTab('reproducer')">repoducer</button>-->
         </div>
 
-        <div id="reproducer" class="tab-content">
-            <div>
-                <label>alo</label>
+        <div id="reproducer" style="position: relative;"class="tab-content">
+            <button id="toggleButton" class="play">▷</button>
+            <div id="sliderWeb" class="location-info">
+                <input type="range" min="0" max="" id="slider">
             </div>
-            <div>
-                <label>---- _______ ----</label>
+            <div> 
+                <button for="history-button" id="backToHistorics">&#10550</button>
             </div>
-            <div id="sliderWeb">
-                <input type="range" min="1" max="50">
-            </div>
+
+            
+        
         </div>
 
         <div id="realtime" class="location-info tab-content">
@@ -102,6 +103,7 @@
         <div id="map">  
             <gmp-map center="40.12150192260742,-100.45039367675781" zoom="10" map-id="DEMO_MAP_ID">
             <gmp-advanced-marker title="My location" id="marker"></gmp-advanced-marker>
+            <gmp-advanced-marker title="otracosa" id="infoWindowMarker"></gmp-advanced-marker>
             </gmp-map>
         </div>
     </div>

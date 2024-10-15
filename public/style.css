@@ -169,7 +169,7 @@ body {
 
 
 
-#fetch-data, #fetch-location {
+#fetch-data, #fetch-location,#backToHistorics {
     justify-self: center; 
     padding: 5px 10px;
     background-color: #6e00b3 !important;
@@ -179,7 +179,40 @@ body {
     cursor: pointer;
     font-size: 15px;
 }
-#fetch-data:hover, #fetch-location:hover, h3:hover{
+#playButton {
+    justify-self: center; 
+    padding: 5px 10px;
+    background-color: #ffffff;
+    color: rgb(0, 0, 0);
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 15px;
+}
+#toggleButton {
+    justify-self: center; 
+    padding: 5px 10px;
+    background-color: #ffffff;
+    color: rgb(0, 0, 0);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+/* Hover effect */
+#toggleButton:hover, #stopButton:hover {
+    background-color: #000000e3;
+    color: #ffffff;
+    transition: 0.3s;
+}
+
+/* Class to keep the button black after being clicked */
+.button-active {
+    background-color: #ffffffe3 !important;
+    color: #000000 !important;
+}
+#fetch-data:hover, #fetch-location:hover, h3:hover, #backToHistorics:hover{
     background-color: #4b0082 !important;
     transition: 0.3s;
 }
@@ -272,6 +305,7 @@ body.dark-mode .tab-content {
 }
 
 body.dark-mode #fetch-data,
+body.dark-mode #backToHistorics,
 body.dark-mode #fetch-location {
     background-color: #4b0082;
     color: #fff;
