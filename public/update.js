@@ -337,6 +337,7 @@ function fetchLatestLocation() {
         .then(data => {
             updateLocationDisplay(data);
             updateMapAndRoute(data.Latitude, data.Longitude, data.Timestamp);
+            console.log(data.Latitude, data.Longitude, data.Timestamp);
         })
         .catch(err => console.error('Error fetching latest location:', err));
 }
