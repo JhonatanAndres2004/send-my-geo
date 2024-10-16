@@ -823,6 +823,7 @@ toggleButton.addEventListener('click', () => {
 // Initialize map when the page loads
 loadName();
 loadMap();
-initMap();
-showTab("realtime");
-console.log("Map loaded successfully");
+document.addEventListener('DOMContentLoaded', async function() {
+    await initMap()
+    showTab("realtime");
+});
