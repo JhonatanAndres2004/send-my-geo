@@ -89,6 +89,7 @@ function showTab(tab) {
         slider.style.position = "absolute";
         clearMap();
         initMap();
+        console.log("Starting live location updates...");
         startLiveLocation();
         console.log("Realtime tab selected");
     } else if (tab === "history") {
