@@ -614,7 +614,7 @@ function clearMap() {
     info = [];
     infoWindow.close;
     infoWindowMarker.setMap(null);
-    marker.setMap(null);
+  
 }
 
 document.getElementById('fetch-data').addEventListener('click', () => {
@@ -807,6 +807,7 @@ closeButton.addEventListener('click',()=>{
 document.getElementById('backToHistorics').addEventListener("click", ()=>{
     clearMap();
     popUpMenu.style.visibility='hidden';
+    marker.setMap(null);
     //popUpMenu.style.opacity ="0" 
     //popUpMenu.style.position="absolute" 
     showTab("history");
