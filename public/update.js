@@ -269,6 +269,7 @@ function loadName() {
 }
 
 async function initMap() {
+    startLiveLocation();
     const { Map } = await google.maps.importLibrary("maps");
     const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
 
