@@ -89,6 +89,7 @@ function showTab(tab) {
         clearMap();
         initMap();
         startLiveLocation();
+        console.log("Realtime tab selected");
     } else if (tab === "history") {
         historyTab.style.visibility = "visible";
         historyTab.style.opacity = "1";
