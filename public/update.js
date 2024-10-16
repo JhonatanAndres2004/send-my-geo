@@ -69,7 +69,7 @@ function loadMap() {
 function showTab(tab) {
     var realTimeTab = document.getElementById("realtime");
     var historyTab = document.getElementById("history");
-    var slider = document.getElementById("reproducer");
+    var reproducer = document.getElementById("reproducer");
     console.log(tab);
     if (tab === "realtime") {
         popUpMenu.style.visibility='hidden'
@@ -84,9 +84,9 @@ function showTab(tab) {
         locationHistoryTab.style.position = "absolute";
         document.getElementById('realtime-button').disabled = true;
         document.getElementById('history-button').disabled = false;
-        slider.style.visibility = "hidden";
-        slider.style.opacity = "0";
-        slider.style.position = "absolute";
+        reproducer.style.visibility = "hidden";
+        reproducer.style.opacity = "0";
+        reproducer.style.position = "absolute";
         clearMap();
         initMap();
         console.log("Starting live location updates...");
@@ -103,10 +103,9 @@ function showTab(tab) {
         document.getElementById('history-button').disabled = true;
         document.getElementById('start-date').value = "";
         document.getElementById('end-date').value = "";
-        slider.style.visibility = "hidden";
-        slider.style.opacity = "0";
-        slider.style.position = "absolute";
-  
+        reproducer.style.visibility = "hidden";
+        reproducer.style.opacity = "0";
+        reproducer.style.position = "absolute";
         stopLiveLocation();
     } else if (tab === "location-history") {
         locationHistoryTab.style.visibility = "visible";
@@ -118,9 +117,9 @@ function showTab(tab) {
         historyTab.style.visibility = "hidden";
         historyTab.style.opacity = "0";
         historyTab.style.position = "absolute";
-        slider.style.visibility = "hidden";
-        slider.style.opacity = "0";
-        slider.style.position = "absolute";
+        reproducer.style.visibility = "hidden";
+        reproducer.style.opacity = "0";
+        reproducer.style.position = "absolute";
         document.getElementById('realtime-button').disabled = false;
         document.getElementById('history-button').disabled = false;
         document.getElementById('location-history-button').disabled = true;
@@ -135,9 +134,9 @@ function showTab(tab) {
         historyTab.style.visibility = "hidden";
         historyTab.style.opacity = "0";
         historyTab.style.position = "absolute";
-        slider.style.visibility = "visible";
-        slider.style.opacity = "1";
-        slider.style.position = "relative";
+        reproducer.style.visibility = "visible";
+        reproducer.style.opacity = "1";
+        reproducer.style.position = "relative";
         popUpMenu.style.visibility='visible';
         document.getElementById('stopButton').style.visibility="visible"
         document.getElementById('realtime-button').disabled = false;
