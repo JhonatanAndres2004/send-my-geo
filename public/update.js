@@ -24,6 +24,7 @@ let played = 0;
 let infoWindow;
 let infoWindowMarker;
 let pin;
+slider.value = 0
 
 const Toast = Swal.mixin({
     toast: true,
@@ -143,14 +144,6 @@ function showTab(tab) {
         document.getElementById('location-history-button').disabled = true
     }
 }
-
-document.addEventListener('DOMContentLoaded', function(){
-    const slider = document.getElementById('slider');
-  
-    // Set initial value for the custom property to reflect the slider position
-    // slider.style.setProperty('--value', `${(slider.value - slider.min) * 100 / (slider.max - slider.min)}%`);
-    slider.value = 0
-})
 
 // Update the valueSlider when the slider changes
 slider.oninput = function() {
@@ -297,7 +290,6 @@ async function initMap() {
         title: "Current Location",
     });
     
-// Set the initial value when the page loads
     pin = new PinElement({
         scale: 0.8,
         background: polylineColor,
@@ -311,18 +303,11 @@ async function initMap() {
         //position: initialPosition,
         content: pin.element
     });
-//infoWindowMarkers.push(infoWindowMarker);
 
     infoWindow = new google.maps.InfoWindow({
         content: "",
-        //maxWidth: 50 ,
-        //maxHeight: 1
-    });//({
-    //    content: `<b>Location: (${lat}, ${lng})</b> <br> Time: ${convertToLocalTime(timestamp)}`,
-    //});
-    //infowindows.push(infoWindow);
+    });
 }
-//const { AdvancedMarkerElement, PinElement } = google.maps.importLibrary("marker");
 
 function startLiveLocation() {
     console.log('Starting live location updates...');
@@ -815,27 +800,11 @@ document.getElementById('backToHistorics').addEventListener("click", ()=>{
     clearMap();
     popUpMenu.style.visibility='hidden';
     marker.setMap(null);
-    //popUpMenu.style.opacity ="0" 
-    //popUpMenu.style.position="absolute" 
     showTab("history");
     document.getElementById('start-date').value = ''
     document.getElementById('end-date').value =  ''
 } )
-// document.getElementById('playButton').addEventListener("click", () => {
-//     //document.getElementById('stopButton').style.visibility="visible"
-//     //document.getElementById('playButton').style.visibility="hidden"
-//     playSlider();
-//     document.getElementById('playButton').classList.add('button-active')
-//     document.getElementById('stopButton').classList.remove('button-active')
-//     //document.getElementById('stopButton').style.position="absolute"
-// })
 
-// document.getElementById('stopButton').addEventListener("click", () => {
-//     stopSlider();
-//     played = 0;
-//     document.getElementById('playButton').classList.remove('button-active')
-//     document.getElementById('stopButton').classList.add('button-active')
-// })
 const toggleButton = document.getElementById('toggleButton');
     
 toggleButton.addEventListener('click', () => {
@@ -844,18 +813,12 @@ toggleButton.addEventListener('click', () => {
         toggleButton.classList.add('pause');
         toggleButton.innerHTML = '❚❚'; // Pause icon and text
         playSlider();
-        // document.getElementById('playButton').classList.remove('button-active')
-        // document.getElementById('stopButton').classList.add('button-active')
-
     } else {
         toggleButton.classList.remove('pause');
         toggleButton.classList.add('play');
         toggleButton.innerHTML = '▷'; // Play icon and text
         stopSlider();
         played = 0;
-        // document.getElementById('playButton').classList.add('button-active')
-        // document.getElementById('stopButton').classList.remove('button-active')
-        
     }
 });
 // Initialize map when the page loads
