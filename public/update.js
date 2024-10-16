@@ -323,6 +323,10 @@ async function initMap() {
 }
 //const { AdvancedMarkerElement, PinElement } = google.maps.importLibrary("marker");
 
+function startLiveLocation() {
+    live = setInterval(fetchLatestLocation, 10000);
+}
+
 function stopLiveLocation() {
     clearInterval(live);
 }

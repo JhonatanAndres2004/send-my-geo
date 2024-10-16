@@ -271,7 +271,6 @@ input[type="range"]::-ms-fill-upper {
 } */
 
 input[type="range"] {
-    -webkit-appearance: none;
     width: 100%;
     height: 8px;
     background: #ddd;
