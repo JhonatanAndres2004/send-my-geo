@@ -806,5 +806,8 @@ toggleButton.addEventListener('click', () => {
 // Initialize map when the page loads
 loadName();
 loadMap();
+console.log("Initializing map...");
 initMap();
+console.log("Map loaded successfully");
 showTab("realtime");
+console.log("Realtime tab selected");
