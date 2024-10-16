@@ -460,7 +460,7 @@ function updateMapAndRouteLocations(lat, lng, timestamp, searchByLocation = fals
             drawPolylineHistorics(lastPosition, newPosition);
             //console.log(timeDiff)
             //info.push(allInfo);
-        } else if (distance > 1 || timeDiff >= 1) {
+        } else if (distance > 1 || timeDiff >= 0.3) {
             // If distance is greater than 1 kilometer or the time difference is greater (or equal) than 1 minute, 
             // Start a new route from that point
             routeCoordinates = [newPosition];
@@ -810,8 +810,8 @@ document.getElementById('backToHistorics').addEventListener("click", ()=>{
     //popUpMenu.style.opacity ="0" 
     //popUpMenu.style.position="absolute" 
     showTab("history");
-    document.getElementById('start-date').innerHTML = ""
-    document.getElementById('end-date').innerHTML =  ""
+    document.getElementById('start-date').value = ''
+    document.getElementById('end-date').value =  ''
 } )
 // document.getElementById('playButton').addEventListener("click", () => {
 //     //document.getElementById('stopButton').style.visibility="visible"
