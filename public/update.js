@@ -69,7 +69,7 @@ function showTab(tab) {
     var realTimeTab = document.getElementById("realtime");
     var historyTab = document.getElementById("history");
     var slider = document.getElementById("reproducer");
-    
+    console.log(tab);
     if (tab === "realtime") {
         popUpMenu.style.visibility='hidden'
         realTimeTab.style.visibility = "visible";
