@@ -24,6 +24,7 @@ let played = 0;
 let infoWindow;
 let infoWindowMarker;
 let pin;
+slider.value = 0
 
 const Toast = Swal.mixin({
     toast: true,
@@ -68,8 +69,7 @@ function loadMap() {
 function showTab(tab) {
     var realTimeTab = document.getElementById("realtime");
     var historyTab = document.getElementById("history");
-    var slider = document.getElementById("reproducer");
-    
+    var reproducer = document.getElementById("reproducer");
     if (tab === "realtime") {
         popUpMenu.style.visibility='hidden'
         realTimeTab.style.visibility = "visible";
@@ -83,9 +83,9 @@ function showTab(tab) {
         locationHistoryTab.style.position = "absolute";
         document.getElementById('realtime-button').disabled = true;
         document.getElementById('history-button').disabled = false;
-        slider.style.visibility = "hidden";
-        slider.style.opacity = "0";
-        slider.style.position = "absolute";
+        reproducer.style.visibility = "hidden";
+        reproducer.style.opacity = "0";
+        reproducer.style.position = "absolute";
         clearMap();
         initMap();
         startLiveLocation();
@@ -100,10 +100,9 @@ function showTab(tab) {
         document.getElementById('history-button').disabled = true;
         document.getElementById('start-date').value = "";
         document.getElementById('end-date').value = "";
-        slider.style.visibility = "hidden";
-        slider.style.opacity = "0";
-        slider.style.position = "absolute";
-  
+        reproducer.style.visibility = "hidden";
+        reproducer.style.opacity = "0";
+        reproducer.style.position = "absolute";
         stopLiveLocation();
     } else if (tab === "location-history") {
         locationHistoryTab.style.visibility = "visible";
@@ -115,9 +114,9 @@ function showTab(tab) {
         historyTab.style.visibility = "hidden";
         historyTab.style.opacity = "0";
         historyTab.style.position = "absolute";
-        slider.style.visibility = "hidden";
-        slider.style.opacity = "0";
-        slider.style.position = "absolute";
+        reproducer.style.visibility = "hidden";
+        reproducer.style.opacity = "0";
+        reproducer.style.position = "absolute";
         document.getElementById('realtime-button').disabled = false;
         document.getElementById('history-button').disabled = false;
         document.getElementById('location-history-button').disabled = true;
@@ -132,9 +131,9 @@ function showTab(tab) {
         historyTab.style.visibility = "hidden";
         historyTab.style.opacity = "0";
         historyTab.style.position = "absolute";
-        slider.style.visibility = "visible";
-        slider.style.opacity = "1";
-        slider.style.position = "relative";
+        reproducer.style.visibility = "visible";
+        reproducer.style.opacity = "1";
+        reproducer.style.position = "relative";
         popUpMenu.style.visibility='visible';
         document.getElementById('stopButton').style.visibility="visible"
         document.getElementById('realtime-button').disabled = false;
@@ -142,14 +141,6 @@ function showTab(tab) {
         document.getElementById('location-history-button').disabled = true
     }
 }
-
-document.addEventListener('DOMContentLoaded', function(){
-    const slider = document.getElementById('slider');
-  
-    // Set initial value for the custom property to reflect the slider position
-    // slider.style.setProperty('--value', `${(slider.value - slider.min) * 100 / (slider.max - slider.min)}%`);
-    slider.value = 0
-})
 
 // Update the valueSlider when the slider changes
 slider.oninput = function() {
@@ -160,13 +151,10 @@ slider.oninput = function() {
     }
     polylines.forEach(polyline => polyline.setMap(null));
     polylines = [];
-    //valueSlider.innerHTML = this.value;  // Display the current slider value
-    let current = parseInt(this.value);  // Parse the slider value as an integer
-    let prevValue = parseInt(previous);  // Previous value as an integer
+    let current = parseInt(this.value);
+    let prevValue = parseInt(previous);
 
-    // Ensure the current value exists in the data (e.g., `info`)
     if (info[current]) {
-
         // Case when moving forward (increasing the slider value)
         if (current) { // > prevValue
             for (let i= 0;i<current -1; i++){
@@ -174,34 +162,15 @@ slider.oninput = function() {
                 setInfoWindow(info[i].lat, info[i].lng, info[i].Timestamp);
                 
             }
-            
-        // Case when moving backward (decreasing the slider value)
-        } //else if (current <= prevValue) {
-        //     if (polylines[current-1]) { //infoWindowMarkers[current-1] && 
-        //         // Remove marker and polyline from the map
-        //         //infoWindowMarkers[current-1].setMap(null);
-        //         polylines[current-1].setMap(null);
-
-        //         // Optionally, you can remove them from the arrays if needed
-        //         //infoWindowMarkers.pop();
-        //         polylines.pop();
-                
-        //     }
-        // }
-
-        // Update previous value for the next input
+        }
         previous = current;
-
     }
 };
 
 function playSlider() {
-    const slider = document.getElementById('slider');
-  
     // Set initial value for the custom property to reflect the slider position
     slider.style.setProperty('--value', `${(slider.value - slider.min) * 100 / (slider.max - slider.min)}%`);
     if (played == 0){
-        let slider = document.getElementById('slider');
         let max = slider.max;  // Max value of the slider
     
         // Start the interval to update the slider value every 500ms (or any speed you like)
@@ -296,7 +265,6 @@ async function initMap() {
         title: "Current Location",
     });
     
-// Set the initial value when the page loads
     pin = new PinElement({
         scale: 0.8,
         background: polylineColor,
@@ -304,24 +272,7 @@ async function initMap() {
         glyph: '!',
         glyphColor: 'white'
     });
-
-    infoWindowMarker = new AdvancedMarkerElement({
-        map: map,
-        //position: initialPosition,
-        content: pin.element
-    });
-//infoWindowMarkers.push(infoWindowMarker);
-
-    infoWindow = new google.maps.InfoWindow({
-        content: "",
-        //maxWidth: 50 ,
-        //maxHeight: 1
-    });//({
-    //    content: `<b>Location: (${lat}, ${lng})</b> <br> Time: ${convertToLocalTime(timestamp)}`,
-    //});
-    //infowindows.push(infoWindow);
 }
-//const { AdvancedMarkerElement, PinElement } = google.maps.importLibrary("marker");
 
 function startLiveLocation() {
     live = setInterval(fetchLatestLocation, 10000);
@@ -434,9 +385,7 @@ function updateMapAndRouteHistorics(lat, lng, timestamp, searchByLocation = fals
             routeCoordinates = [newPosition];
             info.push(allInfo);
         }
-        
-        //console.log(info)
-        document.getElementById('slider').max = info.length
+        document.getElementById('slider').max = info.length;
         lastTimestamp = newTimestamp;
     }
 }
@@ -462,17 +411,11 @@ function updateMapAndRouteLocations(lat, lng, timestamp, searchByLocation = fals
         if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 0.3 && newTimestamp > lastTimestamp) {
             routeCoordinates.push(newPosition);
             drawPolylineHistorics(lastPosition, newPosition);
-            //console.log(timeDiff)
-            //info.push(allInfo);
         } else if (distance > 1 || timeDiff >= 0.3) {
             // If distance is greater than 1 kilometer or the time difference is greater (or equal) than 1 minute, 
             // Start a new route from that point
             routeCoordinates = [newPosition];
-            //info.push(allInfo);
         }
-        
-        //console.log(info)
-        //document.getElementById('slider').max = info.length
         lastTimestamp = newTimestamp;
     }
 }
@@ -494,7 +437,6 @@ function drawPolyline(origin, destination) {
 
     polyline.setMap(map);
     polylines.push(polyline);
-    console.log("Polyline drawn successfully");
 }
 
 function drawPolylineHistorics(origin, destination) {
@@ -559,7 +501,6 @@ function drawPolylineHistorics(origin, destination) {
     // Añadir la polilínea al mapa
     polyline.setMap(map);
     polylines.push(polyline);
-    //console.log(polylines.length)
 }
 
 function convertToLocalTime(utcDateString) {
@@ -606,19 +547,14 @@ function checkDates(dateStart, dateEnd) {
 
 function clearMap() {
     if (circle) circle.setMap(null);
-    infoWindowMarkers.forEach(marker => marker.setMap(null));
-    infowindows.forEach(infowindow => infowindow.close());
-    infoWindowMarkers = [];
-    infowindows = []; 
+    if (infoWindowMarker) infoWindowMarker.setMap(null);
+    if (infoWindow) infoWindow.close();
     polylines.forEach(polyline => polyline.setMap(null));
     polylines = [];
     routeCoordinates = [];
     lastTimestamp = null;
     colorIndex = 0;
     info = [];
-    infoWindow.close;
-    infoWindowMarker.setMap(null);
-  
 }
 
 document.getElementById('fetch-data').addEventListener('click', () => {
@@ -643,20 +579,16 @@ document.getElementById('fetch-data').addEventListener('click', () => {
         fetch(`/historics?startDate=${encodeURIComponent(date1)}&endDate=${encodeURIComponent(date2)}`) 
             .then(response => response.json())
             .then(data => {
-                //console.log('Data fetched:', data); //for debugging reasons
-                //console.log(data.length);
                 if (data.length == 0){
                     Toast.fire({
                         icon: 'warning',
                         title: 'No data found for the selected period'
                     });
-                } else{// Process the received data 
+                } else{
                     popUpMenu.style.visibility='visible';
-                    data.forEach(data => { //execute for every object in JSON
+                    data.forEach(data => {
                         updateLocationDisplay(data);
                         updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp);
-    
-                       
                     });}
                 
             })
@@ -690,7 +622,6 @@ document.getElementById('fetch-location').addEventListener("click", () => {
     } else {
         radiusInput.value = "";
     }
-    //console.log("probando")
 });
 
 document.getElementById('location-input').addEventListener("keydown", (e) => {
@@ -717,7 +648,20 @@ async function initializeAutocomplete() {
 }
 
 async function setInfoWindow(lat, lng, timestamp) { 
-    console.log(lat)
+    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+    
+    if (infoWindowMarker) infoWindowMarker.setMap(null);
+    if (infoWindow) infoWindow.close();
+    
+    infoWindowMarker = new AdvancedMarkerElement({
+        map: map,
+        content: pin.element
+    });
+
+    infoWindow = new google.maps.InfoWindow({
+        content: "",
+    });
+
     infoWindowMarker.setMap(map);
     // Update infoWindowMarker's position
     infoWindowMarker.position = new google.maps.LatLng(lat, lng);
@@ -812,27 +756,11 @@ document.getElementById('backToHistorics').addEventListener("click", ()=>{
     clearMap();
     popUpMenu.style.visibility='hidden';
     marker.setMap(null);
-    //popUpMenu.style.opacity ="0" 
-    //popUpMenu.style.position="absolute" 
     showTab("history");
     document.getElementById('start-date').value = ''
     document.getElementById('end-date').value =  ''
 } )
-// document.getElementById('playButton').addEventListener("click", () => {
-//     //document.getElementById('stopButton').style.visibility="visible"
-//     //document.getElementById('playButton').style.visibility="hidden"
-//     playSlider();
-//     document.getElementById('playButton').classList.add('button-active')
-//     document.getElementById('stopButton').classList.remove('button-active')
-//     //document.getElementById('stopButton').style.position="absolute"
-// })
 
-// document.getElementById('stopButton').addEventListener("click", () => {
-//     stopSlider();
-//     played = 0;
-//     document.getElementById('playButton').classList.remove('button-active')
-//     document.getElementById('stopButton').classList.add('button-active')
-// })
 const toggleButton = document.getElementById('toggleButton');
     
 toggleButton.addEventListener('click', () => {
@@ -841,18 +769,12 @@ toggleButton.addEventListener('click', () => {
         toggleButton.classList.add('pause');
         toggleButton.innerHTML = '❚❚'; // Pause icon and text
         playSlider();
-        // document.getElementById('playButton').classList.remove('button-active')
-        // document.getElementById('stopButton').classList.add('button-active')
-
     } else {
         toggleButton.classList.remove('pause');
         toggleButton.classList.add('play');
         toggleButton.innerHTML = '▷'; // Play icon and text
         stopSlider();
         played = 0;
-        // document.getElementById('playButton').classList.add('button-active')
-        // document.getElementById('stopButton').classList.remove('button-active')
-        
     }
 });
 // Initialize map when the page loads
@@ -860,4 +782,3 @@ loadName();
 loadMap();
 initMap();
 showTab("realtime");
-
