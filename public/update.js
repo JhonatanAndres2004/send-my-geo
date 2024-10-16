@@ -300,7 +300,6 @@ async function initMap() {
 
     infoWindowMarker = new AdvancedMarkerElement({
         map: map,
-        //position: initialPosition,
         content: pin.element
     });
 
@@ -826,4 +825,4 @@ loadName();
 loadMap();
 initMap();
 showTab("realtime");
-
+console.log("Map loaded successfully");
