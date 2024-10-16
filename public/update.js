@@ -70,7 +70,6 @@ function showTab(tab) {
     var realTimeTab = document.getElementById("realtime");
     var historyTab = document.getElementById("history");
     var reproducer = document.getElementById("reproducer");
-    console.log(tab);
     if (tab === "realtime") {
         popUpMenu.style.visibility='hidden'
         realTimeTab.style.visibility = "visible";
@@ -89,9 +88,7 @@ function showTab(tab) {
         reproducer.style.position = "absolute";
         clearMap();
         initMap();
-        console.log("Starting live location updates...");
         startLiveLocation();
-        console.log("Realtime tab selected");
     } else if (tab === "history") {
         historyTab.style.visibility = "visible";
         historyTab.style.opacity = "1";
@@ -275,12 +272,9 @@ async function initMap() {
         glyph: '!',
         glyphColor: 'white'
     });
-
-    console.log('Map initialized successfully');
 }
 
 function startLiveLocation() {
-    console.log('Starting live location updates...');
     live = setInterval(fetchLatestLocation, 10000);
 }
 
@@ -294,7 +288,6 @@ function fetchLatestLocation() {
         .then(data => {
             updateLocationDisplay(data);
             updateMapAndRoute(data.Latitude, data.Longitude, data.Timestamp);
-            console.log(data.Latitude, data.Longitude, data.Timestamp);
         })
         .catch(err => console.error('Error fetching latest location:', err));
 }
@@ -392,9 +385,7 @@ function updateMapAndRouteHistorics(lat, lng, timestamp, searchByLocation = fals
             routeCoordinates = [newPosition];
             info.push(allInfo);
         }
-        
-        //console.log(info)
-        document.getElementById('slider').max = info.length
+        document.getElementById('slider').max = info.length;
         lastTimestamp = newTimestamp;
     }
 }
@@ -420,17 +411,11 @@ function updateMapAndRouteLocations(lat, lng, timestamp, searchByLocation = fals
         if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 0.3 && newTimestamp > lastTimestamp) {
             routeCoordinates.push(newPosition);
             drawPolylineHistorics(lastPosition, newPosition);
-            //console.log(timeDiff)
-            //info.push(allInfo);
         } else if (distance > 1 || timeDiff >= 0.3) {
             // If distance is greater than 1 kilometer or the time difference is greater (or equal) than 1 minute, 
             // Start a new route from that point
             routeCoordinates = [newPosition];
-            //info.push(allInfo);
         }
-        
-        //console.log(info)
-        //document.getElementById('slider').max = info.length
         lastTimestamp = newTimestamp;
     }
 }
@@ -452,7 +437,6 @@ function drawPolyline(origin, destination) {
 
     polyline.setMap(map);
     polylines.push(polyline);
-    console.log("Polyline drawn successfully");
 }
 
 function drawPolylineHistorics(origin, destination) {
@@ -517,7 +501,6 @@ function drawPolylineHistorics(origin, destination) {
     // Añadir la polilínea al mapa
     polyline.setMap(map);
     polylines.push(polyline);
-    //console.log(polylines.length)
 }
 
 function convertToLocalTime(utcDateString) {
@@ -596,20 +579,16 @@ document.getElementById('fetch-data').addEventListener('click', () => {
         fetch(`/historics?startDate=${encodeURIComponent(date1)}&endDate=${encodeURIComponent(date2)}`) 
             .then(response => response.json())
             .then(data => {
-                //console.log('Data fetched:', data); //for debugging reasons
-                //console.log(data.length);
                 if (data.length == 0){
                     Toast.fire({
                         icon: 'warning',
                         title: 'No data found for the selected period'
                     });
-                } else{// Process the received data 
+                } else{
                     popUpMenu.style.visibility='visible';
-                    data.forEach(data => { //execute for every object in JSON
+                    data.forEach(data => {
                         updateLocationDisplay(data);
                         updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp);
-    
-                       
                     });}
                 
             })
@@ -643,7 +622,6 @@ document.getElementById('fetch-location').addEventListener("click", () => {
     } else {
         radiusInput.value = "";
     }
-    //console.log("probando")
 });
 
 document.getElementById('location-input').addEventListener("keydown", (e) => {
@@ -798,8 +776,5 @@ toggleButton.addEventListener('click', () => {
 // Initialize map when the page loads
 loadName();
 loadMap();
-console.log("Initializing map...");
 initMap();
-console.log("Map loaded successfully");
 showTab("realtime");
-console.log("Realtime tab selected");
