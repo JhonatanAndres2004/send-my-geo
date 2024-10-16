@@ -442,13 +442,27 @@ body.dark-mode #dark-mode-toggle{
     background-color: #4b0082;
 }
 
-body.dark-mode .gm-style .gm-style-iw-d::-webkit-scrollbar-track, 
+.gm-style .gm-style-iw-d::-webkit-scrollbar-track, 
 .gm-style .gm-style-iw-d::-webkit-scrollbar-track-piece,
 .gm-style .gm-style-iw-c,
 .gm-style .gm-style-iw-t::after,
 .gm-style .gm-style-iw-tc::after { 
-  background: #282828;
+    background: #282828;
+    background-color: #282828;
+    color: white;
+}
 
+.gm-style .transit-container div {
+    background-color: #282828;
+}
+
+.gm-ui-hover-effect>span {
+    background-color: white;
+}
+
+.poi-info-window div, .poi-info-window a {
+    background-color: #282828;
+    color: white;
 }
 
 .pop-up-menu{
