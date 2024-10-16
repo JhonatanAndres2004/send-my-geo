@@ -583,9 +583,7 @@ function clearMap() {
     lastTimestamp = null;
     colorIndex = 0;
     info = [];
-    infoWindow.close();
     infoWindowMarker.setMap(null);
-  
 }
 
 document.getElementById('fetch-data').addEventListener('click', () => {
