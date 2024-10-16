@@ -649,6 +649,10 @@ async function initializeAutocomplete() {
 
 async function setInfoWindow(lat, lng, timestamp) { 
     const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+    
+    if (infoWindowMarker) infoWindowMarker.setMap(null);
+    if (infoWindow) infoWindow.close();
+    
     infoWindowMarker = new AdvancedMarkerElement({
         map: map,
         content: pin.element
