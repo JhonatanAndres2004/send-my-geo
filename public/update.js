@@ -143,9 +143,17 @@ function showTab(tab) {
     }
 }
 
+document.addEventListener('DOMContentLoaded', function(){
+    const slider = document.getElementById('slider');
+  
+    // Set initial value for the custom property to reflect the slider position
+    // slider.style.setProperty('--value', `${(slider.value - slider.min) * 100 / (slider.max - slider.min)}%`);
+    slider.value = 0
+})
 
 // Update the valueSlider when the slider changes
 slider.oninput = function() {
+    this.style.setProperty('--value', `${(this.value - this.min) * 100 / (this.max - this.min)}%`);
     routeCoordinates=[];
     if (previous == null) {
         previous = this.value;
@@ -183,10 +191,15 @@ slider.oninput = function() {
 
         // Update previous value for the next input
         previous = current;
+
     }
 };
 
 function playSlider() {
+    const slider = document.getElementById('slider');
+  
+    // Set initial value for the custom property to reflect the slider position
+    slider.style.setProperty('--value', `${(slider.value - slider.min) * 100 / (slider.max - slider.min)}%`);
     if (played == 0){
         let slider = document.getElementById('slider');
         let max = slider.max;  // Max value of the slider
@@ -199,10 +212,14 @@ function playSlider() {
                 slider.oninput();  // Trigger the oninput function to update map locations
             } else {
                 slider.value = 0;
+                slider.style.setProperty('--value', `${(slider.value - slider.min) * 100 / (slider.max - slider.min)}%`);
                 clearInterval(playInterval);  // Stop when the slider reaches the max value
                 played = 0;
-                infoWindowMarker.setMap(null)
                 infoWindow.close
+                infoWindowMarker.setMap(null);
+                toggleButton.classList.remove('pause');
+                toggleButton.classList.add('play');
+                toggleButton.innerHTML = '▷'; // Play icon and text
             }
         }, 1000);  // Adjust the time interval for the speed (500ms = 0.5 seconds)
         played = 1;
@@ -438,7 +455,7 @@ function updateMapAndRouteLocations(lat, lng, timestamp, searchByLocation = fals
         const distance = calculateDistance(lastPosition.lat, lastPosition.lng, newPosition.lat, newPosition.lng);
         const timeDiff = (newTimestamp - lastTimestamp) / (1000 * 60); // time difference in minutes
         
-        if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 0.4 && newTimestamp > lastTimestamp) {
+        if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 0.3 && newTimestamp > lastTimestamp) {
             routeCoordinates.push(newPosition);
             drawPolylineHistorics(lastPosition, newPosition);
             //console.log(timeDiff)
@@ -595,6 +612,9 @@ function clearMap() {
     lastTimestamp = null;
     colorIndex = 0;
     info = [];
+    infoWindow.close;
+    infoWindowMarker.setMap(null);
+    marker.setMap(null);
 }
 
 document.getElementById('fetch-data').addEventListener('click', () => {
@@ -790,6 +810,8 @@ document.getElementById('backToHistorics').addEventListener("click", ()=>{
     //popUpMenu.style.opacity ="0" 
     //popUpMenu.style.position="absolute" 
     showTab("history");
+    document.getElementById('start-date').innerHTML = ""
+    document.getElementById('end-date').innerHTML =  ""
 } )
 // document.getElementById('playButton').addEventListener("click", () => {
 //     //document.getElementById('stopButton').style.visibility="visible"
