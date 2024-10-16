@@ -824,6 +824,6 @@ toggleButton.addEventListener('click', () => {
 loadName();
 loadMap();
 document.addEventListener('DOMContentLoaded', async function() {
-    await initMap()
+    await initMap();
     showTab("realtime");
 });
