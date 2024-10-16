@@ -583,7 +583,7 @@ function clearMap() {
     lastTimestamp = null;
     colorIndex = 0;
     info = [];
-    infoWindow.close;
+    infoWindow.close();
     infoWindowMarker.setMap(null);
   
 }
