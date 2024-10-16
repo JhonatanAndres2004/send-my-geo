@@ -171,12 +171,9 @@ slider.oninput = function() {
 };
 
 function playSlider() {
-    const slider = document.getElementById('slider');
-  
     // Set initial value for the custom property to reflect the slider position
     slider.style.setProperty('--value', `${(slider.value - slider.min) * 100 / (slider.max - slider.min)}%`);
     if (played == 0){
-        let slider = document.getElementById('slider');
         let max = slider.max;  // Max value of the slider
     
         // Start the interval to update the slider value every 500ms (or any speed you like)
