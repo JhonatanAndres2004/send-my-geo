@@ -276,15 +276,6 @@ async function initMap() {
         glyphColor: 'white'
     });
 
-    infoWindowMarker = new AdvancedMarkerElement({
-        map: map,
-        content: pin.element
-    });
-
-    infoWindow = new google.maps.InfoWindow({
-        content: "",
-    });
-
     console.log('Map initialized successfully');
 }
 
@@ -573,17 +564,14 @@ function checkDates(dateStart, dateEnd) {
 
 function clearMap() {
     if (circle) circle.setMap(null);
-    infoWindowMarkers.forEach(marker => marker.setMap(null));
-    infowindows.forEach(infowindow => infowindow.close());
-    infoWindowMarkers = [];
-    infowindows = []; 
+    if (infoWindowMarker) infoWindowMarker.setMap(null);
+    if (infoWindow) infoWindow.close();
     polylines.forEach(polyline => polyline.setMap(null));
     polylines = [];
     routeCoordinates = [];
     lastTimestamp = null;
     colorIndex = 0;
     info = [];
-    infoWindowMarker.setMap(null);
 }
 
 document.getElementById('fetch-data').addEventListener('click', () => {
@@ -682,7 +670,16 @@ async function initializeAutocomplete() {
 }
 
 async function setInfoWindow(lat, lng, timestamp) { 
-    console.log(lat)
+    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+    infoWindowMarker = new AdvancedMarkerElement({
+        map: map,
+        content: pin.element
+    });
+
+    infoWindow = new google.maps.InfoWindow({
+        content: "",
+    });
+
     infoWindowMarker.setMap(map);
     // Update infoWindowMarker's position
     infoWindowMarker.position = new google.maps.LatLng(lat, lng);
