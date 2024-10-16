@@ -184,7 +184,7 @@ function playSlider() {
                 slider.style.setProperty('--value', `${(slider.value - slider.min) * 100 / (slider.max - slider.min)}%`);
                 clearInterval(playInterval);  // Stop when the slider reaches the max value
                 played = 0;
-                infoWindow.close
+                infoWindow.close();
                 infoWindowMarker.setMap(null);
                 toggleButton.classList.remove('pause');
                 toggleButton.classList.add('play');
@@ -671,11 +671,6 @@ async function setInfoWindow(lat, lng, timestamp) {
 
     // Open the info window on the updated marker
     infoWindow.open(map, infoWindowMarker);
-
-    infoWindowMarker.addListener('click', () => {
-        infowindows.forEach(infowindow => infowindow.close());
-        infoWindow.open(map, infoWindowMarker);
-    });
 }
 
 function geocode(request, startDate, endDate, radius) {
