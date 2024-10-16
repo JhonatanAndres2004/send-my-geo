@@ -154,13 +154,10 @@ slider.oninput = function() {
     }
     polylines.forEach(polyline => polyline.setMap(null));
     polylines = [];
-    //valueSlider.innerHTML = this.value;  // Display the current slider value
-    let current = parseInt(this.value);  // Parse the slider value as an integer
-    let prevValue = parseInt(previous);  // Previous value as an integer
+    let current = parseInt(this.value);
+    let prevValue = parseInt(previous);
 
-    // Ensure the current value exists in the data (e.g., `info`)
     if (info[current]) {
-
         // Case when moving forward (increasing the slider value)
         if (current) { // > prevValue
             for (let i= 0;i<current -1; i++){
@@ -168,24 +165,8 @@ slider.oninput = function() {
                 setInfoWindow(info[i].lat, info[i].lng, info[i].Timestamp);
                 
             }
-            
-        // Case when moving backward (decreasing the slider value)
-        } //else if (current <= prevValue) {
-        //     if (polylines[current-1]) { //infoWindowMarkers[current-1] && 
-        //         // Remove marker and polyline from the map
-        //         //infoWindowMarkers[current-1].setMap(null);
-        //         polylines[current-1].setMap(null);
-
-        //         // Optionally, you can remove them from the arrays if needed
-        //         //infoWindowMarkers.pop();
-        //         polylines.pop();
-                
-        //     }
-        // }
-
-        // Update previous value for the next input
+        }
         previous = current;
-
     }
 };
 
@@ -306,6 +287,8 @@ async function initMap() {
     infoWindow = new google.maps.InfoWindow({
         content: "",
     });
+
+    console.log('Map initialized successfully');
 }
 
 function startLiveLocation() {
@@ -823,7 +806,5 @@ toggleButton.addEventListener('click', () => {
 // Initialize map when the page loads
 loadName();
 loadMap();
-document.addEventListener('DOMContentLoaded', async function() {
-    await initMap();
-    showTab("realtime");
-});
+initMap();
+showTab("realtime");
