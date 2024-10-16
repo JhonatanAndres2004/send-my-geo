@@ -16,6 +16,14 @@ let popUpMenu=document.getElementById('emergent-pop-up');
 let locationHistoryTab = document.getElementById("location-history");
 let closeButtonContainer=document.getElementById("close-popup-container")
 let closeButton=document.getElementById("close-popup")
+let slider = document.getElementById('slider');
+let valueSlider = document.getElementById('valueSlider')
+let info= []
+let previous;
+let played = 0;
+let infoWindow;
+let infoWindowMarker;
+let pin;
 
 const Toast = Swal.mixin({
     toast: true,
@@ -60,6 +68,7 @@ function loadMap() {
 function showTab(tab) {
     var realTimeTab = document.getElementById("realtime");
     var historyTab = document.getElementById("history");
+    var slider = document.getElementById("reproducer");
     
     if (tab === "realtime") {
         popUpMenu.style.visibility='hidden'
@@ -74,6 +83,9 @@ function showTab(tab) {
         locationHistoryTab.style.position = "absolute";
         document.getElementById('realtime-button').disabled = true;
         document.getElementById('history-button').disabled = false;
+        slider.style.visibility = "hidden";
+        slider.style.opacity = "0";
+        slider.style.position = "absolute";
         clearMap();
         initMap();
         startLiveLocation();
@@ -87,7 +99,11 @@ function showTab(tab) {
         document.getElementById('realtime-button').disabled = false;
         document.getElementById('history-button').disabled = true;
         document.getElementById('start-date').value = "";
-        document.getElementById('end-date').value = "";   
+        document.getElementById('end-date').value = "";
+        slider.style.visibility = "hidden";
+        slider.style.opacity = "0";
+        slider.style.position = "absolute";
+  
         stopLiveLocation();
     } else if (tab === "location-history") {
         locationHistoryTab.style.visibility = "visible";
@@ -99,11 +115,120 @@ function showTab(tab) {
         historyTab.style.visibility = "hidden";
         historyTab.style.opacity = "0";
         historyTab.style.position = "absolute";
+        slider.style.visibility = "hidden";
+        slider.style.opacity = "0";
+        slider.style.position = "absolute";
         document.getElementById('realtime-button').disabled = false;
         document.getElementById('history-button').disabled = false;
         document.getElementById('location-history-button').disabled = true;
         stopLiveLocation();
+    } else if (tab === "slider"){
+        locationHistoryTab.style.visibility = "hidden";
+        locationHistoryTab.style.opacity = "0";
+        locationHistoryTab.style.position = "absolute";
+        realTimeTab.style.visibility = "hidden";
+        realTimeTab.style.opacity = "0";
+        realTimeTab.style.position = "absolute";
+        historyTab.style.visibility = "hidden";
+        historyTab.style.opacity = "0";
+        historyTab.style.position = "absolute";
+        slider.style.visibility = "visible";
+        slider.style.opacity = "1";
+        slider.style.position = "relative";
+        popUpMenu.style.visibility='visible';
+        document.getElementById('stopButton').style.visibility="visible"
+        document.getElementById('realtime-button').disabled = false;
+        document.getElementById('history-button').disabled = false;
+        document.getElementById('location-history-button').disabled = true
     }
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+    const slider = document.getElementById('slider');
+  
+    // Set initial value for the custom property to reflect the slider position
+    // slider.style.setProperty('--value', `${(slider.value - slider.min) * 100 / (slider.max - slider.min)}%`);
+    slider.value = 0
+})
+
+// Update the valueSlider when the slider changes
+slider.oninput = function() {
+    this.style.setProperty('--value', `${(this.value - this.min) * 100 / (this.max - this.min)}%`);
+    routeCoordinates=[];
+    if (previous == null) {
+        previous = this.value;
+    }
+    polylines.forEach(polyline => polyline.setMap(null));
+    polylines = [];
+    //valueSlider.innerHTML = this.value;  // Display the current slider value
+    let current = parseInt(this.value);  // Parse the slider value as an integer
+    let prevValue = parseInt(previous);  // Previous value as an integer
+
+    // Ensure the current value exists in the data (e.g., `info`)
+    if (info[current]) {
+
+        // Case when moving forward (increasing the slider value)
+        if (current) { // > prevValue
+            for (let i= 0;i<current -1; i++){
+                updateMapAndRouteLocations(info[i].lat, info[i].lng, info[i].Timestamp, true);
+                setInfoWindow(info[i].lat, info[i].lng, info[i].Timestamp);
+                
+            }
+            
+        // Case when moving backward (decreasing the slider value)
+        } //else if (current <= prevValue) {
+        //     if (polylines[current-1]) { //infoWindowMarkers[current-1] && 
+        //         // Remove marker and polyline from the map
+        //         //infoWindowMarkers[current-1].setMap(null);
+        //         polylines[current-1].setMap(null);
+
+        //         // Optionally, you can remove them from the arrays if needed
+        //         //infoWindowMarkers.pop();
+        //         polylines.pop();
+                
+        //     }
+        // }
+
+        // Update previous value for the next input
+        previous = current;
+
+    }
+};
+
+function playSlider() {
+    const slider = document.getElementById('slider');
+  
+    // Set initial value for the custom property to reflect the slider position
+    slider.style.setProperty('--value', `${(slider.value - slider.min) * 100 / (slider.max - slider.min)}%`);
+    if (played == 0){
+        let slider = document.getElementById('slider');
+        let max = slider.max;  // Max value of the slider
+    
+        // Start the interval to update the slider value every 500ms (or any speed you like)
+        playInterval = setInterval(() => {
+            let currentValue = parseInt(slider.value);
+            if (currentValue < max) {
+                slider.value = currentValue + 1; // Increment slider value
+                slider.oninput();  // Trigger the oninput function to update map locations
+            } else {
+                slider.value = 0;
+                slider.style.setProperty('--value', `${(slider.value - slider.min) * 100 / (slider.max - slider.min)}%`);
+                clearInterval(playInterval);  // Stop when the slider reaches the max value
+                played = 0;
+                infoWindow.close
+                infoWindowMarker.setMap(null);
+                toggleButton.classList.remove('pause');
+                toggleButton.classList.add('play');
+                toggleButton.innerHTML = '▷'; // Play icon and text
+            }
+        }, 1000);  // Adjust the time interval for the speed (500ms = 0.5 seconds)
+        played = 1;
+    }
+
+}
+
+function stopSlider(){
+    clearInterval(playInterval)
 }
 
 
@@ -145,7 +270,7 @@ function loadName() {
 
 async function initMap() {
     const { Map } = await google.maps.importLibrary("maps");
-    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+    const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
 
     let initialPosition = { lat: 0, lng: 0 };
     
@@ -170,11 +295,33 @@ async function initMap() {
         position: initialPosition,
         title: "Current Location",
     });
-}
+    
+// Set the initial value when the page loads
+    pin = new PinElement({
+        scale: 0.8,
+        background: polylineColor,
+        borderColor: 'white',
+        glyph: '!',
+        glyphColor: 'white'
+    });
 
-function startLiveLocation() {
-    live = setInterval(fetchLatestLocation, 10000);
+    infoWindowMarker = new AdvancedMarkerElement({
+        map: map,
+        //position: initialPosition,
+        content: pin.element
+    });
+//infoWindowMarkers.push(infoWindowMarker);
+
+    infoWindow = new google.maps.InfoWindow({
+        content: "",
+        //maxWidth: 50 ,
+        //maxHeight: 1
+    });//({
+    //    content: `<b>Location: (${lat}, ${lng})</b> <br> Time: ${convertToLocalTime(timestamp)}`,
+    //});
+    //infowindows.push(infoWindow);
 }
+//const { AdvancedMarkerElement, PinElement } = google.maps.importLibrary("marker");
 
 function stopLiveLocation() {
     clearInterval(live);
@@ -249,8 +396,9 @@ function updateMapAndRoute(lat, lng, timestamp) {
             polylines.forEach(polyline => polyline.setMap(null));
             polylines = [];
             colorIndex = 0; // reset color index
+            
         }
-
+        
         lastTimestamp = newTimestamp;
     }
 }
@@ -258,7 +406,7 @@ function updateMapAndRoute(lat, lng, timestamp) {
 function updateMapAndRouteHistorics(lat, lng, timestamp, searchByLocation = false) {
     const newPosition = { lat: parseFloat(lat), lng: parseFloat(lng) };
     const newTimestamp = new Date(timestamp);
-    
+    const allInfo ={lat:parseFloat(lat),lng:parseFloat(lng),Timestamp:timestamp}
     if (!searchByLocation) {
         marker.position = newPosition;
         map.panTo(newPosition);
@@ -275,15 +423,56 @@ function updateMapAndRouteHistorics(lat, lng, timestamp, searchByLocation = fals
         if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 1) {
             routeCoordinates.push(newPosition);
             drawPolylineHistorics(lastPosition, newPosition);
+            info.push(allInfo);
         } else if (distance > 1 || timeDiff >= 1) {
             // If distance is greater than 1 kilometer or the time difference is greater (or equal) than 1 minute, 
             // Start a new route from that point
             routeCoordinates = [newPosition];
+            info.push(allInfo);
         }
-
+        
+        //console.log(info)
+        document.getElementById('slider').max = info.length
         lastTimestamp = newTimestamp;
     }
 }
+
+
+function updateMapAndRouteLocations(lat, lng, timestamp, searchByLocation = false) {
+    const newPosition = { lat: parseFloat(lat), lng: parseFloat(lng) };
+    const newTimestamp = new Date(timestamp);
+    //const allInfo ={lat:parseFloat(lat),lng:parseFloat(lng),Timestamp:timestamp}
+    if (!searchByLocation) {
+        marker.position = newPosition;
+        map.panTo(newPosition);
+    }
+    
+    if (routeCoordinates.length === 0) {
+        routeCoordinates.push(newPosition);
+        lastTimestamp = newTimestamp;
+    } else {
+        const lastPosition = routeCoordinates[routeCoordinates.length - 1];
+        const distance = calculateDistance(lastPosition.lat, lastPosition.lng, newPosition.lat, newPosition.lng);
+        const timeDiff = (newTimestamp - lastTimestamp) / (1000 * 60); // time difference in minutes
+        
+        if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 0.3 && newTimestamp > lastTimestamp) {
+            routeCoordinates.push(newPosition);
+            drawPolylineHistorics(lastPosition, newPosition);
+            //console.log(timeDiff)
+            //info.push(allInfo);
+        } else if (distance > 1 || timeDiff >= 0.3) {
+            // If distance is greater than 1 kilometer or the time difference is greater (or equal) than 1 minute, 
+            // Start a new route from that point
+            routeCoordinates = [newPosition];
+            //info.push(allInfo);
+        }
+        
+        //console.log(info)
+        //document.getElementById('slider').max = info.length
+        lastTimestamp = newTimestamp;
+    }
+}
+
 
 function drawPolyline(origin, destination) {
     const path = [
@@ -315,7 +504,7 @@ function drawPolylineHistorics(origin, destination) {
         path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
         scale: 1,
         strokeColor: polylineColor,
-        strokeWeight: 2
+        strokeWeight: 3
     };
 
     const polyline = new google.maps.Polyline({
@@ -334,15 +523,15 @@ function drawPolylineHistorics(origin, destination) {
     function updateArrowsByZoom() {
         const zoom = map.getZoom();
         let repeat, scale;
-        if (zoom <= 16) {
+        if (zoom <= 13) {
             polyline.setOptions({
                 icons: [] 
             });
             return;
         }
 
-        if (zoom > 16) {
-            scale = 3; 
+        if (zoom > 13) {
+            scale = 2; 
         } 
 
         polyline.setOptions({
@@ -366,6 +555,7 @@ function drawPolylineHistorics(origin, destination) {
     // Añadir la polilínea al mapa
     polyline.setMap(map);
     polylines.push(polyline);
+    //console.log(polylines.length)
 }
 
 function convertToLocalTime(utcDateString) {
@@ -421,11 +611,14 @@ function clearMap() {
     routeCoordinates = [];
     lastTimestamp = null;
     colorIndex = 0;
+    info = [];
+    infoWindow.close;
+    infoWindowMarker.setMap(null);
+  
 }
 
 document.getElementById('fetch-data').addEventListener('click', () => {
     console.log(dateMin);
-
     let startDate = document.getElementById('start-date').value;
     let endDate = document.getElementById('end-date').value;
     const correctDates = checkDates(startDate, endDate); //check if start date is earlier than end date
@@ -446,8 +639,8 @@ document.getElementById('fetch-data').addEventListener('click', () => {
         fetch(`/historics?startDate=${encodeURIComponent(date1)}&endDate=${encodeURIComponent(date2)}`) 
             .then(response => response.json())
             .then(data => {
-                console.log('Data fetched:', data); //for debugging reasons
-                console.log(data.length);
+                //console.log('Data fetched:', data); //for debugging reasons
+                //console.log(data.length);
                 if (data.length == 0){
                     Toast.fire({
                         icon: 'warning',
@@ -475,6 +668,7 @@ document.getElementById('fetch-data').addEventListener('click', () => {
 });
 
 document.getElementById('fetch-location').addEventListener("click", () => {
+    clearMap();
     let startDate = document.getElementById('start-date').value;
     let endDate = document.getElementById('end-date').value;
     startDate = convertToGlobalTime(startDate);
@@ -484,11 +678,15 @@ document.getElementById('fetch-location').addEventListener("click", () => {
     date2 = formatDateTime(endDate);
     const radiusInput = document.getElementById('radius-input');
     const radius = parseFloat(radiusInput.value);
+
     if (radius > 0) {
         geocode({ address: document.getElementById('location-input').value }, date1, date2, radius);
+        showTab("slider")
+        
     } else {
         radiusInput.value = "";
     }
+    //console.log("probando")
 });
 
 document.getElementById('location-input').addEventListener("keydown", (e) => {
@@ -514,28 +712,17 @@ async function initializeAutocomplete() {
     });
 }
 
-async function setInfoWindow(lat, lng, timestamp) {
-    const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
-    
-    const pin = new PinElement({
-        scale: 0.8,
-        background: polylineColor,
-        borderColor: 'white',
-        glyph: '!',
-        glyphColor: 'white'
-    });
-    
-    const infoWindowMarker = new AdvancedMarkerElement({
-        map: map,
-        position: { lat: parseFloat(lat), lng: parseFloat(lng) },
-        content: pin.element
-    });
-    infoWindowMarkers.push(infoWindowMarker);
+async function setInfoWindow(lat, lng, timestamp) { 
+    console.log(lat)
+    infoWindowMarker.setMap(map);
+    // Update infoWindowMarker's position
+    infoWindowMarker.position = new google.maps.LatLng(lat, lng);
 
-    const infoWindow = new google.maps.InfoWindow({
-        content: `<b>Location: (${lat}, ${lng})</b> <br> Time: ${convertToLocalTime(timestamp)}`,
-    });
-    infowindows.push(infoWindow);
+    // Set the content for the info window
+    infoWindow.setContent(` ${convertToLocalTime(timestamp)}`);
+
+    // Open the info window on the updated marker
+    infoWindow.open(map, infoWindowMarker);
 
     infoWindowMarker.addListener('click', () => {
         infowindows.forEach(infowindow => infowindow.close());
@@ -572,7 +759,9 @@ function geocode(request, startDate, endDate, radius) {
             fetch(`/location-request?startDate=${startDate}&endDate=${endDate}&lat=${lat}&lon=${lng}&radius=${radius}`)
                 .then(response => response.json())
                 .then(data => {
+                    //document.getElementById('sliderLocations').max = data.length
                     console.log('Data fetched:', data);
+
                     if (data.length == 0) {
                         Toast.fire({
                             icon: 'warming',
@@ -582,13 +771,16 @@ function geocode(request, startDate, endDate, radius) {
                         data.forEach(data => {
                             updateLocationDisplay(data);
                             updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp, true);
-                            setInfoWindow(data.Latitude, data.Longitude, data.Timestamp);
+                            
+                            //setInfoWindow(data.Latitude, data.Longitude, data.Timestamp);
                         });
+                        
                     }
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
                 });
+                
         })
         .catch((e) => {
             Toast.fire({
@@ -612,6 +804,53 @@ closeButton.addEventListener('click',()=>{
     closeButtonContainer.style.visibility="hidden";
     closeButtonContainer.style.opacity=0;
 })
+document.getElementById('backToHistorics').addEventListener("click", ()=>{
+    clearMap();
+    popUpMenu.style.visibility='hidden';
+    marker.setMap(null);
+    //popUpMenu.style.opacity ="0" 
+    //popUpMenu.style.position="absolute" 
+    showTab("history");
+    document.getElementById('start-date').value = ''
+    document.getElementById('end-date').value =  ''
+} )
+// document.getElementById('playButton').addEventListener("click", () => {
+//     //document.getElementById('stopButton').style.visibility="visible"
+//     //document.getElementById('playButton').style.visibility="hidden"
+//     playSlider();
+//     document.getElementById('playButton').classList.add('button-active')
+//     document.getElementById('stopButton').classList.remove('button-active')
+//     //document.getElementById('stopButton').style.position="absolute"
+// })
+
+// document.getElementById('stopButton').addEventListener("click", () => {
+//     stopSlider();
+//     played = 0;
+//     document.getElementById('playButton').classList.remove('button-active')
+//     document.getElementById('stopButton').classList.add('button-active')
+// })
+const toggleButton = document.getElementById('toggleButton');
+    
+toggleButton.addEventListener('click', () => {
+    if (toggleButton.classList.contains('play')) {
+        toggleButton.classList.remove('play');
+        toggleButton.classList.add('pause');
+        toggleButton.innerHTML = '❚❚'; // Pause icon and text
+        playSlider();
+        // document.getElementById('playButton').classList.remove('button-active')
+        // document.getElementById('stopButton').classList.add('button-active')
+
+    } else {
+        toggleButton.classList.remove('pause');
+        toggleButton.classList.add('play');
+        toggleButton.innerHTML = '▷'; // Play icon and text
+        stopSlider();
+        played = 0;
+        // document.getElementById('playButton').classList.add('button-active')
+        // document.getElementById('stopButton').classList.remove('button-active')
+        
+    }
+});
 // Initialize map when the page loads
 loadName();
 loadMap();
