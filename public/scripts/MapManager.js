@@ -57,7 +57,6 @@ export default class MapManager {
         
         this.updateMarkerPosition(newPosition);
         
-        console.log(this.routeCoordinates);
         if (this.routeCoordinates.length === 0) {
             this.routeCoordinates.push(newPosition);
             this.lastTimestamp = newTimestamp;
