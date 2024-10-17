@@ -63,7 +63,7 @@ export default class MapManager {
             this.lastTimestamp = newTimestamp;
         } else {
             const lastPosition = this.routeCoordinates[this.routeCoordinates.length - 1];
-            const distance = this.ls.calculateDistance(this.lastPosition.lat, this.lastPosition.lng, newPosition.lat, newPosition.lng);
+            const distance = this.ls.calculateDistance(lastPosition.lat, lastPosition.lng, newPosition.lat, newPosition.lng);
             const timeDiff = (newTimestamp - this.lastTimestamp) / (1000 * 60); // time difference in minutes
             
             if (!this.ls.isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 1) {
