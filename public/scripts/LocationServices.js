@@ -51,4 +51,16 @@ export default class LocationServices {
         };
         return utcDate.toLocaleDateString('en-GB', options);
     }
+
+    checkDates(dateStart, dateEnd) {
+        let start = new Date(dateStart);
+        let end = new Date(dateEnd);
+        return start < end;
+    }
+
+    formatDateTime(dateTime) {
+        const [date, time] = dateTime.split(', ');
+        const [day, month, year] = date.split('/');
+        return `${year}-${month}-${day} ${time}`;
+    }
 } 

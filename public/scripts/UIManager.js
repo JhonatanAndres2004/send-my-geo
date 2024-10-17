@@ -3,8 +3,37 @@ export default class UIManager {
         this.slider = document.getElementById('slider');
         this.valueSlider = document.getElementById('valueSlider');
         this.toast = this.createToast();
+        this.dateMin = null;
+        this.dateMax = null;
         this.ls = locationServices;
     }
+
+    // Load date picker for start date
+    startDate = flatpickr("#start-date", {
+        dateFormat: "Y-m-d H:i",
+        maxDate: new Date(),
+        mod: "multiple",
+        enableTime: true,
+        onClose: function(dateStr) {
+            this.dateMin = dateStr;
+            console.log(dateMin)
+            endDate.set('minDate', dateStr)
+        }
+    });
+    
+    
+    // Load date picker for end date
+    endDate = flatpickr("#end-date", {
+        dateFormat: "Y-m-d H:i",
+        maxDate: new Date(),
+        mod: "multiple",
+        enableTime: true,
+        onClose: function(dateStr) {
+            this.dateMax = dateStr;
+            console.log(dateMax)
+            startDate.set('maxDate', dateStr)
+        }
+    });
   
     loadName() {
         fetch('/name')
