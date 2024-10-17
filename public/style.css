@@ -169,7 +169,7 @@ body {
 
 
 
-#fetch-data, #fetch-location,#backToHistorics {
+#fetch-history-button, #fetch-location, #backToHistorics {
     justify-self: center; 
     padding: 5px 10px;
     background-color: #6e00b3 !important;
