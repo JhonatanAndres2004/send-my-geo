@@ -116,4 +116,87 @@ export default class MapManager {
         this.polylines = [];
         this.routeCoordinates = [];
     }
-}  
+
+    updateMapAndRouteHistorics(lat, lng, timestamp, searchByLocation = false) {
+        const newPosition = { lat: parseFloat(lat), lng: parseFloat(lng) };
+        const newTimestamp = new Date(timestamp);
+        const allInfo = { lat: parseFloat(lat), lng: parseFloat(lng), Timestamp: timestamp }
+        
+        if (!searchByLocation) this.updateMarkerPosition(newPosition);
+
+        if (this.routeCoordinates.length === 0) {
+            this.routeCoordinates.push(newPosition);
+            this.lastTimestamp = newTimestamp;
+        } else {
+            const lastPosition = this.routeCoordinates[this.routeCoordinates.length - 1];
+            const distance = this.ls.calculateDistance(lastPosition.lat, lastPosition.lng, newPosition.lat, newPosition.lng);
+            const timeDiff = (newTimestamp - this.lastTimestamp) / (1000 * 60); // time difference in minutes
+            
+            if (!this.ls.isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 1) {
+                this.routeCoordinates.push(newPosition);
+                this.drawPolylineHistorics(lastPosition, newPosition);
+                this.info.push(allInfo);
+            } else if (distance > 1 || timeDiff >= 1) {
+                // If distance is greater than 1 kilometer or the time difference is greater (or equal) than 1 minute, 
+                // Start a new route from that point
+                this.routeCoordinates = [newPosition];
+                this.info.push(allInfo);
+            }
+            document.getElementById('slider').max = this.info.length;
+            this.lastTimestamp = newTimestamp;
+        }
+    }
+
+    drawPolylineHistorics(origin, destination) {
+        const path = [
+            new google.maps.LatLng(origin.lat, origin.lng),
+            new google.maps.LatLng(destination.lat, destination.lng)
+        ];
+        
+        // Arrow symbol for the polyline
+        const lineSymbol = {
+            path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+            scale: 1,
+            strokeColor: polylineColor,
+            strokeWeight: 3
+        };
+    
+        const polyline = new google.maps.Polyline({
+            path: path,
+            geodesic: true,
+            strokeColor: polylineColor,
+            strokeOpacity: 0.8,
+            strokeWeight: 5,
+            icons: [{
+                icon: lineSymbol,
+                repeat: "200px"
+            }]
+        });
+    
+        // Update arrows with zoom
+        function updateArrowsByZoom() {
+            const zoom = map.getZoom();
+            if (zoom <= 15) {
+                polyline.setOptions({
+                    icons: [] 
+                });
+            } else {
+                polyline.setOptions({
+                    icons: [{
+                        icon: {
+                            ...lineSymbol,
+                            scale: 2
+                        },
+                        offset: "100%"
+                    }]
+                });
+            }
+        }
+
+        google.maps.event.addListener(this.map, 'zoom_changed', updateArrowsByZoom);
+        updateArrowsByZoom();
+        polyline.setMap(this.map);
+        this.polylines.push(polyline);
+    }
+
+}
