@@ -1,14 +1,12 @@
-import LocationServices from './LocationServices.js';
-const ls = new LocationServices();
-
 export default class MapManager {
-    constructor() {
+    constructor(locationServices) {
         this.map = null;
         this.marker = null;
         this.polylines = [];
         this.routeCoordinates = [];
         this.lastTimestamp = null;
         this.mapThemeId = 'a43cc08dd4e3e26d';
+        this.ls = locationServices;
         window.initMap = this.initMap.bind(this);
     }
   
@@ -64,10 +62,10 @@ export default class MapManager {
             this.lastTimestamp = newTimestamp;
         } else {
             const lastPosition = this.routeCoordinates[this.routeCoordinates.length - 1];
-            const distance = ls.calculateDistance(this.lastPosition.lat, this.lastPosition.lng, newPosition.lat, newPosition.lng);
+            const distance = this.ls.calculateDistance(this.lastPosition.lat, this.lastPosition.lng, newPosition.lat, newPosition.lng);
             const timeDiff = (newTimestamp - this.lastTimestamp) / (1000 * 60); // time difference in minutes
             
-            if (!ls.isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 1) {
+            if (!this.ls.isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 1) {
                 this.routeCoordinates.push(newPosition);
                 this.drawPolyline(lastPosition, newPosition);
             } else if (distance > 1 || timeDiff >= 1) {

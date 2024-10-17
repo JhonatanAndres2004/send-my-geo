@@ -1,11 +1,9 @@
-import LocationServices from './LocationServices.js';
-const ls = new LocationServices();
-
 export default class UIManager {
-    constructor() {
+    constructor(locationServices) {
         this.slider = document.getElementById('slider');
         this.valueSlider = document.getElementById('valueSlider');
         this.toast = this.createToast();
+        this.ls = locationServices;
     }
   
     loadName() {
@@ -35,7 +33,7 @@ export default class UIManager {
     updateLocationDisplay(data) {
         document.getElementById('latitude').innerText = data.Latitude;
         document.getElementById('longitude').innerText = data.Longitude;
-        const timestamp = ls.convertToLocalTime(data.Timestamp);
+        const timestamp = this.ls.convertToLocalTime(data.Timestamp);
         const [date, time] = timestamp.split(', ');
         document.getElementById('date').innerText = date;
         document.getElementById('time').innerText = time;
