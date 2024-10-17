@@ -14,21 +14,6 @@ export default class UIManager {
             .catch(err => console.error('Error fetching name:', err));
     }
 
-    createToast() {
-        return Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            iconColor: "#6e00b3",
-            didOpen: (toast) => {
-            toast.onmouseenter = Swal.stopTimer;
-            toast.onmouseleave = Swal.resumeTimer;
-            }
-        });
-    }
-  
     showTab(tabName) {
         const tabs = {
             realtime: 'realtime',
@@ -44,6 +29,30 @@ export default class UIManager {
         }
     }
   
+    updateLocationDisplay(data) {
+        document.getElementById('latitude').innerText = data.Latitude;
+        document.getElementById('longitude').innerText = data.Longitude;
+        const timestamp = convertToLocalTime(data.Timestamp);
+        const [date, time] = timestamp.split(', ');
+        document.getElementById('date').innerText = date;
+        document.getElementById('time').innerText = time;
+    }
+
+    createToast() {
+        return Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            iconColor: "#6e00b3",
+            didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+    }
+
     showErrorMessage(message) {
         this.toast.fire({
             icon: 'error',

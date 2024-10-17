@@ -1,10 +1,13 @@
+import lss from './lss.js';
+const ls = new lss();
+
 export default class MapManager {
     constructor() {
         this.map = null;
         this.marker = null;
         this.polylines = [];
         this.routeCoordinates = [];
-        this.colorIndex = 0;
+        this.lastTimestamp = null;
         this.mapThemeId = 'a43cc08dd4e3e26d';
         window.initMap = this.initMap.bind(this);
     }
@@ -50,17 +53,47 @@ export default class MapManager {
         });
     }
   
+    updateMapAndRoute(lat, lng, timestamp) {
+        const newPosition = { lat: parseFloat(lat), lng: parseFloat(lng) };
+        const newTimestamp = new Date(timestamp);
+        
+        this.updateMarkerPosition(newPosition);
+        
+        if (this.routeCoordinates.length === 0) {
+            this.routeCoordinates.push(newPosition);
+            this.lastTimestamp = newTimestamp;
+        } else {
+            const lastPosition = this.routeCoordinates[this.routeCoordinates.length - 1];
+            const distance = ls.calculateDistance(this.lastPosition.lat, this.lastPosition.lng, newPosition.lat, newPosition.lng);
+            const timeDiff = (newTimestamp - this.lastTimestamp) / (1000 * 60); // time difference in minutes
+            
+            if (!ls.isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 1) {
+                this.routeCoordinates.push(newPosition);
+                this.drawPolyline(lastPosition, newPosition);
+            } else if (distance > 1 || timeDiff >= 1) {
+                // If distance is greater than 1 kilometer or the time difference is greater (or equal) than 1 minute, 
+                // Start a new route from that point
+                this.routeCoordinates = [newPosition];
+                // Clear the previous drawn polylines
+                this.polylines.forEach(polyline => polyline.setMap(null));
+                this.polylines = [];               
+            }
+            
+            this.lastTimestamp = newTimestamp;
+        }
+    }
+
     updateMarkerPosition(position) {
         this.marker.position = position;
         this.map.panTo(position);
     }
   
-    drawPolyline(origin, destination, color) {
+    drawPolyline(origin, destination) {
         const path = [new google.maps.LatLng(origin.lat, origin.lng), new google.maps.LatLng(destination.lat, destination.lng)];
         const polyline = new google.maps.Polyline({
             path: path,
             geodesic: true,
-            strokeColor: color || '#FF0000',
+            strokeColor: '#FF0000',
             strokeOpacity: 1.0,
             strokeWeight: 4
         });
