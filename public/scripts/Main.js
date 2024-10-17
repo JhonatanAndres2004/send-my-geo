@@ -2,10 +2,9 @@ import MapManager from './MapManager.js';
 import LocationServices from './LocationServices.js';
 import UIManager from './UIManager.js';
 
-const mapManager = new MapManager();
 const locationServices = new LocationServices();
-const uiManager = new UIManager();
-
+const mapManager = new MapManager(locationServices);
+const uiManager = new UIManager(locationServices);
 
 function liveLocation() {
     uiManager.showTab('realtime');
