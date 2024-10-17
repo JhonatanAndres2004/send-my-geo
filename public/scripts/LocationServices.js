@@ -2,27 +2,7 @@ import UIManager from './UIManager.js';
 const ui = new UIManager();
 
 export default class LocationServices {
-    constructor() {
-        this.live = null;
-    }
-    
-    fetchLatestLocation() {
-        fetch('/latest-location')
-            .then(response => response.json())
-            .then(data => {
-                ui.updateLocationDisplay(data);
-
-            })
-            .catch(err => console.error('Error fetching latest location:', err));
-    }
-
-    startLiveLocation() {
-        this.live = setInterval(this.fetchLatestLocation, 10000);
-    }
-    
-    stopLiveLocation() {
-        clearInterval(this.live);
-    }
+    constructor() {}
   
     calculateDistance(lat1, lon1, lat2, lon2) {
         const R = 6371; // Radius of Earth in km
