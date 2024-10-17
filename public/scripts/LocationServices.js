@@ -18,8 +18,8 @@ export default class LocationServices {
     }
     
     isSameLocation(coord1, coord2) {
-        return roundCoordinate(coord1.lat) === roundCoordinate(coord2.lat) &&
-               roundCoordinate(coord1.lng) === roundCoordinate(coord2.lng);
+        return this.roundCoordinate(coord1.lat) === this.roundCoordinate(coord2.lat) &&
+               this.roundCoordinate(coord1.lng) === this.roundCoordinate(coord2.lng);
     }
 
     convertToLocalTime(utcDateString) {
