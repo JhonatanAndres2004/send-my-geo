@@ -77,7 +77,7 @@ function fetchHistory(){
             } else {
                 popUpMenu.style.visibility = 'visible';
                 data.forEach(data => {
-                    updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp);
+                    MapManager.updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp);
                 });
             }
         })
