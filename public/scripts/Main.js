@@ -18,7 +18,7 @@ function fetchLatestLocation() {
         .then(response => response.json())
         .then(data => {
             uiManager.updateLocationDisplay(data);
-
+            mapManager.updateMapAndRoute(data.Latitude, data.Longitude, data.Timestamp);
         })
         .catch(err => console.error('Error fetching latest location:', err));
 }
