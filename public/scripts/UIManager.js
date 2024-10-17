@@ -5,6 +5,7 @@ export default class UIManager {
         this.toast = this.createToast();
         this.dateMin = null;
         this.dateMax = null;
+        this.createFlatPickrs();
         this.ls = locationServices;
     }
 
@@ -93,6 +94,28 @@ export default class UIManager {
             didOpen: (toast) => {
             toast.onmouseenter = Swal.stopTimer;
             toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+    }
+
+    createFlatPickrs(){
+        this.startDatePickr = flatpickr("#start-date-input", {
+            dateFormat: "Y-m-d H:i",
+            maxDate: new Date(),
+            enableTime: true,
+            onClose: function(dateStr) {
+                this.dateMin = dateStr;
+                this.endDatePickr.set('minDate', dateStr);
+            }
+        });
+        
+        this.endDatePickr = flatpickr("#end-date-input", {
+            dateFormat: "Y-m-d H:i",
+            maxDate: new Date(),
+            enableTime: true,
+            onClose: function(dateStr) {
+                this.endDate = dateStr;
+                this.startDatePickr.set('maxDate', dateStr);
             }
         });
     }
