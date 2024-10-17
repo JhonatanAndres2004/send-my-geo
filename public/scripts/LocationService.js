@@ -14,7 +14,7 @@ export default class LocationService {
     }
 
     startLiveLocation() {
-        this.live = setInterval(fetchLatestLocation, 10000);
+        this.live = setInterval(this.fetchLatestLocation, 10000);
     }
     
     stopLiveLocation() {
