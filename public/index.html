@@ -27,17 +27,6 @@
             <button id="history-button" class="tab-btn" onclick="showTab('history')">Historical Data</button>
         </div>
 
-        <div id="reproducer" style="position: relative;"class="tab-content">
-            <div>
-                <button id="toggleButton" class="play">▷</button>
-            </div>
-            
-        <div class="sliderContiner">
-            <input style="position: relative;" type="range" min="0" max="" id="slider" class="slider">
-        </div>
-            <button for="history-button" id="backToHistorics">&#10550</button>
-        </div>
-
         <div id="realtime" class="location-info tab-content">
             <div class="info-item">
                 <span><b>Latitude:</b></span>
@@ -60,6 +49,7 @@
                 <span id="RPM">Coming soon</span>
             </div>
         </div>
+
         <div id="history" class="tab-content">
             <div class="info-item-historics">
                 <label for="start-date"><b>Start Date</b></label>
@@ -71,10 +61,18 @@
             </div>
             <div class="info-item-historics">
                 <button id="fetch-data">See Data</button>
-
             </div>
         </div>
 
+        <div id="player" style="position: relative;" class="tab-content">
+            <div>
+                <button id="toggleButton" class="play">▷</button>
+            </div>
+            <div class="sliderContiner">
+                <input style="position: relative;" type="range" min="0" max="" id="slider" class="slider">
+            </div>
+            <button for="history-button" id="backToHistorics">&#10550</button>
+        </div>
     </div>
 
     <div id="map-container">
@@ -109,10 +107,6 @@
         </div>
     </div>
 
-    <script src="update.js"></script>
-  
-
-
-    </div>
+    <script type="module" src="scripts/Main.js"></script>
 </body>
 </html>
