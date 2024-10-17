@@ -16,7 +16,7 @@ export default class UIManager {
         enableTime: true,
         onClose: function(dateStr) {
             this.dateMin = dateStr;
-            console.log(dateMin)
+            console.log(this.dateMin)
             endDate.set('minDate', dateStr)
         }
     });
@@ -30,7 +30,7 @@ export default class UIManager {
         enableTime: true,
         onClose: function(dateStr) {
             this.dateMax = dateStr;
-            console.log(dateMax)
+            console.log(this.dateMax)
             startDate.set('maxDate', dateStr)
         }
     });

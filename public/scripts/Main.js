@@ -55,8 +55,8 @@ function stopLiveLocation() {
 }
 
 function fetchHistory(){
-    const startDate = startDateInput.value;
-    const endDate = endDateInput.value;
+    var startDate = startDateInput.value;
+    var endDate = endDateInput.value;
     const correctDates = locationServices.checkDates(startDate, endDate);
     if (startDate && endDate && correctDates) {
         startDate = locationServices.convertToGlobalTime(startDate);
