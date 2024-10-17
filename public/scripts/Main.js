@@ -21,6 +21,7 @@ let live;
 // Event Listeners
 realtimeButton.addEventListener('click', liveLocation);
 historyButton.addEventListener('click', historyLocation);
+fetchHistoryButton.addEventListener('click', fetchHistory);
 
 // Functions
 function liveLocation() {

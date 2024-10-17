@@ -9,7 +9,7 @@ export default class UIManager {
     }
 
     // Load date picker for start date
-    startDate = flatpickr("#start-date", {
+    startDate = flatpickr("#start-date-input", {
         dateFormat: "Y-m-d H:i",
         maxDate: new Date(),
         mod: "multiple",
@@ -23,7 +23,7 @@ export default class UIManager {
     
     
     // Load date picker for end date
-    endDate = flatpickr("#end-date", {
+    endDate = flatpickr("#end-date-input", {
         dateFormat: "Y-m-d H:i",
         maxDate: new Date(),
         mod: "multiple",
