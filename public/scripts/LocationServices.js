@@ -41,4 +41,34 @@ export default class LocationServices {
         return roundCoordinate(coord1.lat) === roundCoordinate(coord2.lat) &&
                roundCoordinate(coord1.lng) === roundCoordinate(coord2.lng);
     }
+
+    convertToLocalTime(utcDateString) {
+        const localDate = new Date(utcDateString); 
+        const options = {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false,
+            timeZone: 'America/Bogota'
+        };   
+        return localDate.toLocaleString('en-GB', options);
+    }
+    
+    convertToGlobalTime(localTime) {
+        const utcDate = new Date(localTime);
+        const options = {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false,
+            timeZone: 'UTC'
+        };
+        return utcDate.toLocaleDateString('en-GB', options);
+    }
 } 

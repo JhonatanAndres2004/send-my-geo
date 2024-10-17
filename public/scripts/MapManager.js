@@ -1,5 +1,5 @@
-import lss from './LocationServices.js';
-const ls = new lss();
+import LocationServices from './LocationServices.js';
+const ls = new LocationServices();
 
 export default class MapManager {
     constructor() {

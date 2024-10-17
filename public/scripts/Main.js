@@ -3,13 +3,13 @@ import LocationServices from './LocationServices.js';
 import UIManager from './UIManager.js';
 
 const mapManager = new MapManager();
-const locationService = new LocationServices();
+const locationServices = new LocationServices();
 const uiManager = new UIManager();
 
 
 function liveLocation() {
     uiManager.showTab('realtime');
-    locationService.startLiveLocation();
+    locationServices.startLiveLocation();
 
 }
 
