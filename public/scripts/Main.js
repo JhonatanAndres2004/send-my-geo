@@ -8,7 +8,6 @@ const uiManager = new UIManager(locationServices);
 
 function liveLocation() {
     uiManager.showTab('realtime');
-    locationServices.startLiveLocation();
     startLiveLocation();
 }
 
