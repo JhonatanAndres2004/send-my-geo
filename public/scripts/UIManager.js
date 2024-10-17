@@ -28,6 +28,20 @@ export default class UIManager {
             element.style.opacity = (tab === tabName) ? 1 : 0;
             element.style.position = (tab === tabName) ? 'relative' : 'absolute';
         }
+        switch (tabName) {
+            case 'realtime':
+                document.getElementById('realtime-button').disabled = true;
+                document.getElementById('history-button').disabled = false;
+                break;
+            case 'history':
+                document.getElementById('realtime-button').disabled = false;
+                document.getElementById('history-button').disabled = true;
+                break;
+            default:
+                document.getElementById('realtime-button').disabled = true;
+                document.getElementById('history-button').disabled = true;
+                break;
+        }
     }
   
     updateLocationDisplay(data) {

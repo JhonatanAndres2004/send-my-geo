@@ -7,6 +7,7 @@ export default class MapManager {
         this.lastTimestamp = null;
         this.mapThemeId = 'a43cc08dd4e3e26d';
         this.ls = locationServices;
+        this.info = [];
         window.initMap = this.initMap.bind(this);
     }
   
@@ -51,6 +52,17 @@ export default class MapManager {
         });
     }
   
+    clearMap() {
+        if (this.circle) this.circle.setMap(null);
+        if (this.infoWindowMarker) this.infoWindowMarker.setMap(null);
+        if (this.infoWindow) this.infoWindow.close();
+        this.polylines.forEach(polyline => polyline.setMap(null));
+        this.polylines = [];
+        this.routeCoordinates = [];
+        this.lastTimestamp = null;
+        this.info = [];
+    }
+
     updateMapAndRoute(lat, lng, timestamp) {
         const newPosition = { lat: parseFloat(lat), lng: parseFloat(lng) };
         const newTimestamp = new Date(timestamp);

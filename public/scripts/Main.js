@@ -26,6 +26,7 @@ function liveLocation() {
 
 function historyLocation() {
     uiManager.showTab('history');
+    mapManager.clearMap();
     stopLiveLocation();
 }
 
