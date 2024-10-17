@@ -6,6 +6,8 @@ const locationServices = new LocationServices();
 const mapManager = new MapManager(locationServices);
 const uiManager = new UIManager(locationServices);
 
+let live;
+
 function liveLocation() {
     uiManager.showTab('realtime');
     startLiveLocation();
