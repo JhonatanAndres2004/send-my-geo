@@ -758,6 +758,7 @@ popUpMenu.addEventListener("click", () => {
 closeButton.addEventListener('click',()=>{
     locationHistoryTab.style.visibility = "hidden";
     locationHistoryTab.style.opacity=0;
+    closeButton.click()
     closeButtonContainer.style.visibility="hidden";
     closeButtonContainer.style.opacity=0;
 })
