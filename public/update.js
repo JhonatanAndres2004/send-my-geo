@@ -24,6 +24,7 @@ let played = 0;
 let infoWindow;
 let infoWindowMarker;
 let pin;
+let sliderBack=0;
 slider.value = 0
 
 const Toast = Swal.mixin({
@@ -86,8 +87,19 @@ function showTab(tab) {
         reproducer.style.visibility = "hidden";
         reproducer.style.opacity = "0";
         reproducer.style.position = "absolute";
+        
         clearMap();
         initMap();
+        stopSlider()
+        //Give default style to the button when redirected to real time page and also stop slider animation
+        if(toggleButton.classList.contains('pause')){
+            toggleButton.classList.remove('pause');
+            toggleButton.classList.add('play');
+            toggleButton.innerHTML = '▷'; // Play icon and text
+            played = 0;
+        }
+        stopSlider();
+
         startLiveLocation();
     } else if (tab === "history") {
         historyTab.style.visibility = "visible";
@@ -169,6 +181,7 @@ slider.oninput = function() {
 
 function playSlider() {
     // Set initial value for the custom property to reflect the slider position
+    sliderPlaying=1;
     slider.style.setProperty('--value', `${(slider.value - slider.min) * 100 / (slider.max - slider.min)}%`);
     if (played == 0){
         let max = slider.max;  // Max value of the slider
@@ -198,6 +211,7 @@ function playSlider() {
 
 function stopSlider(){
     clearInterval(playInterval)
+    console.log("Reproduction detained")
 }
 
 
@@ -744,10 +758,12 @@ popUpMenu.addEventListener("click", () => {
 closeButton.addEventListener('click',()=>{
     locationHistoryTab.style.visibility = "hidden";
     locationHistoryTab.style.opacity=0;
+    closeButton.click()
     closeButtonContainer.style.visibility="hidden";
     closeButtonContainer.style.opacity=0;
 })
 document.getElementById('backToHistorics').addEventListener("click", ()=>{
+    toggleButton.click()
     clearMap();
     popUpMenu.style.visibility='hidden';
     marker.setMap(null);
