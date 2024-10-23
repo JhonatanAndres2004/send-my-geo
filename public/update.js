@@ -66,6 +66,36 @@ function loadMap() {
         .catch(err => console.error('Error fetching API key:', err));
 }
 
+function playSlider() {
+    // Set initial value for the custom property to reflect the slider position
+    slider.style.setProperty('--value', `${(slider.value - slider.min) * 100 / (slider.max - slider.min)}%`);
+    if (played == 0){
+        let max = slider.max;  // Max value of the slider
+    
+        // Start the interval to update the slider value every 500ms (or any speed you like)
+        playInterval = setInterval(() => {
+            let currentValue = parseInt(slider.value);
+            if (currentValue < max) {
+                slider.value = currentValue + 1; // Increment slider value
+                slider.oninput();  // Trigger the oninput function to update map locations
+            } else {
+                slider.value = 0;
+                slider.style.setProperty('--value', `${(slider.value - slider.min) * 100 / (slider.max - slider.min)}%`);
+                clearInterval(playInterval);  // Stop when the slider reaches the max value
+                played = 0;
+                infoWindow.close();
+                infoWindowMarker.setMap(null);
+                toggleButton.classList.remove('pause');
+                toggleButton.classList.add('play');
+                toggleButton.innerHTML = '▷'; // Play icon and text
+            }
+        }, 1000);  // Adjust the time interval for the speed (500ms = 0.5 seconds)
+        played = 1;
+    }
+
+}
+
+
 function showTab(tab) {
     var realTimeTab = document.getElementById("realtime");
     var historyTab = document.getElementById("history");
@@ -168,34 +198,6 @@ slider.oninput = function() {
     }
 };
 
-function playSlider() {
-    // Set initial value for the custom property to reflect the slider position
-    slider.style.setProperty('--value', `${(slider.value - slider.min) * 100 / (slider.max - slider.min)}%`);
-    if (played == 0){
-        let max = slider.max;  // Max value of the slider
-    
-        // Start the interval to update the slider value every 500ms (or any speed you like)
-        playInterval = setInterval(() => {
-            let currentValue = parseInt(slider.value);
-            if (currentValue < max) {
-                slider.value = currentValue + 1; // Increment slider value
-                slider.oninput();  // Trigger the oninput function to update map locations
-            } else {
-                slider.value = 0;
-                slider.style.setProperty('--value', `${(slider.value - slider.min) * 100 / (slider.max - slider.min)}%`);
-                clearInterval(playInterval);  // Stop when the slider reaches the max value
-                played = 0;
-                infoWindow.close();
-                infoWindowMarker.setMap(null);
-                toggleButton.classList.remove('pause');
-                toggleButton.classList.add('play');
-                toggleButton.innerHTML = '▷'; // Play icon and text
-            }
-        }, 1000);  // Adjust the time interval for the speed (500ms = 0.5 seconds)
-        played = 1;
-    }
-
-}
 
 function stopSlider(){
     clearInterval(playInterval)
@@ -559,7 +561,12 @@ function clearMap() {
 }
 
 document.getElementById('fetch-data').addEventListener('click', () => {
-    stopSlider()
+    let aux=1
+    if (aux==1){
+        aux=2
+    }else{
+        stopSlider()
+    }
     console.log(dateMin);
     let startDate = document.getElementById('start-date').value;
     let endDate = document.getElementById('end-date').value;
