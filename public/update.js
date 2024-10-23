@@ -24,6 +24,7 @@ let played = 0;
 let infoWindow;
 let infoWindowMarker;
 let pin;
+let sliderPlaying=0;
 slider.value = 0
 
 const Toast = Swal.mixin({
@@ -88,6 +89,10 @@ function showTab(tab) {
         reproducer.style.position = "absolute";
         clearMap();
         initMap();
+        if(sliderPlaying==1){
+            stopSlider()
+            sliderPlaying=0
+        }
         startLiveLocation();
     } else if (tab === "history") {
         historyTab.style.visibility = "visible";
@@ -169,6 +174,7 @@ slider.oninput = function() {
 
 function playSlider() {
     // Set initial value for the custom property to reflect the slider position
+    sliderPlaying=1;
     slider.style.setProperty('--value', `${(slider.value - slider.min) * 100 / (slider.max - slider.min)}%`);
     if (played == 0){
         let max = slider.max;  // Max value of the slider
@@ -748,6 +754,10 @@ closeButton.addEventListener('click',()=>{
     closeButtonContainer.style.opacity=0;
 })
 document.getElementById('backToHistorics').addEventListener("click", ()=>{
+    if(sliderPlaying==1){
+        stopSlider()
+        sliderPlaying=0
+    }
     clearMap();
     popUpMenu.style.visibility='hidden';
     marker.setMap(null);
