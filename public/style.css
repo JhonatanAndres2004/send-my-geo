@@ -663,6 +663,9 @@ min-width: 70px;
 
 /* Media query para pantallas muy pequeñas */
 @media screen and (max-width: 400px) {
+    #location-history{
+        height: 200px;
+        }
     .info-item {
         width: 100%;
         max-width: 150px;
