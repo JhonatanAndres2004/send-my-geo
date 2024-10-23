@@ -88,6 +88,7 @@ function showTab(tab) {
         reproducer.style.position = "absolute";
         clearMap();
         initMap();
+        stopSlider()
         startLiveLocation();
     } else if (tab === "history") {
         historyTab.style.visibility = "visible";
@@ -558,6 +559,7 @@ function clearMap() {
 }
 
 document.getElementById('fetch-data').addEventListener('click', () => {
+    stopSlider()
     console.log(dateMin);
     let startDate = document.getElementById('start-date').value;
     let endDate = document.getElementById('end-date').value;
@@ -748,6 +750,7 @@ closeButton.addEventListener('click',()=>{
     closeButtonContainer.style.opacity=0;
 })
 document.getElementById('backToHistorics').addEventListener("click", ()=>{
+    stopSlider()
     clearMap();
     popUpMenu.style.visibility='hidden';
     marker.setMap(null);
