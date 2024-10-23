@@ -88,7 +88,6 @@ function showTab(tab) {
         reproducer.style.position = "absolute";
         clearMap();
         initMap();
-        stopSlider()
         startLiveLocation();
     } else if (tab === "history") {
         historyTab.style.visibility = "visible";
@@ -749,7 +748,6 @@ closeButton.addEventListener('click',()=>{
     closeButtonContainer.style.opacity=0;
 })
 document.getElementById('backToHistorics').addEventListener("click", ()=>{
-    stopSlider()
     clearMap();
     popUpMenu.style.visibility='hidden';
     marker.setMap(null);
