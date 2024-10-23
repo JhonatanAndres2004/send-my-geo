@@ -86,7 +86,7 @@ function showTab(tab) {
         reproducer.style.visibility = "hidden";
         reproducer.style.opacity = "0";
         reproducer.style.position = "absolute";
-        if(toggleButton.classList.contains('pause')){
+        if(playInterval && toggleButton.classList.contains('pause')){
             toggleButton.click()
         }
         clearMap();
@@ -752,7 +752,7 @@ closeButton.addEventListener('click',()=>{
     closeButtonContainer.style.opacity=0;
 })
 document.getElementById('backToHistorics').addEventListener("click", ()=>{
-    if(toggleButton.classList.contains('pause')){
+    if(playInterval %% toggleButton.classList.contains('pause')){
         toggleButton.click()
 
     }
