@@ -755,7 +755,6 @@ document.getElementById('backToHistorics').addEventListener("click", ()=>{
     if(playInterval && toggleButton.classList.contains('pause')){
         toggleButton.click()
     }
-    stopSlider()
     clearMap();
     popUpMenu.style.visibility='hidden';
     marker.setMap(null);
