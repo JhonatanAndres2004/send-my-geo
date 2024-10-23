@@ -204,6 +204,7 @@ function playSlider() {
 
 function stopSlider(){
     clearInterval(playInterval)
+    console.log("Reproduction detained")
 }
 
 
