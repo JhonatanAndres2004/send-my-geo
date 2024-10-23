@@ -24,7 +24,7 @@ let played = 0;
 let infoWindow;
 let infoWindowMarker;
 let pin;
-let sliderPlaying=0;
+let sliderBack=0;
 slider.value = 0
 
 const Toast = Swal.mixin({
@@ -87,12 +87,19 @@ function showTab(tab) {
         reproducer.style.visibility = "hidden";
         reproducer.style.opacity = "0";
         reproducer.style.position = "absolute";
+        
         clearMap();
         initMap();
-        if(sliderPlaying==1){
-            stopSlider()
-            sliderPlaying=0
+        stopSlider()
+        //Give default style to the button when redirected to real time page and also stop slider animation
+        if(toggleButton.classList.contains('pause')){
+            toggleButton.classList.remove('pause');
+            toggleButton.classList.add('play');
+            toggleButton.innerHTML = '▷'; // Play icon and text
+            played = 0;
         }
+        stopSlider();
+
         startLiveLocation();
     } else if (tab === "history") {
         historyTab.style.visibility = "visible";
@@ -755,10 +762,7 @@ closeButton.addEventListener('click',()=>{
     closeButtonContainer.style.opacity=0;
 })
 document.getElementById('backToHistorics').addEventListener("click", ()=>{
-    if(sliderPlaying==1){
-        stopSlider()
-        sliderPlaying=0
-    }
+    toggleButton.click()
     clearMap();
     popUpMenu.style.visibility='hidden';
     marker.setMap(null);
