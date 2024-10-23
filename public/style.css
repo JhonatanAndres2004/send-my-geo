@@ -494,7 +494,7 @@ body.dark-mode #dark-mode-toggle{
     z-index: 102;
     display: flex;
     flex-direction: column;
-    width: 300px;
+    width: 500px;
     height: 150px;
     margin-top: 5px;
     margin-left: 5px;
@@ -624,7 +624,7 @@ min-width: 70px;
 
 @media screen and (max-width: 550px) {
     #location-history{
-    width: 50%;
+    width: 70%;
     height: 200px;
     }
     .info-item-historics-location{
