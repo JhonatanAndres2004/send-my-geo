@@ -754,6 +754,7 @@ closeButton.addEventListener('click',()=>{
 document.getElementById('backToHistorics').addEventListener("click", ()=>{
     if(toggleButton.classList.contains('pause')){
         toggleButton.click()
+
     }
     stopSlider()
     clearMap();
