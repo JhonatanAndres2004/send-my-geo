@@ -86,9 +86,6 @@ function showTab(tab) {
         reproducer.style.visibility = "hidden";
         reproducer.style.opacity = "0";
         reproducer.style.position = "absolute";
-        if(playInterval && toggleButton.classList.contains('pause')){
-            toggleButton.click()
-        }
         clearMap();
         initMap();
         startLiveLocation();
@@ -201,7 +198,6 @@ function playSlider() {
 
 function stopSlider(){
     clearInterval(playInterval)
-    console.log("Slider stopped")
 }
 
 
@@ -752,10 +748,6 @@ closeButton.addEventListener('click',()=>{
     closeButtonContainer.style.opacity=0;
 })
 document.getElementById('backToHistorics').addEventListener("click", ()=>{
-    if(playInterval && toggleButton.classList.contains('pause')){
-        toggleButton.click()
-    }
-    stopSlider()
     clearMap();
     popUpMenu.style.visibility='hidden';
     marker.setMap(null);
