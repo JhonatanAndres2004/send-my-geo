@@ -178,7 +178,7 @@ slider.oninput = function() {
         if (current) { // > prevValue
             for (let i= 0;i<current -1; i++){
                 updateMapAndRouteLocations(info[i].lat, info[i].lng, info[i].Timestamp, true);
-                setInfoWindow(info[i].lat, info[i].lng, info[i].Timestamp), info[i].vel;
+                setInfoWindow(info[i].lat, info[i].lng, info[i].Timestamp, info[i].vel);
                 
             }
         }
