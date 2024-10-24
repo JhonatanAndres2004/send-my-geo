@@ -178,7 +178,7 @@ slider.oninput = function() {
         if (current) { // > prevValue
             for (let i= 0;i<current -1; i++){
                 updateMapAndRouteLocations(info[i].lat, info[i].lng, info[i].Timestamp, true);
-                setInfoWindow(info[i].lat, info[i].lng, info[i].Timestamp);
+                setInfoWindow(info[i].lat, info[i].lng, info[i].Timestamp), info[i].vel;
                 
             }
         }
@@ -318,6 +318,7 @@ function updateLocationDisplay(data) {
     const [date, time] = timestamp.split(', ');
     document.getElementById('date').innerText = date;
     document.getElementById('time').innerText = time;
+    document.getElementById('velocity').innerText = data.Velocity
 }
 
 function roundCoordinate(coord) {
@@ -377,10 +378,10 @@ function updateMapAndRoute(lat, lng, timestamp) {
     }
 }
 
-function updateMapAndRouteHistorics(lat, lng, timestamp, searchByLocation = false) {
+function updateMapAndRouteHistorics(lat, lng, timestamp, vel, searchByLocation = false) {
     const newPosition = { lat: parseFloat(lat), lng: parseFloat(lng) };
     const newTimestamp = new Date(timestamp);
-    const allInfo ={lat:parseFloat(lat),lng:parseFloat(lng),Timestamp:timestamp}
+    const allInfo ={lat:parseFloat(lat),lng:parseFloat(lng),Timestamp:timestamp,vel:parseFloat(vel)}
     if (!searchByLocation) {
         marker.position = newPosition;
         map.panTo(newPosition);
@@ -666,7 +667,7 @@ async function initializeAutocomplete() {
     });
 }
 
-async function setInfoWindow(lat, lng, timestamp) { 
+async function setInfoWindow(lat, lng, timestamp, vel) { 
     const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
     
     if (infoWindowMarker) infoWindowMarker.setMap(null);
@@ -686,7 +687,13 @@ async function setInfoWindow(lat, lng, timestamp) {
     infoWindowMarker.position = new google.maps.LatLng(lat, lng);
 
     // Set the content for the info window
-    infoWindow.setContent(` ${convertToLocalTime(timestamp)}`);
+    infoWindow.setContent(`
+        <div>
+          <p>Time: ${convertToLocalTime(timestamp)}</p>
+          <p>Velocity: ${parseFloat(vel)} km/h</p> 
+        </div>
+      `);
+      //.toFixed(2)
 
     // Open the info window on the updated marker
     infoWindow.open(map, infoWindowMarker);
@@ -732,7 +739,7 @@ function geocode(request, startDate, endDate, radius) {
                     } else {
                         data.forEach(data => {
                             updateLocationDisplay(data);
-                            updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp, true);
+                            updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp, data.Velocity, true);
                             
                             //setInfoWindow(data.Latitude, data.Longitude, data.Timestamp);
                         });
