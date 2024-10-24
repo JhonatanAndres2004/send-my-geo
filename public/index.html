@@ -90,14 +90,13 @@
                 <label for="location-input" id="location-input-label"><b>Location</b></label>
                 <input type="text" id="location-input" placeholder="Enter location" name="start-date-input-location">
             </div>
-        <div class="info-item-historics-location">
-            <label for="radius-input" id="radius-input-label"><b>Radius (m)</b></label>
-            <input type="number" id="radius-input" value="500" name="radius"  step="10" min="0">
-        </div>
-        <div class="info-item-historics-location submit-location-button">
-            <button id="fetch-location">Submit</button>
-        </div>
-
+            <div class="info-item-historics-location">
+                <label for="radius-input" id="radius-input-label"><b>Radius</b></label>
+                <input type="number" id="radius-input" placeholder="(meters)" name="radius"  step="10" min="0">
+            </div>
+            <div class="info-item-historics-location submit-location-button">
+                <button id="fetch-location">Submit</button>
+            </div>
         </div>
         <div id="map">  
             <gmp-map center="40.12150192260742,-100.45039367675781" zoom="10" map-id="DEMO_MAP_ID">
