@@ -36,7 +36,7 @@ app.get('/name', (req, res) => {
 
 // API endpoint to get the latest location data
 app.get('/latest-location', (req, res) => {
-    const query = `SELECT Latitude, Longitude, Timestamp FROM locations ORDER BY Timestamp DESC LIMIT 1`;
+    const query = `SELECT * FROM locations ORDER BY Timestamp DESC LIMIT 1`;
     connection.query(query, (err, results) => {
         if (err) throw err;
         res.json(results[0]);
