@@ -65,13 +65,32 @@ function loadMap() {
         })
         .catch(err => console.error('Error fetching API key:', err));
 }
-
 function showTab(tab) {
     var realTimeTab = document.getElementById("realtime");
     var historyTab = document.getElementById("history");
     var reproducer = document.getElementById("reproducer");
+    var locationHistoryTab = document.getElementById("location-history");
+
+    // If slider is playing, stop it when changing tabs
+    if (played === 1 && reproducer.style.visibility === "visible") {
+        stopSlider();
+        played = 0;
+        const toggleButton = document.getElementById('toggleButton');
+        toggleButton.classList.remove('pause');
+        toggleButton.classList.add('play');
+        toggleButton.innerHTML = '▷'; // Play icon
+        
+        // Close info window and remove marker if they exist
+        if (infoWindow) {
+            infoWindow.close();
+        }
+        if (infoWindowMarker) {
+            infoWindowMarker.setMap(null);
+        }
+    }
+
     if (tab === "realtime") {
-        popUpMenu.style.visibility='hidden'
+        popUpMenu.style.visibility = 'hidden';
         realTimeTab.style.visibility = "visible";
         realTimeTab.style.opacity = "1";
         realTimeTab.style.position = "relative";
@@ -121,7 +140,7 @@ function showTab(tab) {
         document.getElementById('history-button').disabled = false;
         document.getElementById('location-history-button').disabled = true;
         stopLiveLocation();
-    } else if (tab === "slider"){
+    } else if (tab === "slider") {
         locationHistoryTab.style.visibility = "hidden";
         locationHistoryTab.style.opacity = "0";
         locationHistoryTab.style.position = "absolute";
@@ -134,11 +153,11 @@ function showTab(tab) {
         reproducer.style.visibility = "visible";
         reproducer.style.opacity = "1";
         reproducer.style.position = "relative";
-        popUpMenu.style.visibility='visible';
-        document.getElementById('stopButton').style.visibility="visible"
+        popUpMenu.style.visibility = 'visible';
+        document.getElementById('stopButton').style.visibility = "visible";
         document.getElementById('realtime-button').disabled = false;
         document.getElementById('history-button').disabled = false;
-        document.getElementById('location-history-button').disabled = true
+        document.getElementById('location-history-button').disabled = true;
     }
 }
 
@@ -747,14 +766,24 @@ closeButton.addEventListener('click',()=>{
     closeButtonContainer.style.visibility="hidden";
     closeButtonContainer.style.opacity=0;
 })
-document.getElementById('backToHistorics').addEventListener("click", ()=>{
+document.getElementById('backToHistorics').addEventListener("click", () => {
+    // Stop the slider animation if it's playing
+    if (played === 1) {
+        stopSlider();
+        played = 0;
+        const toggleButton = document.getElementById('toggleButton');
+        toggleButton.classList.remove('pause');
+        toggleButton.classList.add('play');
+        toggleButton.innerHTML = '▷'; // Play icon
+    }
+    
     clearMap();
-    popUpMenu.style.visibility='hidden';
+    popUpMenu.style.visibility = 'hidden';
     marker.setMap(null);
     showTab("history");
-    document.getElementById('start-date').value = ''
-    document.getElementById('end-date').value =  ''
-} )
+    document.getElementById('start-date').value = '';
+    document.getElementById('end-date').value = '';
+});
 
 const toggleButton = document.getElementById('toggleButton');
     
