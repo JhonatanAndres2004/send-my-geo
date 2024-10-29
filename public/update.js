@@ -178,7 +178,7 @@ slider.oninput = function() {
         if (current) { // > prevValue
             for (let i= 0;i<current -1; i++){
                 updateMapAndRouteLocations(info[i].lat, info[i].lng, info[i].Timestamp, true);
-                setInfoWindow(info[i].lat, info[i].lng, info[i].Timestamp, info[i].vel);
+                setInfoWindow(info[i].lat, info[i].lng, info[i].Timestamp, info[i].vel,info[i].rpm);
                 
             }
         }
@@ -319,6 +319,7 @@ function updateLocationDisplay(data) {
     document.getElementById('date').innerText = date;
     document.getElementById('time').innerText = time;
     document.getElementById('velocity').innerText = data.Velocity
+    document.getElementById('rpm').innerText = data.rpm
 }
 
 function roundCoordinate(coord) {
@@ -378,10 +379,10 @@ function updateMapAndRoute(lat, lng, timestamp) {
     }
 }
 
-function updateMapAndRouteHistorics(lat, lng, timestamp, vel, searchByLocation = false) {
+function updateMapAndRouteHistorics(lat, lng, timestamp, vel,rpm ,searchByLocation = false) {
     const newPosition = { lat: parseFloat(lat), lng: parseFloat(lng) };
     const newTimestamp = new Date(timestamp);
-    const allInfo ={lat:parseFloat(lat),lng:parseFloat(lng),Timestamp:timestamp,vel:parseFloat(vel)}
+    const allInfo ={lat:parseFloat(lat),lng:parseFloat(lng),Timestamp:timestamp,vel:parseFloat(vel),rpm:parseFloat(rpm)}
     if (!searchByLocation) {
         marker.position = newPosition;
         map.panTo(newPosition);
@@ -667,7 +668,7 @@ async function initializeAutocomplete() {
     });
 }
 
-async function setInfoWindow(lat, lng, timestamp, vel) { 
+async function setInfoWindow(lat, lng, timestamp, vel, rpm) { 
     const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
     
     if (infoWindowMarker) infoWindowMarker.setMap(null);
@@ -690,7 +691,8 @@ async function setInfoWindow(lat, lng, timestamp, vel) {
     infoWindow.setContent(`
         <div>
           <p>Time: ${convertToLocalTime(timestamp)}</p>
-          <p>Velocity: ${parseFloat(vel)} km/h</p> 
+          <p>Velocity: ${parseFloat(vel)} km/h</p>
+          <p> RPM: ${parseFloat(rpm)}<p> 
         </div>
       `);
       //.toFixed(2)
@@ -739,7 +741,7 @@ function geocode(request, startDate, endDate, radius) {
                     } else {
                         data.forEach(data => {
                             updateLocationDisplay(data);
-                            updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp, data.Velocity, true);
+                            updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp, data.Velocity, data.rpm, true);
                             
                             //setInfoWindow(data.Latitude, data.Longitude, data.Timestamp);
                         });
