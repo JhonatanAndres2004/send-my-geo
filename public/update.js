@@ -178,7 +178,7 @@ slider.oninput = function() {
         if (current) { // > prevValue
             for (let i= 0;i<current -1; i++){
                 updateMapAndRouteLocations(info[i].lat, info[i].lng, info[i].Timestamp, true);
-                setInfoWindow(info[i].lat, info[i].lng, info[i].Timestamp, info[i].vel,info[i].rpm);
+                setInfoWindow(info[i].lat, info[i].lng, info[i].Timestamp, info[i].vel, info[i].rpm);
                 
             }
         }
@@ -319,7 +319,7 @@ function updateLocationDisplay(data) {
     document.getElementById('date').innerText = date;
     document.getElementById('time').innerText = time;
     document.getElementById('velocity').innerText = data.Velocity
-    document.getElementById('rpm').innerText = data.rpm
+    document.getElementById('rpm').innerText = data.RPM
 }
 
 function roundCoordinate(coord) {
@@ -741,7 +741,7 @@ function geocode(request, startDate, endDate, radius) {
                     } else {
                         data.forEach(data => {
                             updateLocationDisplay(data);
-                            updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp, data.Velocity, data.rpm, true);
+                            updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp, data.Velocity, data.RPM, true);
                             
                             //setInfoWindow(data.Latitude, data.Longitude, data.Timestamp);
                         });
