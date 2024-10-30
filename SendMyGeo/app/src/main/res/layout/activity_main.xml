@@ -87,5 +87,24 @@
         android:textSize="20sp"
         android:textColor="#999999"
         />
-
+    <TextView
+        android:id="@+id/dataTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:text="RPM: 0"
+        android:textSize="20sp"
+        android:textColor="#999999"
+        />
+    <TextView
+        android:id="@+id/speedTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:text="Speed: 0 km/h"
+        android:textSize="20sp"
+        android:textColor="#999999"
+        />
 </LinearLayout>
