@@ -36,23 +36,42 @@ app.get('/name', (req, res) => {
 
 // API endpoint to get the latest location data
 app.get('/latest-location', (req, res) => {
-    const query = `SELECT * FROM locations ORDER BY Timestamp DESC LIMIT 1`;
-    connection.query(query, (err, results) => {
-        if (err) throw err;
-        res.json(results[0]);
-    });
+    const{ID,allVehicles} = req.query
+    let query
+    if(allVehicles == 1){
+        query = `(SELECT * FROM locations WHERE ID = 1 ORDER BY Timestamp DESC LIMIT 1)
+            UNION ALL
+            (SELECT * FROM locations WHERE ID = 2 ORDER BY Timestamp DESC LIMIT 1);`;
+            if (err) throw err;
+            res.json(results);
+        }else{
+        query = `SELECT * FROM locations  WHERE ID=${ID} ORDER BY Timestamp DESC LIMIT 1`;
+        connection.query(query, (err, results) => {
+            if (err) throw err;
+            res.json(results[0]);
+        });
+    }
+    
+    
 });
 
 //Handled GET request to the '/historics' endpoint
 app.get('/historics', (req, res) => {
-    const { startDate, endDate } = req.query;
+    const { startDate, endDate, ID, allVehicles } = req.query;
+    let query
 
     // Validate that both start date and end date are provided
     if (!startDate || !endDate) {
         return res.status(400).json({ error: 'Please provide both startDate and endDate query parameters.' });
     }
-    // Construct SQL query to retrieve locations within the specified data range
-    const query = `SELECT * FROM locations WHERE Timestamp BETWEEN '${startDate}' AND '${endDate}'`;
+    if(allVehicles){
+
+    }
+    else{
+        // Construct SQL query to retrieve locations within the specified data range
+    query = `SELECT * FROM locations WHERE ID =${ID} AND Timestamp BETWEEN '${startDate}' AND '${endDate}';`;
+    }
+    
     connection.query(query, (err, results) => {
         if (err) throw err;
         res.json(results)
@@ -60,7 +79,7 @@ app.get('/historics', (req, res) => {
 });
 
 app.get('/location-request', (req, res) => {
-    const { startDate, endDate, lat, lon, radius } = req.query;
+    const { startDate, endDate, lat, lon, radius, ID } = req.query;
 
     // Validate that all required query parameters are provided
     if (!startDate || !endDate || !lat || !lon || !radius) {
@@ -71,7 +90,7 @@ app.get('/location-request', (req, res) => {
     const query = `SELECT *, 
         (6371000 * ACOS(COS(RADIANS(${lat})) * COS(RADIANS(Latitude)) * COS(RADIANS(Longitude) - RADIANS(${lon})) + SIN(RADIANS(${lat})) * SIN(RADIANS(Latitude)))) AS distance
         FROM locations
-        WHERE Timestamp BETWEEN '${startDate}' AND '${endDate}'
+        WHERE ID =${ID} AND Timestamp BETWEEN '${startDate}' AND '${endDate}'
         HAVING distance <= ${radius}
     `;
     connection.query(query, (err, results) => {
@@ -81,7 +100,7 @@ app.get('/location-request', (req, res) => {
 });
 
 if (port === 443) {
-    // HTTPS server configuration
+    //HTTPS server configuration
     https.createServer({
         key: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/privkey.pem`),
         cert: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/fullchain.pem`)
@@ -97,7 +116,7 @@ if (port === 443) {
         console.log(`HTTP server redirecting to HTTPS on port 80`);
     });
 } else {
-    // HTTP server configuration
+    //HTTP server configuration
     https.createServer({
         key: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/privkey.pem`),
         cert: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/fullchain.pem`)
