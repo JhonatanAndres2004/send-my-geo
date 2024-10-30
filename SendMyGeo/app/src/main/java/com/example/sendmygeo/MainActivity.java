@@ -68,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
     private Handler handler = new Handler();
     private Runnable runnable;
     private boolean isSendingData = true;
-    private boolean usesUDP = true;
 
     private static final String HOST_NAME_1 = "sendmygeo-k.ddns.net";
     private static final String HOST_NAME_2 = "sendmygeo-j.ddns.net";
@@ -79,15 +78,13 @@ public class MainActivity extends AppCompatActivity {
     private static final UUID OBD2_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private static final int REQUEST_ENABLE_BT = 1;
     private static final String OBD2_DEVICE_NAME = "OBDII"; // Ajusta al nombre de tu dispositivo
-    private int rpm;
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothSocket socket;
     private OutputStream outputStream;
     private InputStream inputStream;
-    private TextView dataTextView;
+    private TextView rpmTextView;
     private boolean isRunning = false;
     private TextView speedTextView;
-    private int speed; // New variable for speed
     private static final int BUFFER_SIZE = 1024;
     private static final long READ_TIMEOUT = 2000; // 2 seconds timeout
 
@@ -96,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        dataTextView = findViewById(R.id.dataTextView);
+        rpmTextView = findViewById(R.id.rpmTextView);
         speedTextView = findViewById(R.id.speedTextView); // Initialize speed TextView
 
         handler = new Handler();
@@ -117,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         setupBluetooth();
-
         startSendingData();
         startLocationUpdates();
     }
@@ -145,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
             setupBluetooth();
         }
     }
+
     private void setupBluetooth() {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         //If there is not a bluetooth module, send an error message of short time length
@@ -171,7 +168,8 @@ public class MainActivity extends AppCompatActivity {
             try {
                 // If there is no permission to connect to a device, do nothing
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                    return;
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 2);
                 }
                 //Get bonded bluetoot device and establish the default device to be null
                 Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
@@ -206,38 +204,16 @@ public class MainActivity extends AppCompatActivity {
                 sendCommand("ATSP0");   // Automatic protocol
                 Thread.sleep(1000);
 
-                // Start to periodically read
-                startReading();
-
+                showToast("Connected to OBD");
             } catch (Exception e) {
-                showToast("Error: " + e.getMessage());
+                showToast(e.getMessage());
                 closeConnection();
             }
         }).start();
     }
-    private void startReading() {
-        isRunning = true;
-        //In the UI thread, that is, the main thread, read the RPM every 5 seconds if it is running
-        //and if the socket exists and is connected
-        runOnUiThread(() -> {
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (isRunning && socket != null && socket.isConnected()) {
-                        readRPM();
-                        readSpeed();
-                        handler.postDelayed(this, 10000);
-                    }else{
-                        speed=0;
-                        rpm=0;
-                        runOnUiThread(() -> dataTextView.setText("RPM: " + rpm));
-                        runOnUiThread(() -> speedTextView.setText("Speed: " + speed + " km/h"));
-                    }
-                }
-            }, 0);
-        });
-    }
-    private void readSpeed() {
+
+    private int readSpeed() {
+        int speed = 0;
         try {
             // OBD command for vehicle speed is 01 0D
             sendCommand("01 0D");
@@ -248,15 +224,16 @@ public class MainActivity extends AppCompatActivity {
                 if (data.length >= 3) {
                     // Speed is in the third byte, direct conversion from hex to decimal
                     speed = Integer.parseInt(data[2], 16);
-                    // Update UI with speed value
-                    runOnUiThread(() -> speedTextView.setText("Speed: " + speed + " km/h"));
                 }
             }
         } catch (Exception e) {
             showToast("Error reading speed: " + e.getMessage());
         }
+        return speed;
     }
-    private void readRPM() {
+
+    private int readRPM() {
+        int rpm = 0;
         try {
             //Command to read RPM
             sendCommand("01 0C");
@@ -271,14 +248,14 @@ public class MainActivity extends AppCompatActivity {
                     int b = Integer.parseInt(data[3], 16);
                     //formula obtained from the manual to obtain rpm from 2 bytes, the information was "encoded"
                     rpm = ((a * 256) + b) / 4;
-                    //Constantly update the message showing RPM
-                    runOnUiThread(() -> dataTextView.setText("RPM: " + rpm));
                 }
             }
         } catch (Exception e) {
             showToast("Error leyendo RPM: " + e.getMessage());
         }
+        return rpm;
     }
+    
     private void sendCommand(String command) throws IOException {
         if (outputStream != null) {
             // Clear any existing data in the input buffer
@@ -408,16 +385,9 @@ public class MainActivity extends AppCompatActivity {
     private void updateLocationAndSend() {
         if (lastLocation != null) {
             updateLocationUI();
-            if (usesUDP) {
-                sendUDP(HOST_NAME_1);
-                sendUDP(HOST_NAME_2);
-                sendUDP(HOST_NAME_3);
-
-            } else {
-                sendTCP(HOST_NAME_1);
-                sendTCP(HOST_NAME_2);
-                sendTCP(HOST_NAME_3);
-            }
+            sendUDP(HOST_NAME_1);
+            sendUDP(HOST_NAME_2);
+            sendUDP(HOST_NAME_3);
         } else {
             Toast.makeText(MainActivity.this, "It was impossible to obtain the location", Toast.LENGTH_SHORT).show();
         }
@@ -437,13 +407,18 @@ public class MainActivity extends AppCompatActivity {
         sdfUTC.setTimeZone(TimeZone.getTimeZone("UTC"));
         String utcTime = sdfUTC.format(new Date(lastLocation.getTime()));
 
+        // Speed and rpm data from OBD
+        int speed = readSpeed();
+        int rpm = readRPM();
+        
         latitudeTextView.setText("Latitude: " + latitude);
         longitudeTextView.setText("Longitude: " + longitude);
         altitudeTextView.setText("Altitude: " + altitude + " meters");
         timeTextView.setText("Local Time: " + localTime);
+        rpmTextView.setText("RPM: " + rpm);
+        speedTextView.setText("Speed: " + speed + " km/h");
 
-        locationMessage = latitude + ";" + longitude + ";" + utcTime + ";" + speed + ";" + rpm;;
-        showToast("Sent:" + locationMessage);
+        locationMessage = latitude + ";" + longitude + ";" + utcTime + ";" + speed + ";" + rpm;
     }
 
     private String resolveDomainName(String hostName) {
@@ -472,34 +447,9 @@ public class MainActivity extends AppCompatActivity {
                     DatagramPacket packet = new DatagramPacket(buf, buf.length, address, UDP_PORT);
                     socket.send(packet);
                     socket.close();
-                    //showToast("Data sent via UDP to " + hostName + " (" + ipAddress + ")");
                 } catch (Exception e) {
                     e.printStackTrace();
                     showToast("Error sending data via UDP to " + hostName);
-                }
-            }
-        }).start();
-    }
-
-    private void sendTCP(final String hostName) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String ipAddress = resolveDomainName(hostName);
-                if (ipAddress == null) {
-                    showToast("Failed to resolve DNS for TCP: " + hostName);
-                    return;
-                }
-                try {
-                    Socket socket = new Socket(ipAddress, TCP_PORT);
-                    PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-                    out.println(locationMessage);
-                    out.close();
-                    socket.close();
-                    showToast("Data sent via TCP to " + hostName + " (" + ipAddress + ")");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    showToast("Error sending data via TCP to " + hostName);
                 }
             }
         }).start();
