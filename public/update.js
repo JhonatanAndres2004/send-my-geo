@@ -4,7 +4,7 @@ let polylines = [];
 let routeCoordinates = [];
 let lastTimestamp = null;
 let colorIndex = 0;
-const colors = ['#FF0000']; 
+const colors = ['#FF0000',]; 
 let live;
 let autocomplete;
 let mapThemeId = 'a43cc08dd4e3e26d';
@@ -12,6 +12,7 @@ let circle;
 let infowindows = [];
 let infoWindowMarkers = [];
 let polylineColor = '#ff7008';
+let polylineColor2 = '#3956FF'
 let popUpMenu=document.getElementById('emergent-pop-up');
 let locationHistoryTab = document.getElementById("location-history");
 let closeButtonContainer=document.getElementById("close-popup-container")
@@ -24,6 +25,11 @@ let played = 0;
 let infoWindow;
 let infoWindowMarker;
 let pin;
+let ID = 1;
+let vehicle1 = document.getElementById('vehicle1');
+let vehicle2 = document.getElementById('vehicle2');
+let allVehicles = document.getElementById('all');
+let all = false;
 slider.value = 0
 
 const Toast = Swal.mixin({
@@ -176,7 +182,7 @@ slider.oninput = function() {
     if (info[current]) {
         // Case when moving forward (increasing the slider value)
         if (current) { // > prevValue
-            for (let i= 0;i<current -1; i++){
+            for (let i= 0;i<current; i++){
                 updateMapAndRouteLocations(info[i].lat, info[i].lng, info[i].Timestamp, true);
                 setInfoWindow(info[i].lat, info[i].lng, info[i].Timestamp, info[i].vel, info[i].rpm);
                 
@@ -205,6 +211,7 @@ function playSlider() {
                 played = 0;
                 infoWindow.close();
                 infoWindowMarker.setMap(null);
+                polylines.forEach(polyline => polyline.setMap(null));
                 toggleButton.classList.remove('pause');
                 toggleButton.classList.add('play');
                 toggleButton.innerHTML = '▷'; // Play icon and text
@@ -263,7 +270,7 @@ async function initMap() {
     let initialPosition = { lat: 0, lng: 0 };
     
     try {
-        const response = await fetch('/latest-location');
+        const response = await fetch(`/latest-location?ID=${encodeURI(ID)}`);
         const data = await response.json();
         initialPosition = { lat: parseFloat(data.Latitude), lng: parseFloat(data.Longitude) };  
     } catch (err) {
@@ -293,16 +300,20 @@ async function initMap() {
     });
 }
 
-function startLiveLocation() {
-    live = setInterval(fetchLatestLocation, 10000);
+function startLiveLocation(id) {
+    fetchLatestLocation(id)
+    live = setInterval(() => fetchLatestLocation(id), 10000); // Pass `ID` argument to `fetchLatestLocation`
 }
 
 function stopLiveLocation() {
     clearInterval(live);
 }
 
-function fetchLatestLocation() {
-    fetch('/latest-location')
+function fetchLatestLocation(id,) {
+    if(!id){
+        id = ID
+    }
+    fetch(`/latest-location?ID=${encodeURI(id)}`) ///historics?startDate=${encodeURIComponent(date1)}
         .then(response => response.json())
         .then(data => {
             updateLocationDisplay(data);
@@ -391,6 +402,7 @@ function updateMapAndRouteHistorics(lat, lng, timestamp, vel,rpm ,searchByLocati
     if (routeCoordinates.length === 0) {
         routeCoordinates.push(newPosition);
         lastTimestamp = newTimestamp;
+        info.push(allInfo);
     } else {
         const lastPosition = routeCoordinates[routeCoordinates.length - 1];
         const distance = calculateDistance(lastPosition.lat, lastPosition.lng, newPosition.lat, newPosition.lng);
@@ -398,7 +410,13 @@ function updateMapAndRouteHistorics(lat, lng, timestamp, vel,rpm ,searchByLocati
         
         if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 1) {
             routeCoordinates.push(newPosition);
-            drawPolylineHistorics(lastPosition, newPosition);
+            if(ID == 1){
+                drawPolylineHistorics(lastPosition, newPosition);
+            }else if(ID == 2){
+                drawPolylineHistorics(lastPosition, newPosition, true);
+                console.log("ola")
+            }
+            
             info.push(allInfo);
         } else if (distance > 1 || timeDiff >= 1) {
             // If distance is greater than 1 kilometer or the time difference is greater (or equal) than 1 minute, 
@@ -406,7 +424,7 @@ function updateMapAndRouteHistorics(lat, lng, timestamp, vel,rpm ,searchByLocati
             routeCoordinates = [newPosition];
             info.push(allInfo);
         }
-        document.getElementById('slider').max = info.length;
+        document.getElementById('slider').max = (info.length - 1);
         lastTimestamp = newTimestamp;
     }
 }
@@ -431,7 +449,12 @@ function updateMapAndRouteLocations(lat, lng, timestamp, searchByLocation = fals
         
         if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 0.3 && newTimestamp > lastTimestamp) {
             routeCoordinates.push(newPosition);
-            drawPolylineHistorics(lastPosition, newPosition);
+            if(ID == 2){
+                drawPolylineHistorics(lastPosition, newPosition, true);
+            }else{
+                drawPolylineHistorics(lastPosition, newPosition);
+            }
+            
         } else if (distance > 1 || timeDiff >= 0.3) {
             // If distance is greater than 1 kilometer or the time difference is greater (or equal) than 1 minute, 
             // Start a new route from that point
@@ -442,49 +465,93 @@ function updateMapAndRouteLocations(lat, lng, timestamp, searchByLocation = fals
 }
 
 
-function drawPolyline(origin, destination) {
+function drawPolyline(origin, destination, vehicle2=false) {
     const path = [
         new google.maps.LatLng(origin.lat, origin.lng),
         new google.maps.LatLng(destination.lat, destination.lng)
     ];
+    if(vehicle2){
+        const polyline2 = new google.maps.Polyline({
+            path: path,
+            geodesic: true,
+            strokeColor: colors[1] ,
+            strokeOpacity: 1.0,
+            strokeWeight: 4
+        })
+        polyline2.setMap(map);
+        polylines.push(polyline2);    
+    }else{
+        const polyline = new google.maps.Polyline({
+            path: path,
+            geodesic: true,
+            strokeColor: colors[0],
+            strokeOpacity: 1.0,
+            strokeWeight: 4
+        });
+        polyline.setMap(map);
+        polylines.push(polyline);    
+    }
+    // const polyline = new google.maps.Polyline({
+    //     path: path,
+    //     geodesic: true,
+    //     strokeColor: colors[0],
+    //     strokeOpacity: 1.0,
+    //     strokeWeight: 4
+    // });
 
-    const polyline = new google.maps.Polyline({
-        path: path,
-        geodesic: true,
-        strokeColor: colors[colorIndex],
-        strokeOpacity: 1.0,
-        strokeWeight: 4
-    });
-
-    polyline.setMap(map);
-    polylines.push(polyline);
+    
 }
 
-function drawPolylineHistorics(origin, destination) {
+function drawPolylineHistorics(origin, destination,vehicle2=false) {
+    let lineSymbol
+    let polyline
     const path = [
         new google.maps.LatLng(origin.lat, origin.lng),
         new google.maps.LatLng(destination.lat, destination.lng)
     ];
+    if(vehicle2){
+        polyline = new google.maps.Polyline({
+            path: path,
+            geodesic: true,
+            strokeColor: polylineColor2,
+            strokeOpacity: 0.8,
+            strokeWeight: 5,
+            icons: [{
+                icon:lineSymbol,
+                repeat: "200px"
+            }]
+        });
+        lineSymbol = {
+            path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+            scale: 1,
+            strokeColor: polylineColor2,
+            strokeWeight: 3
+        };    
+        
+    }else{
+        polyline = new google.maps.Polyline({
+            path: path,
+            geodesic: true,
+            strokeColor: polylineColor,
+            strokeOpacity: 0.8,
+            strokeWeight: 5,
+            icons: [{
+                icon: lineSymbol,
+                repeat: "200px"
+            }]
+        });
+        lineSymbol = {
+            path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+            scale: 1,
+            strokeColor: polylineColor,
+            strokeWeight: 3
+        };
+    }
     
     // Configuración base de la flecha
-    const lineSymbol = {
-        path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
-        scale: 1,
-        strokeColor: polylineColor,
-        strokeWeight: 3
-    };
+    
 
-    const polyline = new google.maps.Polyline({
-        path: path,
-        geodesic: true,
-        strokeColor: polylineColor,
-        strokeOpacity: 0.8,
-        strokeWeight: 5,
-        icons: [{
-            icon: lineSymbol,
-            repeat: "200px"
-        }]
-    });
+    
 
     // Función para actualizar las flechas según el zoom
     function updateArrowsByZoom() {
@@ -579,6 +646,8 @@ function clearMap() {
 }
 
 document.getElementById('fetch-data').addEventListener('click', () => {
+    stopLiveLocation();
+    let url
     console.log(dateMin);
     let startDate = document.getElementById('start-date').value;
     let endDate = document.getElementById('end-date').value;
@@ -592,12 +661,17 @@ document.getElementById('fetch-data').addEventListener('click', () => {
 
         // Clear the map before fetching new data
         clearMap();
+        if(all){
 
+        }
+        else{
+            url = `/historics?startDate=${encodeURIComponent(date1)}&endDate=${encodeURIComponent(date2)}&ID=${encodeURI(ID)}`;
+        }
         // Construct the URL with encoded date parameters for fetching historical data
-        const url = `/historics?starDate=${encodeURIComponent(date1)}&endDate=${encodeURIComponent(date2)}`;
+        
 
         console.log("Encoded URL:", url);  
-        fetch(`/historics?startDate=${encodeURIComponent(date1)}&endDate=${encodeURIComponent(date2)}`) 
+        fetch(url) 
             .then(response => response.json())
             .then(data => {
                 if (data.length == 0){
@@ -701,7 +775,8 @@ async function setInfoWindow(lat, lng, timestamp, vel, rpm) {
     infoWindow.open(map, infoWindowMarker);
 }
 
-function geocode(request, startDate, endDate, radius) {
+function geocode(request, startDate, endDate, radius,allVehicles=false) {
+    let url
     const geocoder = new google.maps.Geocoder();
     clearMap();
     geocoder
@@ -726,8 +801,14 @@ function geocode(request, startDate, endDate, radius) {
             // Fetch data after the marker's position is updated
             const lat = center.lat();
             const lng = center.lng();
-            console.log(`/location-request?startDate=${startDate}&endDate=${endDate}&lat=${lat}&lon=${lng}&radius=${radius}`);
-            fetch(`/location-request?startDate=${startDate}&endDate=${endDate}&lat=${lat}&lon=${lng}&radius=${radius}`)
+            if(allVehicles){
+                url = `/location-request?startDate=${startDate}&endDate=${endDate}&lat=${lat}&lon=${lng}&radius=${radius}&ID=${ID}`
+            }else{
+                url = `/location-request?startDate=${startDate}&endDate=${endDate}&lat=${lat}&lon=${lng}&radius=${radius}&ID=${ID}`
+            }
+            
+            console.log(url);
+            fetch(url)
                 .then(response => response.json())
                 .then(data => {
                     //document.getElementById('sliderLocations').max = data.length
@@ -751,6 +832,7 @@ function geocode(request, startDate, endDate, radius) {
                 .catch(error => {
                     console.error('Error fetching data:', error);
                 });
+                console.log(info);
                 
         })
         .catch((e) => {
@@ -810,8 +892,33 @@ toggleButton.addEventListener('click', () => {
         played = 0;
     }
 });
+
+vehicle1.addEventListener('click', () =>{
+    all= false;
+    clearMap();
+    stopLiveLocation();
+    ID = 1;
+    startLiveLocation();
+    
+})
+
+vehicle2.addEventListener('click', () =>{
+    all = false;
+    clearMap();
+    stopLiveLocation();
+    ID = 2;
+    startLiveLocation();
+    
+})
+allVehicles.addEventListener('click', () =>{
+    clearMap();
+    stopLiveLocation();
+    all = true;
+    startLiveLocation();
+})
 // Initialize map when the page loads
 loadName();
-loadMap();
+//loadMap();
+document.addEventListener("DOMContentLoaded", loadMap);
 initMap();
 showTab("realtime");
