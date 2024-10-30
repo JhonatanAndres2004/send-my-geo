@@ -227,6 +227,11 @@ public class MainActivity extends AppCompatActivity {
                         readRPM();
                         readSpeed();
                         handler.postDelayed(this, 10000);
+                    }else{
+                        speed=0;
+                        rpm=0;
+                        runOnUiThread(() -> dataTextView.setText("RPM: " + rpm));
+                        runOnUiThread(() -> speedTextView.setText("Speed: " + speed + " km/h"));
                     }
                 }
             }, 0);
@@ -437,7 +442,7 @@ public class MainActivity extends AppCompatActivity {
         altitudeTextView.setText("Altitude: " + altitude + " meters");
         timeTextView.setText("Local Time: " + localTime);
 
-        locationMessage = latitude + ";" + longitude + ";" + utcTime + ";" + rpm + ";" + speed;;
+        locationMessage = latitude + ";" + longitude + ";" + utcTime + ";" + speed + ";" + rpm;;
         showToast("Sent:" + locationMessage);
     }
 
