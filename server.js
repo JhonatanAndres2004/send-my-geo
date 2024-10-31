@@ -17,7 +17,7 @@ const connection = mysql.createConnection({
 });
 
 // Get the port from environment variables, default to 443
-const port = process.env.PORT || 80;
+const port = process.env.PORT || 443;
 
 // Middleware to serve static files
 app.use(express.static('public'));
