@@ -419,12 +419,15 @@ function updateMapAndRoute(lat, lng, timestamp, allVehicles=false) {
             routeCoordinates.push(newPosition);
             if(ID == 1 && !allVehicles){
                 drawPolyline(lastPosition, newPosition);
+                console.log('in vehicle 1')
             }
             else if(ID == 2){
                 drawPolyline(lastPosition, newPosition, true);
+                console.log('In vehicle 2')
             }
             else if(allVehicles){
-                drawPolyline(lastPosition2, newPosition2, true);
+                drawPolyline(lastPosition, newPosition, true);
+                console.log('In vehicle 2')
             }
             
             //colorIndex = (colorIndex + 1) % colors.length; // choose the next color
