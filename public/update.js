@@ -401,13 +401,13 @@ function updateMapAndRoute(lat, lng, timestamp, allVehicles=false) {
     const newTimestamp = new Date(timestamp); 
     
     // Always update HTML display and marker position
-    if(allVehicles || ID == 2){
-        marker2.position = newPosition;
-        //map.panTo(newPosition);
-    }else{
-        marker1.position = newPosition;
-    }
-    
+    // if(allVehicles || ID == 2){
+    //     marker2.position = newPosition;
+    //     //map.panTo(newPosition);
+    // }else{
+    //     marker1.position = newPosition;
+    // }
+    marker1.position = newPosition;
     
     if (routeCoordinates.length === 0)  {
         routeCoordinates.push(newPosition);
@@ -453,7 +453,7 @@ function updateMapAndRoute2(lat, lng, timestamp, allVehicles=false) {
     const newTimestamp = new Date(timestamp); 
     
     // Always update HTML display and marker position
-    
+    marker2.position = newPosition;
     
     if (routeCoordinates2.length === 0)  {
         routeCoordinates2.push(newPosition);
