@@ -17,7 +17,7 @@ const connection = mysql.createConnection({
 });
 
 // Get the port from environment variables, default to 443
-const port = process.env.PORT || 443;
+const port = process.env.PORT || 80;
 
 // Middleware to serve static files
 app.use(express.static('public'));
@@ -46,14 +46,13 @@ app.get('/latest-location', (req, res) => {
             connection.query(query, (err, results) =>{
                 if (err) throw err;
                 res.json(results);
-            })
-            
-        }else{
-        query = `SELECT * FROM locations  WHERE ID=${ID} ORDER BY Timestamp DESC LIMIT 1`;
-        connection.query(query, (err, results) => {
-            if (err) throw err;
-            res.json(results[0]);
-        });
+            });    
+    } else {
+            query = `SELECT * FROM locations  WHERE ID=${ID} ORDER BY Timestamp DESC LIMIT 1`;
+            connection.query(query, (err, results) => {
+                if (err) throw err;
+                res.json(results[0]);
+            });
     }
     
     
@@ -124,7 +123,8 @@ if (port === 443) {
     https.createServer({
         key: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/privkey.pem`),
         cert: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/fullchain.pem`)
-    }, app).listen(port, () => {
+    }, app)
+    app.listen(port, () => {
         
         console.log(`HTTPS Testing Server running on https://localhost:${port}`);
     });

@@ -4,7 +4,9 @@ let marker2;
 let polylines = [];
 let polylines2 = [];
 let routeCoordinates = [];
+let routeCoordinates2 = [];
 let lastTimestamp = null;
+let lastTimestamp2 = null;
 let colorIndex = 0;
 const colors = ['#FF0000',]; 
 let live;
@@ -350,7 +352,7 @@ function fetchLatestLocation(id,) {
                 updateLocationDisplay(data[0]);
                 updateMapAndRoute(data[0].Latitude, data[0].Longitude, data[0].Timestamp);
                 //updateLocationDisplay(data);
-                updateMapAndRoute(data[1].Latitude, data[1].Longitude, data[1].Timestamp, true);
+                updateMapAndRoute2(data[1].Latitude, data[1].Longitude, data[1].Timestamp, true);
                 console.log('fetching both vehicles real time')
             }else{
                 updateLocationDisplay(data);
@@ -396,7 +398,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 
 function updateMapAndRoute(lat, lng, timestamp, allVehicles=false) {
     const newPosition = { lat: parseFloat(lat), lng: parseFloat(lng) };
-    const newTimestamp = new Date(timestamp);
+    const newTimestamp = new Date(timestamp); 
     
     // Always update HTML display and marker position
     if(allVehicles || ID == 2){
@@ -407,7 +409,7 @@ function updateMapAndRoute(lat, lng, timestamp, allVehicles=false) {
     }
     
     
-    if (routeCoordinates.length === 0) {
+    if (routeCoordinates.length === 0)  {
         routeCoordinates.push(newPosition);
         lastTimestamp = newTimestamp;
     } else {
@@ -446,6 +448,44 @@ function updateMapAndRoute(lat, lng, timestamp, allVehicles=false) {
         lastTimestamp = newTimestamp;
     }
 }
+function updateMapAndRoute2(lat, lng, timestamp, allVehicles=false) {
+    const newPosition = { lat: parseFloat(lat), lng: parseFloat(lng) };
+    const newTimestamp = new Date(timestamp); 
+    
+    // Always update HTML display and marker position
+    
+    
+    if (routeCoordinates2.length === 0)  {
+        routeCoordinates2.push(newPosition);
+        lastTimestamp2 = newTimestamp;
+    } else {
+        const lastPosition = routeCoordinates2[routeCoordinates2.length - 1];
+        const distance = calculateDistance(lastPosition.lat, lastPosition.lng, newPosition.lat, newPosition.lng);
+        const timeDiff = (newTimestamp - lastTimestamp) / (1000 * 60); // time difference in minutes
+        
+        if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 1) {
+            routeCoordinates2.push(newPosition);
+            console.log('conditional before polyline')
+            
+                drawPolyline(lastPosition, newPosition, true);
+                console.log('In vehicle 2')
+    
+            
+            //colorIndex = (colorIndex + 1) % colors.length; // choose the next color
+        } else if (distance > 1 || timeDiff >= 1) {
+            // If distance is greater than 1 kilometer or the time difference is greater (or equal) than 1 minute, 
+            // Start a new route from that point
+            routeCoordinates2 = [newPosition];
+            // Clear the previous drawn polylines
+            polylines2.forEach(polyline2 => polyline2.setMap(null));
+            polylines2 = [];
+            colorIndex = 0; // reset color index
+            
+        }
+        
+        lastTimestamp2 = newTimestamp;
+    }
+}
 
 function updateMapAndRouteHistorics(lat, lng, timestamp, vel,rpm ,searchByLocation = false, allVehicles= false) {
     console.log(allVehicles);
@@ -481,11 +521,11 @@ function updateMapAndRouteHistorics(lat, lng, timestamp, vel,rpm ,searchByLocati
                 drawPolylineHistorics(lastPosition, newPosition, true);
                 console.log('inside of "ID == 2" polyline historics')
             }
-            if(allVehicles){
-                drawPolylineHistorics(lastPosition, newPosition, true);
-                console.log('inside conditional of second vehicle')
-                //marker2.position = newPosition;
-            }
+            // if(allVehicles){
+            //     drawPolylineHistorics(lastPosition, newPosition, true);
+            //     console.log('inside conditional of second vehicle')
+            //     //marker2.position = newPosition;
+            // }
             
             info.push(allInfo);
         } else if (distance > 1 || timeDiff >= 1) {
