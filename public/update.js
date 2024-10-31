@@ -400,14 +400,14 @@ function updateMapAndRoute(lat, lng, timestamp, allVehicles=false) {
     const newPosition = { lat: parseFloat(lat), lng: parseFloat(lng) };
     const newTimestamp = new Date(timestamp); 
     
-    // Always update HTML display and marker position
-    // if(allVehicles || ID == 2){
-    //     marker2.position = newPosition;
-    //     //map.panTo(newPosition);
-    // }else{
-    //     marker1.position = newPosition;
-    // }
-    marker1.position = newPosition;
+    //Always update HTML display and marker position
+    if(allVehicles || ID == 2){
+        marker2.position = newPosition;
+        //map.panTo(newPosition);
+    }else{
+        marker1.position = newPosition;
+    }
+    //marker1.position = newPosition;
     
     if (routeCoordinates.length === 0)  {
         routeCoordinates.push(newPosition);
