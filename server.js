@@ -5,6 +5,7 @@ const https = require('https');
 const http = require('http');  // Added for HTTP redirection
 const fs = require('fs');
 const path = require('path');
+const { connect } = require('http2');
 require('dotenv').config();
 
 // Create a connection to the database
@@ -42,8 +43,11 @@ app.get('/latest-location', (req, res) => {
         query = `(SELECT * FROM locations WHERE ID = 1 ORDER BY Timestamp DESC LIMIT 1)
             UNION ALL
             (SELECT * FROM locations WHERE ID = 2 ORDER BY Timestamp DESC LIMIT 1);`;
-            if (err) throw err;
-            res.json(results);
+            connection.query(query, (err, results) =>{
+                if (err) throw err;
+                res.json(results);
+            })
+            
         }else{
         query = `SELECT * FROM locations  WHERE ID=${ID} ORDER BY Timestamp DESC LIMIT 1`;
         connection.query(query, (err, results) => {
