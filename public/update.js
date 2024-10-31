@@ -417,14 +417,14 @@ function updateMapAndRoute(lat, lng, timestamp, allVehicles=false) {
         
         if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 1) {
             routeCoordinates.push(newPosition);
-            if(ID == 1 || allVehicles){
+            if(ID == 1 && !allVehicles){
                 drawPolyline(lastPosition, newPosition);
             }
             else if(ID == 2){
                 drawPolyline(lastPosition, newPosition, true);
             }
             else if(allVehicles){
-                drawPolyline(lastPosition, newPosition, true);
+                drawPolyline(lastPosition2, newPosition2, true);
             }
             
             //colorIndex = (colorIndex + 1) % colors.length; // choose the next color
