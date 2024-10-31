@@ -351,7 +351,7 @@ function fetchLatestLocation(id,) {
                 updateMapAndRoute(data[0].Latitude, data[0].Longitude, data[0].Timestamp);
                 //updateLocationDisplay(data);
                 updateMapAndRoute(data[1].Latitude, data[1].Longitude, data[1].Timestamp, true);
-                console.log('alo')
+                console.log('fetching both vehicles real time')
             }else{
                 updateLocationDisplay(data);
                 updateMapAndRoute(data.Latitude, data.Longitude, data.Timestamp);
@@ -417,6 +417,7 @@ function updateMapAndRoute(lat, lng, timestamp, allVehicles=false) {
         
         if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 1) {
             routeCoordinates.push(newPosition);
+            console.log('conditional before polyline')
             if(ID == 1 && !allVehicles){
                 drawPolyline(lastPosition, newPosition);
                 console.log('in vehicle 1')
