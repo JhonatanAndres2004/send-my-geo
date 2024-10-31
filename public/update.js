@@ -401,7 +401,7 @@ function updateMapAndRoute(lat, lng, timestamp, allVehicles=false) {
     const newTimestamp = new Date(timestamp); 
     
     //Always update HTML display and marker position
-    if(allVehicles || ID == 2){
+    if(ID == 2){
         marker2.position = newPosition;
         //map.panTo(newPosition);
     }else{
