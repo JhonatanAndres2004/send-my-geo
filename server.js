@@ -123,8 +123,7 @@ if (port === 443) {
     https.createServer({
         key: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/privkey.pem`),
         cert: fs.readFileSync(`/etc/letsencrypt/live/${process.env.DOMAIN_NAME}/fullchain.pem`)
-    }, app)
-    app.listen(port, () => {
+    }, app).listen(port, () => {
         
         console.log(`HTTPS Testing Server running on https://localhost:${port}`);
     });
