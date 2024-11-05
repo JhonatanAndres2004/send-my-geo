@@ -350,7 +350,7 @@ function fetchLatestLocation(id,) {
         .then(data => {
             if (data.length > 1){
                 updateLocationDisplay(data[0]);
-                updateMapAndRoute(data[0].Latitude, data[0].Longitude, data[0].Timestamp, true);
+                updateMapAndRoute(data[0].Latitude, data[0].Longitude, data[0].Timestamp);
                 //updateLocationDisplay(data);
                 updateMapAndRoute2(data[1].Latitude, data[1].Longitude, data[1].Timestamp, true);
                 console.log('fetching both vehicles real time')
