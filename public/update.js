@@ -461,7 +461,7 @@ function updateMapAndRoute2(lat, lng, timestamp, allVehicles=false) {
     } else {
         const lastPosition = routeCoordinates2[routeCoordinates2.length - 1];
         const distance = calculateDistance(lastPosition.lat, lastPosition.lng, newPosition.lat, newPosition.lng);
-        const timeDiff = (newTimestamp - lastTimestamp) / (1000 * 60); // time difference in minutes
+        const timeDiff = (newTimestamp - lastTimestamp2) / (1000 * 60); // time difference in minutes
         
         if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 1) {
             routeCoordinates2.push(newPosition);
