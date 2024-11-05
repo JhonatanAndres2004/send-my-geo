@@ -26,7 +26,7 @@ cursor = conn.cursor()
 
 def insert_location(lat, lon, timestamp, velocity, rpm):
     try:
-        sql = "INSERT INTO locations (latitude, longitude, timestamp, Velocity, RPM, ID) VALUES (%s, %s, %s, %s, %s, %s)"
+        sql = "INSERT INTO locations (latitude, longitude, timestamp, Velocity, RPM, ID) VALUES (%s, %s, %s, %s, %s)"
         cursor.execute(sql, (lat, lon, timestamp, velocity, rpm, ID))
         conn.commit()
     except pymysql.MySQLError as e:
