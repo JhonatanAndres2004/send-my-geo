@@ -521,11 +521,11 @@ function updateMapAndRouteHistorics(lat, lng, timestamp, vel,rpm ,searchByLocati
                 drawPolylineHistorics(lastPosition, newPosition, true);
                 console.log('inside of "ID == 2" polyline historics')
             }
-            // if(allVehicles){
-            //     drawPolylineHistorics(lastPosition, newPosition, true);
-            //     console.log('inside conditional of second vehicle')
-            //     //marker2.position = newPosition;
-            // }
+            if(allVehicles){
+                drawPolylineHistorics(lastPosition, newPosition, true);
+                console.log('inside conditional of second vehicle')
+                //marker2.position = newPosition;
+            }
             
             info.push(allInfo);
         } else if (distance > 1 || timeDiff >= 1) {
