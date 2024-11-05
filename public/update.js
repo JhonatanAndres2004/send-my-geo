@@ -8,7 +8,7 @@ let routeCoordinates2 = [];
 let lastTimestamp = null;
 let lastTimestamp2 = null;
 let colorIndex = 0;
-const colors = ['#FF0000',]; 
+const colors = ['#FF0000','#3956FF']; 
 let live;
 let autocomplete;
 let mapThemeId = 'a43cc08dd4e3e26d';
