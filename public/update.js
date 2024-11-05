@@ -424,7 +424,7 @@ function updateMapAndRoute(lat, lng, timestamp, allVehicles=false) {
                 drawPolyline(lastPosition, newPosition);
                 console.log('in vehicle 1')
             }
-            else if(ID == 2){
+            else if(ID == 2 && !allVehicles){
                 drawPolyline(lastPosition, newPosition, true);
                 console.log('In vehicle 2')
             }
@@ -467,8 +467,8 @@ function updateMapAndRoute2(lat, lng, timestamp, allVehicles=false) {
             routeCoordinates2.push(newPosition);
             console.log('conditional before polyline')
             
-                drawPolyline(lastPosition, newPosition, true);
-                console.log('In vehicle 2')
+            drawPolyline(lastPosition, newPosition, true);
+            console.log('In vehicle 2')
     
             
             //colorIndex = (colorIndex + 1) % colors.length; // choose the next color
