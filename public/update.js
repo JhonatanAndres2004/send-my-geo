@@ -176,6 +176,8 @@ function showTab(tab) {
 slider.oninput = function() {
     this.style.setProperty('--value', `${(this.value - this.min) * 100 / (this.max - this.min)}%`);
     routeCoordinates=[];
+    marker2.position = null
+    marker1.position = null 
     if (previous == null) {
         previous = this.value;
     }
@@ -224,7 +226,7 @@ function playSlider() {
                 toggleButton.classList.add('play');
                 toggleButton.innerHTML = '▷'; // Play icon and text
             }
-        }, 1000);  // Adjust the time interval for the speed (500ms = 0.5 seconds)
+        }, 500);  // Adjust the time interval for the speed (500ms = 0.5 seconds)
         played = 1;
     }
 
@@ -421,11 +423,11 @@ function updateMapAndRoute(lat, lng, timestamp, allVehicles=false) {
         if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 1) {
             routeCoordinates.push(newPosition);
             console.log('conditional before polyline')
-            if(ID == 1 && !allVehicles){
+            if(ID === 1 && !allVehicles){
                 drawPolyline(lastPosition, newPosition);
                 console.log('in vehicle 1')
             }
-            else if(ID == 2 && !allVehicles){
+            else if(ID === 2 && !allVehicles){
                 drawPolyline(lastPosition, newPosition, true);
                 console.log('In vehicle 2')
             }
@@ -508,7 +510,7 @@ function updateMapAndRouteHistorics(lat, lng, timestamp, vel,rpm ,searchByLocati
         routeCoordinates.push(newPosition);
         lastTimestamp = newTimestamp;
         info.push(allInfo);
-        if(all = 1 && ID == 1){
+        if(all === 1 && ID === 1){
             info2.push(allInfo);
         }
     } else {
@@ -518,10 +520,10 @@ function updateMapAndRouteHistorics(lat, lng, timestamp, vel,rpm ,searchByLocati
         
         if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 1) {
             routeCoordinates.push(newPosition);
-            if(ID == 1 && !allVehicles){
+            if(ID === 1 && !allVehicles){
                 drawPolylineHistorics(lastPosition, newPosition);
                 console.log('inside of "ID == 1" polyline historics')
-            }else if(ID == 2 || allVehicles){
+            }else if(ID === 2 || allVehicles){
                 drawPolylineHistorics(lastPosition, newPosition, true);
                 console.log('inside of "ID == 2" polyline historics')
             }
@@ -531,7 +533,7 @@ function updateMapAndRouteHistorics(lat, lng, timestamp, vel,rpm ,searchByLocati
                 //marker2.position = newPosition;
                 
             }
-            if(allVehicles && ID == 1){
+            if(allVehicles && ID === 1){
                 info2.push(allInfo);
             }else{
                 info.push(allInfo);
@@ -844,7 +846,7 @@ document.getElementById('fetch-data').addEventListener('click', () => {
 
         // Clear the map before fetching new data
         clearMap();
-        if(all == 1){
+        if(all === 1){
             
             url = `/historics?startDate=${encodeURIComponent(date1)}&endDate=${encodeURIComponent(date2)}&ID=${encodeURI(ID)}`;
             url2 = `/historics?startDate=${encodeURIComponent(date1)}&endDate=${encodeURIComponent(date2)}&ID=${encodeURI(ID+1)}`;
@@ -931,7 +933,7 @@ document.getElementById('fetch-location').addEventListener("click", () => {
     const radius = parseFloat(radiusInput.value);
 
     if (radius > 0) {
-        if (all ==1){
+        if (all ===1){
             geocode({ address: document.getElementById('location-input').value }, date1, date2, radius, true);
             console.log('location, both vehicles');
         }else{
