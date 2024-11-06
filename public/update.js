@@ -919,7 +919,12 @@ document.getElementById('fetch-location').addEventListener("click", () => {
     const radius = parseFloat(radiusInput.value);
 
     if (radius > 0) {
-        geocode({ address: document.getElementById('location-input').value }, date1, date2, radius);
+        if (all ==1){
+            geocode({ address: document.getElementById('location-input').value }, date1, date2, radius);
+        }else{
+            geocode({ address: document.getElementById('location-input').value }, date1, date2, radius, true);
+        }
+        //geocode({ address: document.getElementById('location-input').value }, date1, date2, radius);
         showTab("slider")
         
     } else {
