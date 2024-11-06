@@ -208,7 +208,7 @@ slider.oninput = function() {
     if (info2[current] && all ===1){
         if (current){
             for (let j=0;j<current;j++ ){
-                setInfoWindow(info2[i].lat, info2[i].lng, info2[i].Timestamp, info2[i].vel, info2[i].rpm, true);
+                setInfoWindow(info2[j].lat, info2[j].lng, info2[j].Timestamp, info2[j].vel, info2[j].rpm, true);
             }
         }
     }
@@ -1010,7 +1010,7 @@ async function setInfoWindow(lat, lng, timestamp, vel, rpm, allVehicles=false) {
     });
     infoWindowMarker2 = new AdvancedMarkerElement({
         map:map,
-        content: pin2.element
+        content: pin_2.element
     });
 
     infoWindow = new google.maps.InfoWindow({
