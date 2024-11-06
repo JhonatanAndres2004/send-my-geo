@@ -180,22 +180,9 @@ function showTab(tab) {
 // Update the valueSlider when the slider changes
 slider.oninput = function() {
     this.style.setProperty('--value', `${(this.value - this.min) * 100 / (this.max - this.min)}%`);
-    if (infoWindowMarker) infoWindowMarker.setMap(null);
-    if (infoWindow) infoWindow.close();
-    if(infoWindowMarker2) infoWindowMarker2.setMap(null);
-    if (infoWindow2) infoWindow2.close();
-    routeCoordinates=[];
-    marker2.position = null
-    marker1.position = null 
-    if (previous == null) {
-        previous = this.value;
-    }
-    polylines.forEach(polyline => polyline.setMap(null));
-    polylines = [];
-    polylines2.forEach(polyline2 => polyline2.setMap(null));
-    polylines2 = [];
+    clearMapLocations();
     let current = parseInt(this.value);
-    let prevValue = parseInt(previous);
+    
 
     if (info[current]) {
         // Case when moving forward (increasing the slider value)
@@ -855,7 +842,20 @@ function clearMap() {
     info2 = [];
 
 }
+function clearMapLocations() {
+    marker2.position = null
+    marker1.position = null 
+    if (infoWindowMarker) infoWindowMarker.setMap(null);
+    if (infoWindow) infoWindow.close();
+    if (infoWindowMarker2) infoWindowMarker2.setMap(null);
+    if (infoWindow2) infoWindow2.close();
+    polylines.forEach(polyline => polyline.setMap(null));
+    polylines = [];
+    polylines2.forEach(polyline2 => polyline2.setMap(null));
+    polylines2 = [];
+    routeCoordinates = [];
 
+}
 document.getElementById('fetch-data').addEventListener('click', () => {
     stopLiveLocation();
     let url
