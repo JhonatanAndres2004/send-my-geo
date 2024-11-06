@@ -922,9 +922,9 @@ document.getElementById('fetch-location').addEventListener("click", () => {
 
     if (radius > 0) {
         if (all ==1){
-            geocode({ address: document.getElementById('location-input').value }, date1, date2, radius);
-        }else{
             geocode({ address: document.getElementById('location-input').value }, date1, date2, radius, true);
+        }else{
+            geocode({ address: document.getElementById('location-input').value }, date1, date2, radius);
         }
         //geocode({ address: document.getElementById('location-input').value }, date1, date2, radius);
         showTab("slider")
@@ -1056,17 +1056,17 @@ function geocode(request, startDate, endDate, radius,allVehicles=false) {
 
                 if(url2){
                     fetch(url)
-                .then(response => response.json())
-                .then(data => {
+                    .then(response => response.json())
+                    .then(data => {
                     //document.getElementById('sliderLocations').max = data.length
-                    console.log('Data fetched:', data);
+                        console.log('Data2 fetched:', data);
 
-                    if (data.length == 0) {
-                        Toast.fire({
-                            icon: 'warming',
-                            title: 'No routes were found'
+                        if (data.length == 0) {
+                            Toast.fire({
+                                icon: 'warming',
+                                title: 'No routes were found'
                         });
-                    } else {
+                        } else {
                         data.forEach(data => {
                             updateLocationDisplay(data);
                             updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp, data.Velocity, data.RPM, true,true);
@@ -1081,6 +1081,7 @@ function geocode(request, startDate, endDate, radius,allVehicles=false) {
                 });
                 }
                 console.log(info);
+                console.log(info2);
                 
         })
         
