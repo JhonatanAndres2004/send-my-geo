@@ -544,6 +544,7 @@ function updateMapAndRouteHistorics(lat, lng, timestamp, vel,rpm ,searchByLocati
             routeCoordinates = [newPosition];
             info.push(allInfo);
         }
+        sliderLength();
         //document.getElementById('slider').max = (info.length - 1);
         lastTimestamp = newTimestamp;
     }
@@ -830,6 +831,7 @@ document.getElementById('fetch-data').addEventListener('click', () => {
     let url
     let url2
     console.log(dateMin);
+    console.log('all', all);
     let startDate = document.getElementById('start-date').value;
     let endDate = document.getElementById('end-date').value;
     const correctDates = checkDates(startDate, endDate); //check if start date is earlier than end date
@@ -936,7 +938,7 @@ document.getElementById('fetch-location').addEventListener("click", () => {
             geocode({ address: document.getElementById('location-input').value }, date1, date2, radius);
         }
         //geocode({ address: document.getElementById('location-input').value }, date1, date2, radius);
-        sliderLength();
+        //sliderLength();
         showTab("slider")
         
     } else {
