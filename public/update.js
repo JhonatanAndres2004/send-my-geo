@@ -1182,6 +1182,7 @@ vehicle1.addEventListener('click', () =>{
     clearMap();
     stopLiveLocation();
     ID = 1;
+    console.log(all)
     startLiveLocation();
     
 })
@@ -1217,7 +1218,7 @@ allVehicles.addEventListener('click', () =>{
     clearMap();
     stopLiveLocation();
     all = 1;
-    
+    console.log(all)
     startLiveLocation();
     
 })
