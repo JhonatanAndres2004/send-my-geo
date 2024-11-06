@@ -199,19 +199,22 @@ slider.oninput = function() {
             for (let i= 0;i<current; i++){
                 updateMapAndRouteLocations(info[i].lat, info[i].lng, info[i].Timestamp, true);
                 setInfoWindow(info[i].lat, info[i].lng, info[i].Timestamp, info[i].vel, info[i].rpm);
-                
+                if(all === 1){
+                    setInfoWindow(info2[j].lat, info2[j].lng, info2[j].Timestamp, info2[j].vel, info2[j].rpm, true);
+                }
+
                 
             }
         }
         previous = current;
     }
-    if (info2[current] && all ===1){
-        if (current){
-            for (let j=0;j<current;j++ ){
-                setInfoWindow(info2[j].lat, info2[j].lng, info2[j].Timestamp, info2[j].vel, info2[j].rpm, true);
-            }
-        }
-    }
+    // if (info2[current] && all ===1){
+    //     if (current){
+    //         for (let j=0;j<current;j++ ){
+    //             setInfoWindow(info2[j].lat, info2[j].lng, info2[j].Timestamp, info2[j].vel, info2[j].rpm, true);
+    //         }
+    //     }
+    // }
 };
 
 function playSlider() {
@@ -1026,15 +1029,7 @@ async function setInfoWindow(lat, lng, timestamp, vel, rpm, allVehicles=false) {
     infoWindowMarker.position = new google.maps.LatLng(lat, lng);
     
     
-    infoWindow.setContent(`
-        <div>
-          <p>Time: ${convertToLocalTime(timestamp)}</p>
-          <p>Velocity: ${parseFloat(vel)} km/h</p>
-          <p> RPM: ${parseFloat(rpm)}<p> 
-        </div>
-      `);
-
-      infoWindow.open(map, infoWindowMarker);
+   
 
       if (allVehicles === true){
         infoWindow2.setContent(`
@@ -1046,9 +1041,21 @@ async function setInfoWindow(lat, lng, timestamp, vel, rpm, allVehicles=false) {
           `);
 
 
-        infoWindowMarker2.setMap(true);
+        infoWindowMarker2.setMap(map);
         infoWindowMarker2.position = new google.maps.LatLng(lat,lng);
         infoWindow2.open(map,infoWindowMarker2)
+    }else{
+        infoWindow.setContent(`
+            <div>
+              <p>Time: ${convertToLocalTime(timestamp)}</p>
+              <p>Velocity: ${parseFloat(vel)} km/h</p>
+              <p> RPM: ${parseFloat(rpm)}<p> 
+            </div>
+          `);
+          infoWindowMarker.setMap(map);
+          infoWindowMarker.position = new google.maps.LatLng(lat, lng);
+          infoWindow.open(map, infoWindowMarker);
+
     }
 
     // Set the content for the info window
