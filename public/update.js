@@ -1095,7 +1095,7 @@ function geocode(request, startDate, endDate, radius,allVehicles=false) {
                 title: 'It was impossible to use geocoding for this location'
             });
         });
-        sliderLength();
+    sliderLength();
         
 }
 
