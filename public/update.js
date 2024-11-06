@@ -180,6 +180,10 @@ function showTab(tab) {
 // Update the valueSlider when the slider changes
 slider.oninput = function() {
     this.style.setProperty('--value', `${(this.value - this.min) * 100 / (this.max - this.min)}%`);
+    if (infoWindowMarker) infoWindowMarker.setMap(null);
+    if (infoWindow) infoWindow.close();
+    if(infoWindowMarker2) infoWindowMarker2.setMap(null);
+    if (infoWindow2) infoWindow2.close();
     routeCoordinates=[];
     marker2.position = null
     marker1.position = null 
@@ -209,7 +213,7 @@ slider.oninput = function() {
         if (current){
             for (let i=0;i<current;i++ ){
                 updateMapAndRouteLocations(info2[i].lat, info2[i].lng, info2[i].Timestamp, true, true);
-                //setInfoWindow(info2[i].lat, info2[i].lng, info2[i].Timestamp, info2[i].vel, info2[i].rpm, true);
+                setInfoWindow(info2[i].lat, info2[i].lng, info2[i].Timestamp, info2[i].vel, info2[i].rpm, true);
             }
         }
     }
@@ -998,10 +1002,10 @@ async function initializeAutocomplete() {
 async function setInfoWindow(lat, lng, timestamp, vel, rpm, allVehicles=false) { 
     const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
     
-    if (infoWindowMarker) infoWindowMarker.setMap(null);
-    if (infoWindow) infoWindow.close();
-    if(infoWindowMarker2) infoWindowMarker2.setMap(null);
-    if (infoWindow2) infoWindow2.close();
+    // if (infoWindowMarker) infoWindowMarker.setMap(null);
+    // if (infoWindow) infoWindow.close();
+    // if(infoWindowMarker2) infoWindowMarker2.setMap(null);
+    // if (infoWindow2) infoWindow2.close();
     if(ID ===2 ){
         pin.background = polylineColor2
     }if(ID ===1){
