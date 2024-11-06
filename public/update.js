@@ -200,7 +200,7 @@ slider.oninput = function() {
                 updateMapAndRouteLocations(info[i].lat, info[i].lng, info[i].Timestamp, true);
                 setInfoWindow(info[i].lat, info[i].lng, info[i].Timestamp, info[i].vel, info[i].rpm);
                 if(all === 1){
-                    setInfoWindow(info2[j].lat, info2[j].lng, info2[j].Timestamp, info2[j].vel, info2[j].rpm, true);
+                    setInfoWindow(info2[i].lat, info2[i].lng, info2[i].Timestamp, info2[i].vel, info2[i].rpm, true);
                 }
 
                 
@@ -1272,6 +1272,19 @@ vehicle2.addEventListener('click', () =>{
     
 })
 allVehicles.addEventListener('click', () =>{
+    var reproducer = document.getElementById("reproducer");
+    var startPckr = document.getElementById("start-date");
+    var endPickr = document.getElementById("end-date");
+    var startDate = startPckr.value
+    var endDate = endPickr.value
+    if(reproducer.style.visibility == "visible"){
+        const toggleButton = document.getElementById('toggleButton');
+        //toggleButton.click();      
+        showTab("history")
+        startPckr.value = startDate;
+        endPickr.value = endDate;
+        popUpMenu.click();
+    }
     marker1.position = null
     marker2.position = null
     ID = 1
