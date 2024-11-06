@@ -199,11 +199,18 @@ slider.oninput = function() {
             for (let i= 0;i<current; i++){
                 updateMapAndRouteLocations(info[i].lat, info[i].lng, info[i].Timestamp, true);
                 setInfoWindow(info[i].lat, info[i].lng, info[i].Timestamp, info[i].vel, info[i].rpm);
-                setInfoWindow(info2[i].lat, info2[i].lng, info2[i].Timestamp, info2[i].vel, info2[i].rpm, true);
+                
                 
             }
         }
         previous = current;
+    }
+    if (info2[current] && all ===1){
+        if (current){
+            for (let j=0;j<current;j++ ){
+                setInfoWindow(info2[i].lat, info2[i].lng, info2[i].Timestamp, info2[i].vel, info2[i].rpm, true);
+            }
+        }
     }
 };
 
