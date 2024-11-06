@@ -1071,7 +1071,7 @@ function geocode(request, startDate, endDate, radius,allVehicles=false) {
                         } else {
                         data.forEach(data => {
                             updateLocationDisplay(data);
-                            updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp, data.Velocity, data.RPM, true,true);
+                            updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp, data.Velocity, data.RPM, false,true);
                             
                             //setInfoWindow(data.Latitude, data.Longitude, data.Timestamp);
                         });
