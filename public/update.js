@@ -234,6 +234,8 @@ function playSlider() {
                 played = 0;
                 infoWindow.close();
                 infoWindowMarker.setMap(null);
+                infoWindow2.close();
+                infoWindowMarker2.setMap(null);
                 polylines.forEach(polyline => polyline.setMap(null));
                 polylines2.forEach(polyline2 => polyline2.setMap(null));
                 toggleButton.classList.remove('pause');
@@ -1000,7 +1002,7 @@ async function setInfoWindow(lat, lng, timestamp, vel, rpm, allVehicles=false) {
     if (infoWindow) infoWindow.close();
     if(infoWindowMarker2) infoWindowMarker2.setMap(null);
     if (infoWindow2) infoWindow2.close();
-    if(ID ===2 || allVehicles ){
+    if(ID ===2 ){
         pin.background = polylineColor2
     }if(ID ===1){
         pin.background = polylineColor
@@ -1043,6 +1045,7 @@ async function setInfoWindow(lat, lng, timestamp, vel, rpm, allVehicles=false) {
         infoWindowMarker2.position = new google.maps.LatLng(lat,lng);
         infoWindow2.open(map,infoWindowMarker2)
     }else{
+        console.log('setting infowindow')
         infoWindow.setContent(`
             <div>
               <p>Time: ${convertToLocalTime(timestamp)}</p>
