@@ -208,7 +208,7 @@ slider.oninput = function() {
     if (info2[current] && all ===1){
         if (current){
             for (let i=0;i<current;i++ ){
-                updateMapAndRouteLocations(info[i].lat, info[i].lng, info[i].Timestamp, true, true);
+                updateMapAndRouteLocations(info2[i].lat, info2[i].lng, info2[i].Timestamp, true, true);
                     setInfoWindow(info2[i].lat, info2[i].lng, info2[i].Timestamp, info2[i].vel, info2[i].rpm, true);
             }
         }
@@ -1000,9 +1000,9 @@ async function setInfoWindow(lat, lng, timestamp, vel, rpm, allVehicles=false) {
     if (infoWindow) infoWindow.close();
     if(infoWindowMarker2) infoWindowMarker2.setMap(null);
     if (infoWindow2) infoWindow2.close();
-    if(ID ==2 ){
+    if(ID ===2 || allVehicles ){
         pin.background = polylineColor2
-    }else{
+    }if(ID ===1){
         pin.background = polylineColor
     }
     infoWindowMarker = new AdvancedMarkerElement({
@@ -1022,9 +1022,9 @@ async function setInfoWindow(lat, lng, timestamp, vel, rpm, allVehicles=false) {
         content: ""
     });
 
-    infoWindowMarker.setMap(map);
+    //infoWindowMarker.setMap(map);
     // Update infoWindowMarker's position
-    infoWindowMarker.position = new google.maps.LatLng(lat, lng);
+    //infoWindowMarker.position = new google.maps.LatLng(lat, lng);
     
     
    
