@@ -923,6 +923,7 @@ document.getElementById('fetch-location').addEventListener("click", () => {
     if (radius > 0) {
         if (all ==1){
             geocode({ address: document.getElementById('location-input').value }, date1, date2, radius, true);
+            console.log('location, both vehicles');
         }else{
             geocode({ address: document.getElementById('location-input').value }, date1, date2, radius);
         }
@@ -1029,6 +1030,7 @@ function geocode(request, startDate, endDate, radius,allVehicles=false) {
             }
             
             console.log(url);
+            console.log(url2)
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
