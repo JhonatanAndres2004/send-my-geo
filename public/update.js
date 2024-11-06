@@ -813,6 +813,8 @@ function clearMap() {
     lastTimestamp = null;
     colorIndex = 0;
     info = [];
+    info2 = [];
+
 }
 
 document.getElementById('fetch-data').addEventListener('click', () => {
