@@ -209,7 +209,7 @@ slider.oninput = function() {
         if (current){
             for (let i=0;i<current;i++ ){
                 updateMapAndRouteLocations(info2[i].lat, info2[i].lng, info2[i].Timestamp, true, true);
-                    setInfoWindow(info2[i].lat, info2[i].lng, info2[i].Timestamp, info2[i].vel, info2[i].rpm, true);
+                //setInfoWindow(info2[i].lat, info2[i].lng, info2[i].Timestamp, info2[i].vel, info2[i].rpm, true);
             }
         }
     }
