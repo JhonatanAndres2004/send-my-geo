@@ -1045,8 +1045,6 @@ async function setInfoWindow2(lat, lng, timestamp, vel, rpm, allVehicles=false) 
     const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
     if(infoWindowMarker2) infoWindowMarker2.setMap(null);
     if (infoWindow2) infoWindow2.close();
-
-    if(infoWindowMarker2)
     infoWindowMarker2 = new AdvancedMarkerElement({
         map:map,
         content: pin_2.element
