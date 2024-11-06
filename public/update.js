@@ -1057,7 +1057,7 @@ function geocode(request, startDate, endDate, radius,allVehicles=false) {
                 });
 
                 if(url2){
-                    fetch(url)
+                    fetch(url2)
                     .then(response => response.json())
                     .then(data => {
                     //document.getElementById('sliderLocations').max = data.length
