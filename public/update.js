@@ -552,8 +552,10 @@ function updateMapAndRouteHistorics(lat, lng, timestamp, vel,rpm ,searchByLocati
 function sliderLength(){
     if(info.length > info2.length){
         document.getElementById('slider').max = (info.length - 1);
+        console.log('data1 greater than data2')
     }else{
         document.getElementById('slider').max = (info2.length - 1)
+        console.log('data2 grater or equal than data1')
     }  
 }
 
