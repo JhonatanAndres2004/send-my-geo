@@ -200,6 +200,7 @@ slider.oninput = function() {
                 updateMapAndRouteLocations(info[i].lat, info[i].lng, info[i].Timestamp, true);
                 setInfoWindow(info[i].lat, info[i].lng, info[i].Timestamp, info[i].vel, info[i].rpm);
                 if(all === 1){
+                    updateMapAndRouteLocations(info[i].lat, info[i].lng, info[i].Timestamp, true, true);
                     setInfoWindow(info2[i].lat, info2[i].lng, info2[i].Timestamp, info2[i].vel, info2[i].rpm, true);
                 }
 
@@ -590,7 +591,7 @@ function sliderLength(){
     }  
 }
 
-function updateMapAndRouteLocations(lat, lng, timestamp, searchByLocation = false) {
+function updateMapAndRouteLocations(lat, lng, timestamp, searchByLocation = false, allVehicles=false) {
     const newPosition = { lat: parseFloat(lat), lng: parseFloat(lng) };
     const newTimestamp = new Date(timestamp);
     //const allInfo ={lat:parseFloat(lat),lng:parseFloat(lng),Timestamp:timestamp}
@@ -609,7 +610,7 @@ function updateMapAndRouteLocations(lat, lng, timestamp, searchByLocation = fals
         
         if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 0.3 && newTimestamp > lastTimestamp) {
             routeCoordinates.push(newPosition);
-            if(ID == 2){
+            if(ID == 2 || allVehicles){
                 drawPolylineHistorics(lastPosition, newPosition, true);
             }else{
                 drawPolylineHistorics(lastPosition, newPosition);
