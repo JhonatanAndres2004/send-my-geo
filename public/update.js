@@ -552,12 +552,15 @@ function updateMapAndRouteHistorics(lat, lng, timestamp, vel,rpm ,searchByLocati
 function sliderLength(){
     console.log('inside of slider lenght function')
     console.log('info',info)
+    console.log('info1 length',info.length);
+    
     console.log('info2',info2)
+    console.log('info2 length',info2.length);
     if(info.length > info2.length){
         document.getElementById('slider').max = (info.length - 1);
         console.log('data1 greater than data2')
     }else{
-        document.getElementById('slider').max = (info2.length - 1)
+        document.getElementById('slider').max = (info2.length - 1);
         console.log('data2 grater or equal than data1')
     }  
 }
