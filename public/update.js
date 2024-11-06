@@ -550,6 +550,7 @@ function updateMapAndRouteHistorics(lat, lng, timestamp, vel,rpm ,searchByLocati
 }
 
 function sliderLength(){
+    console.log('inside of slider lenght function')
     if(info.length > info2.length){
         document.getElementById('slider').max = (info.length - 1);
         console.log('data1 greater than data2')
