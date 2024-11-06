@@ -14,7 +14,9 @@ let autocomplete;
 let mapThemeId = 'a43cc08dd4e3e26d';
 let circle;
 let infowindows = [];
+let infowindows2 =[];
 let infoWindowMarkers = [];
+let infoWindowMarkers2 = [];
 let polylineColor = '#ff7008';
 let polylineColor2 = '#3956FF'
 let popUpMenu=document.getElementById('emergent-pop-up');
@@ -28,8 +30,11 @@ let info2 = [];
 let previous;
 let played = 0;
 let infoWindow;
+let infowindow2;
 let infoWindowMarker;
+let infoWindowMarker2;
 let pin;
+let pin_2;
 let ID = 1;
 let vehicle1 = document.getElementById('vehicle1');
 let vehicle2 = document.getElementById('vehicle2');
@@ -194,6 +199,7 @@ slider.oninput = function() {
             for (let i= 0;i<current; i++){
                 updateMapAndRouteLocations(info[i].lat, info[i].lng, info[i].Timestamp, true);
                 setInfoWindow(info[i].lat, info[i].lng, info[i].Timestamp, info[i].vel, info[i].rpm);
+                setInfoWindow(info2[i].lat, info2[i].lng, info2[i].Timestamp, info2[i].vel, info2[i].rpm, true);
                 
             }
         }
@@ -331,7 +337,13 @@ async function initMap() {
         glyph: '!',
         glyphColor: 'white'
     });
-    
+    pin_2 = new PinElement({
+        scale: 0.8,
+        background: polylineColor2,
+        borderColor: 'white',
+        glyph: '!',
+        glyphColor: 'white'
+    });
     
 }
 
@@ -816,6 +828,8 @@ function clearMap() {
     if (circle) circle.setMap(null);
     if (infoWindowMarker) infoWindowMarker.setMap(null);
     if (infoWindow) infoWindow.close();
+    if (infoWindowMarker2) infoWindowMarker2.setMap(null);
+    if (infoWindow2) infoWindow2.close();
     polylines.forEach(polyline => polyline.setMap(null));
     polylines = [];
     polylines2.forEach(polyline2 => polyline2.setMap(null));
@@ -971,11 +985,13 @@ async function initializeAutocomplete() {
     });
 }
 
-async function setInfoWindow(lat, lng, timestamp, vel, rpm) { 
+async function setInfoWindow(lat, lng, timestamp, vel, rpm, allVehicles=false) { 
     const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
     
     if (infoWindowMarker) infoWindowMarker.setMap(null);
     if (infoWindow) infoWindow.close();
+    if(infoWindowMarker2) infoWindowMarker2.setMap(null);
+    if (infoWindow2) infoWindow2.close();
     if(ID ==2 ){
         pin.background = polylineColor2
     }else{
@@ -985,16 +1001,24 @@ async function setInfoWindow(lat, lng, timestamp, vel, rpm) {
         map: map,
         content: pin.element 
     });
+    infoWindowMarker2 = new AdvancedMarkerElement({
+        map:map,
+        content: pin2.element
+    });
 
     infoWindow = new google.maps.InfoWindow({
         content: "",
     });
 
+    infoWindow2 = new google.maps.InfoWindow({
+        content: ""
+    });
+
     infoWindowMarker.setMap(map);
     // Update infoWindowMarker's position
     infoWindowMarker.position = new google.maps.LatLng(lat, lng);
-
-    // Set the content for the info window
+    
+    
     infoWindow.setContent(`
         <div>
           <p>Time: ${convertToLocalTime(timestamp)}</p>
@@ -1002,10 +1026,30 @@ async function setInfoWindow(lat, lng, timestamp, vel, rpm) {
           <p> RPM: ${parseFloat(rpm)}<p> 
         </div>
       `);
+
+      infoWindow.open(map, infoWindowMarker);
+
+      if (allVehicles === true){
+        infoWindow2.setContent(`
+            <div>
+              <p>Time: ${convertToLocalTime(timestamp)}</p>
+              <p>Velocity: ${parseFloat(vel)} km/h</p>
+              <p> RPM: ${parseFloat(rpm)}<p> 
+            </div>
+          `);
+
+
+        infoWindowMarker2.setMap(true);
+        infoWindowMarker2.position = new google.maps.LatLng(lat,lng);
+        infoWindow2.open(map,infoWindowMarker2)
+    }
+
+    // Set the content for the info window
+    
       //.toFixed(2)
 
     // Open the info window on the updated marker
-    infoWindow.open(map, infoWindowMarker);
+    
 }
 
 function geocode(request, startDate, endDate, radius,allVehicles=false) {
