@@ -930,6 +930,7 @@ document.getElementById('fetch-location').addEventListener("click", () => {
             geocode({ address: document.getElementById('location-input').value }, date1, date2, radius);
         }
         //geocode({ address: document.getElementById('location-input').value }, date1, date2, radius);
+        sliderLength();
         showTab("slider")
         
     } else {
@@ -1095,7 +1096,7 @@ function geocode(request, startDate, endDate, radius,allVehicles=false) {
                 title: 'It was impossible to use geocoding for this location'
             });
         });
-    sliderLength();
+    
         
 }
 
