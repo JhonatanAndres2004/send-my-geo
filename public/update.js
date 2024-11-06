@@ -30,7 +30,7 @@ let info2 = [];
 let previous;
 let played = 0;
 let infoWindow;
-let infowindow2;
+let infoWindow2;
 let infoWindowMarker;
 let infoWindowMarker2;
 let pin;
