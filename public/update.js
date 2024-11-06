@@ -1249,6 +1249,10 @@ vehicle1.addEventListener('click', () =>{
         endPickr.value = endDate;
         popUpMenu.click();
     }
+    
+    document.getElementById('vehicle1').disabled = true;
+    document.getElementById('vehicle2').disabled = false;
+    document.getElementById('all').disabled = false;
     marker2.position = null
     marker.position = null
     all= 0;
@@ -1274,6 +1278,11 @@ vehicle2.addEventListener('click', () =>{
         endPickr.value = endDate;
         popUpMenu.click();
     }
+
+    document.getElementById('vehicle1').disabled = false;
+    document.getElementById('vehicle2').disabled = true;
+    document.getElementById('all').disabled = false;
+
     marker1.position = null
     marker.position = null
     all = 0;
@@ -1298,6 +1307,10 @@ allVehicles.addEventListener('click', () =>{
         endPickr.value = endDate;
         popUpMenu.click();
     }
+    document.getElementById('vehicle1').disabled = false;
+    document.getElementById('vehicle2').disabled = false;
+    document.getElementById('all').disabled = true;
+    
     marker1.position = null
     marker2.position = null
     ID = 1

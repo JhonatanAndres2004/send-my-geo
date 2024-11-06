@@ -107,6 +107,10 @@ button:disabled {
     cursor: not-allowed;
 }
 
+.v-btn:disabled{
+    background-color: #88808f;
+    cursor: not-allowed;
+}
 .tab-content {
     display: flex;
     flex-direction: row;
