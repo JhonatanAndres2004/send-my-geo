@@ -23,7 +23,8 @@ let closeButtonContainer=document.getElementById("close-popup-container")
 let closeButton=document.getElementById("close-popup")
 let slider = document.getElementById('slider');
 let valueSlider = document.getElementById('valueSlider')
-let info= []
+let info= [];
+let info2 = [];
 let previous;
 let played = 0;
 let infoWindow;
@@ -507,6 +508,9 @@ function updateMapAndRouteHistorics(lat, lng, timestamp, vel,rpm ,searchByLocati
         routeCoordinates.push(newPosition);
         lastTimestamp = newTimestamp;
         info.push(allInfo);
+        if(all = 1 && ID == 1){
+            info2.push(allInfo);
+        }
     } else {
         const lastPosition = routeCoordinates[routeCoordinates.length - 1];
         const distance = calculateDistance(lastPosition.lat, lastPosition.lng, newPosition.lat, newPosition.lng);
@@ -517,28 +521,41 @@ function updateMapAndRouteHistorics(lat, lng, timestamp, vel,rpm ,searchByLocati
             if(ID == 1 && !allVehicles){
                 drawPolylineHistorics(lastPosition, newPosition);
                 console.log('inside of "ID == 1" polyline historics')
-            }else if(ID == 2){
+            }else if(ID == 2 || allVehicles){
                 drawPolylineHistorics(lastPosition, newPosition, true);
                 console.log('inside of "ID == 2" polyline historics')
             }
-            if(allVehicles){
+            if(allVehicles ){
                 drawPolylineHistorics(lastPosition, newPosition, true);
                 console.log('inside conditional of second vehicle')
                 //marker2.position = newPosition;
+                
+            }
+            if(allVehicles && ID == 1){
+                info2.push(allInfo);
+            }else{
+                info.push(allInfo);
             }
             
-            info.push(allInfo);
+            
         } else if (distance > 1 || timeDiff >= 1) {
             // If distance is greater than 1 kilometer or the time difference is greater (or equal) than 1 minute, 
             // Start a new route from that point
             routeCoordinates = [newPosition];
             info.push(allInfo);
         }
-        document.getElementById('slider').max = (info.length - 1);
+        //document.getElementById('slider').max = (info.length - 1);
         lastTimestamp = newTimestamp;
     }
 }
 
+function sliderLength(){
+    if(info.length > info2.length){
+        document.getElementById('slider').max = (info.length - 1);
+    }else{
+        document.getElementById('slider').max = (info2.length - 1)
+    }  
+}
 
 function updateMapAndRouteLocations(lat, lng, timestamp, searchByLocation = false) {
     const newPosition = { lat: parseFloat(lat), lng: parseFloat(lng) };
@@ -972,6 +989,7 @@ async function setInfoWindow(lat, lng, timestamp, vel, rpm) {
 
 function geocode(request, startDate, endDate, radius,allVehicles=false) {
     let url
+    let url2
     const geocoder = new google.maps.Geocoder();
     clearMap();
     geocoder
@@ -998,12 +1016,39 @@ function geocode(request, startDate, endDate, radius,allVehicles=false) {
             const lng = center.lng();
             if(allVehicles){
                 url = `/location-request?startDate=${startDate}&endDate=${endDate}&lat=${lat}&lon=${lng}&radius=${radius}&ID=${ID}`
+                url2 = `/location-request?startDate=${startDate}&endDate=${endDate}&lat=${lat}&lon=${lng}&radius=${radius}&ID=${ID+1}`
             }else{
                 url = `/location-request?startDate=${startDate}&endDate=${endDate}&lat=${lat}&lon=${lng}&radius=${radius}&ID=${ID}`
             }
             
             console.log(url);
             fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    //document.getElementById('sliderLocations').max = data.length
+                    console.log('Data fetched:', data);
+
+                    if (data.length == 0) {
+                        Toast.fire({
+                            icon: 'warming',
+                            title: 'No routes were found'
+                        });
+                    } else {
+                        data.forEach(data => {
+                            updateLocationDisplay(data);
+                            updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp, data.Velocity, data.RPM);
+                            
+                            //setInfoWindow(data.Latitude, data.Longitude, data.Timestamp);
+                        });
+                        
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+
+                if(url2){
+                    fetch(url)
                 .then(response => response.json())
                 .then(data => {
                     //document.getElementById('sliderLocations').max = data.length
@@ -1027,15 +1072,19 @@ function geocode(request, startDate, endDate, radius,allVehicles=false) {
                 .catch(error => {
                     console.error('Error fetching data:', error);
                 });
+                }
                 console.log(info);
                 
         })
+        
         .catch((e) => {
             Toast.fire({
                 icon: 'info',
                 title: 'It was impossible to use geocoding for this location'
             });
         });
+        sliderLength();
+        
 }
 
 
