@@ -180,7 +180,13 @@ function showTab(tab) {
 // Update the valueSlider when the slider changes
 slider.oninput = function() {
     this.style.setProperty('--value', `${(this.value - this.min) * 100 / (this.max - this.min)}%`);
-    clearMapLocations();
+    marker2.position = null;
+    marker1.position = null;
+    polylines.forEach(polyline => polyline.setMap(null));
+    polylines = [];
+    polylines2.forEach(polyline2 => polyline2.setMap(null));
+    polylines2 = [];
+    routeCoordinates = [];
     let current = parseInt(this.value);
     
 
@@ -200,7 +206,7 @@ slider.oninput = function() {
         if (current){
             for (let i=0;i<current;i++ ){
                 updateMapAndRouteLocations(info2[i].lat, info2[i].lng, info2[i].Timestamp, true, true);
-                setInfoWindow(info2[i].lat, info2[i].lng, info2[i].Timestamp, info2[i].vel, info2[i].rpm, true);
+                setInfoWindow2(info2[i].lat, info2[i].lng, info2[i].Timestamp, info2[i].vel, info2[i].rpm);
             }
         }
     }
@@ -1002,10 +1008,9 @@ async function initializeAutocomplete() {
 async function setInfoWindow(lat, lng, timestamp, vel, rpm, allVehicles=false) { 
     const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
     
-    // if (infoWindowMarker) infoWindowMarker.setMap(null);
-    // if (infoWindow) infoWindow.close();
-    // if(infoWindowMarker2) infoWindowMarker2.setMap(null);
-    // if (infoWindow2) infoWindow2.close();
+    if (infoWindowMarker) infoWindowMarker.setMap(null);
+    if (infoWindow) infoWindow.close();
+    
     if(ID ===2 ){
         pin.background = polylineColor2
     }if(ID ===1){
@@ -1015,53 +1020,59 @@ async function setInfoWindow(lat, lng, timestamp, vel, rpm, allVehicles=false) {
         map: map,
         content: pin.element 
     });
-    infoWindowMarker2 = new AdvancedMarkerElement({
-        map:map,
-        content: pin_2.element
-    });
 
     infoWindow = new google.maps.InfoWindow({
         content: "",
     });
 
+    
+
+    
+    infoWindow.setContent(`
+        <div>
+          <p>Time: ${convertToLocalTime(timestamp)}</p>
+          <p>Velocity: ${parseFloat(vel)} km/h</p>
+          <p> RPM: ${parseFloat(rpm)}<p> 
+        </div>
+      `);
+      infoWindowMarker.setMap(map);
+      infoWindowMarker.position = new google.maps.LatLng(lat, lng);
+      infoWindow.open(map, infoWindowMarker);
+    
+}
+
+async function setInfoWindow2(lat, lng, timestamp, vel, rpm, allVehicles=false) { 
+    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+    if(infoWindowMarker2) infoWindowMarker2.setMap(null);
+    if (infoWindow2) infoWindow2.close();
+
+    if(infoWindowMarker2)
+    infoWindowMarker2 = new AdvancedMarkerElement({
+        map:map,
+        content: pin_2.element
+    });
+
+    
+
     infoWindow2 = new google.maps.InfoWindow({
         content: ""
     });
 
-    //infoWindowMarker.setMap(map);
-    // Update infoWindowMarker's position
-    //infoWindowMarker.position = new google.maps.LatLng(lat, lng);
     
-    
-   
-
-      if (allVehicles === true){
-        infoWindow2.setContent(`
-            <div>
-              <p>Time: ${convertToLocalTime(timestamp)}</p>
-              <p>Velocity: ${parseFloat(vel)} km/h</p>
-              <p> RPM: ${parseFloat(rpm)}<p> 
-            </div>
-          `);
+    infoWindow2.setContent(`
+        <div>
+          <p>Time: ${convertToLocalTime(timestamp)}</p>
+          <p>Velocity: ${parseFloat(vel)} km/h</p>
+          <p> RPM: ${parseFloat(rpm)}<p> 
+        </div>
+      `);
 
 
-        infoWindowMarker2.setMap(map);
-        infoWindowMarker2.position = new google.maps.LatLng(lat,lng);
-        infoWindow2.open(map,infoWindowMarker2)
-    }else{
-        console.log('setting infowindow')
-        infoWindow.setContent(`
-            <div>
-              <p>Time: ${convertToLocalTime(timestamp)}</p>
-              <p>Velocity: ${parseFloat(vel)} km/h</p>
-              <p> RPM: ${parseFloat(rpm)}<p> 
-            </div>
-          `);
-          infoWindowMarker.setMap(map);
-          infoWindowMarker.position = new google.maps.LatLng(lat, lng);
-          infoWindow.open(map, infoWindowMarker);
+    infoWindowMarker2.setMap(map);
+    infoWindowMarker2.position = new google.maps.LatLng(lat,lng);
+    infoWindow2.open(map,infoWindowMarker2)
 
-    }
+      
 
     // Set the content for the info window
     
@@ -1070,7 +1081,6 @@ async function setInfoWindow(lat, lng, timestamp, vel, rpm, allVehicles=false) {
     // Open the info window on the updated marker
     
 }
-
 function geocode(request, startDate, endDate, radius,allVehicles=false) {
     let url
     let url2
