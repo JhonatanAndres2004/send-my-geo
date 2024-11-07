@@ -1,29 +1,46 @@
 let map;
 let marker;
+let marker2;
 let polylines = [];
+let polylines2 = [];
 let routeCoordinates = [];
+let routeCoordinates2 = [];
 let lastTimestamp = null;
+let lastTimestamp2 = null;
 let colorIndex = 0;
-const colors = ['#FF0000']; 
+const colors = ['#FF0000','#3956FF']; 
 let live;
 let autocomplete;
 let mapThemeId = 'a43cc08dd4e3e26d';
 let circle;
 let infowindows = [];
+let infowindows2 =[];
 let infoWindowMarkers = [];
+let infoWindowMarkers2 = [];
 let polylineColor = '#ff7008';
+let polylineColor2 = '#3956FF'
 let popUpMenu=document.getElementById('emergent-pop-up');
 let locationHistoryTab = document.getElementById("location-history");
 let closeButtonContainer=document.getElementById("close-popup-container")
 let closeButton=document.getElementById("close-popup")
 let slider = document.getElementById('slider');
 let valueSlider = document.getElementById('valueSlider')
-let info= []
+let realTimeTab2 = document.getElementById('realtime2')
+let info= [];
+let info2 = [];
 let previous;
 let played = 0;
 let infoWindow;
+let infoWindow2;
 let infoWindowMarker;
+let infoWindowMarker2;
 let pin;
+let pin_2;
+let ID = 1;
+let vehicle1 = document.getElementById('vehicle1');
+let vehicle2 = document.getElementById('vehicle2');
+let allVehicles = document.getElementById('all');
+let all = 0;
 slider.value = 0
 
 const Toast = Swal.mixin({
@@ -94,6 +111,9 @@ function showTab(tab) {
         realTimeTab.style.visibility = "visible";
         realTimeTab.style.opacity = "1";
         realTimeTab.style.position = "relative";
+        realTimeTab2.style.visibility = "hidden";
+        realTimeTab2.style.opacity="0";
+        realTimeTab2.style.position = "absolute";
         historyTab.style.visibility = "hidden";
         historyTab.style.opacity = "0";
         historyTab.style.position = "absolute";
@@ -115,6 +135,9 @@ function showTab(tab) {
         realTimeTab.style.visibility = "hidden";
         realTimeTab.style.opacity = "0";
         realTimeTab.style.position = "absolute";
+        realTimeTab2.style.visibility = "hidden";
+        realTimeTab2.style.opacity="0";
+        realTimeTab2.style.position = "absolute";
         document.getElementById('realtime-button').disabled = false;
         document.getElementById('history-button').disabled = true;
         document.getElementById('start-date').value = "";
@@ -130,6 +153,9 @@ function showTab(tab) {
         realTimeTab.style.visibility = "hidden";
         realTimeTab.style.opacity = "0";
         realTimeTab.style.position = "absolute";
+        realTimeTab2.style.visibility = "hidden";
+        realTimeTab2.style.opacity="0";
+        realTimeTab2.style.position = "absolute";
         historyTab.style.visibility = "hidden";
         historyTab.style.opacity = "0";
         historyTab.style.position = "absolute";
@@ -147,6 +173,9 @@ function showTab(tab) {
         realTimeTab.style.visibility = "hidden";
         realTimeTab.style.opacity = "0";
         realTimeTab.style.position = "absolute";
+        realTimeTab2.style.visibility = "hidden";
+        realTimeTab2.style.opacity="0";
+        realTimeTab2.style.position = "absolute";
         historyTab.style.visibility = "hidden";
         historyTab.style.opacity = "0";
         historyTab.style.position = "absolute";
@@ -164,25 +193,35 @@ function showTab(tab) {
 // Update the valueSlider when the slider changes
 slider.oninput = function() {
     this.style.setProperty('--value', `${(this.value - this.min) * 100 / (this.max - this.min)}%`);
-    routeCoordinates=[];
-    if (previous == null) {
-        previous = this.value;
-    }
+    marker2.position = null;
+    marker1.position = null;
     polylines.forEach(polyline => polyline.setMap(null));
     polylines = [];
+    polylines2.forEach(polyline2 => polyline2.setMap(null));
+    polylines2 = [];
+    routeCoordinates = [];
     let current = parseInt(this.value);
-    let prevValue = parseInt(previous);
+    
 
     if (info[current]) {
         // Case when moving forward (increasing the slider value)
         if (current) { // > prevValue
-            for (let i= 0;i<current -1; i++){
+            for (let i= 0;i<current; i++){
                 updateMapAndRouteLocations(info[i].lat, info[i].lng, info[i].Timestamp, true);
-                setInfoWindow(info[i].lat, info[i].lng, info[i].Timestamp);
+                setInfoWindow(info[i].lat, info[i].lng, info[i].Timestamp, info[i].vel, info[i].rpm);
+
                 
             }
         }
         previous = current;
+    }
+    if (info2[current] && all ===1){
+        if (current){
+            for (let i=0;i<current;i++ ){
+                updateMapAndRouteLocations(info2[i].lat, info2[i].lng, info2[i].Timestamp, true, true);
+                setInfoWindow2(info2[i].lat, info2[i].lng, info2[i].Timestamp, info2[i].vel, info2[i].rpm);
+            }
+        }
     }
 };
 
@@ -205,11 +244,15 @@ function playSlider() {
                 played = 0;
                 infoWindow.close();
                 infoWindowMarker.setMap(null);
+                infoWindow2.close();
+                infoWindowMarker2.setMap(null);
+                polylines.forEach(polyline => polyline.setMap(null));
+                polylines2.forEach(polyline2 => polyline2.setMap(null));
                 toggleButton.classList.remove('pause');
                 toggleButton.classList.add('play');
                 toggleButton.innerHTML = '▷'; // Play icon and text
             }
-        }, 1000);  // Adjust the time interval for the speed (500ms = 0.5 seconds)
+        }, 500);  // Adjust the time interval for the speed (500ms = 0.5 seconds)
         played = 1;
     }
 
@@ -263,7 +306,7 @@ async function initMap() {
     let initialPosition = { lat: 0, lng: 0 };
     
     try {
-        const response = await fetch('/latest-location');
+        const response = await fetch(`/latest-location?ID=${encodeURI(ID)}`);
         const data = await response.json();
         initialPosition = { lat: parseFloat(data.Latitude), lng: parseFloat(data.Longitude) };  
     } catch (err) {
@@ -277,12 +320,35 @@ async function initMap() {
         mapTypeControl: false,
 
     });
+    const pin1 = new PinElement({
+        scale: 0.8,
+        background: '#FF0000',
+        borderColor: 'white',
+        glyph: '1',
+        glyphColor: 'white'
 
-    marker = new AdvancedMarkerElement({
+    });
+    const pin2 = new PinElement({
+        scale: 0.8,
+        background: polylineColor2,
+        borderColor: 'white',
+        glyph: '2',
+        glyphColor: 'white'
+    });
+
+    marker1 = new AdvancedMarkerElement({
         map: map,
         position: initialPosition,
         title: "Current Location",
+        content: pin1.element
     });
+    marker = new AdvancedMarkerElement({
+        map:map
+    })
+    marker2 = new AdvancedMarkerElement({
+        map:map,
+        content: pin2.element
+    })
     
     pin = new PinElement({
         scale: 0.8,
@@ -291,33 +357,68 @@ async function initMap() {
         glyph: '!',
         glyphColor: 'white'
     });
+    pin_2 = new PinElement({
+        scale: 0.8,
+        background: polylineColor2,
+        borderColor: 'white',
+        glyph: '!',
+        glyphColor: 'white'
+    });
+    
 }
 
-function startLiveLocation() {
-    live = setInterval(fetchLatestLocation, 10000);
+function startLiveLocation(id) {
+    fetchLatestLocation(id)
+    live = setInterval(() => fetchLatestLocation(id), 10000); // Pass `ID` argument to `fetchLatestLocation`
 }
 
 function stopLiveLocation() {
     clearInterval(live);
 }
 
-function fetchLatestLocation() {
-    fetch('/latest-location')
+function fetchLatestLocation(id,) {
+    if(!id){
+        id = ID
+    }
+    fetch(`/latest-location?ID=${encodeURI(id)}&allVehicles=${all}`) ///historics?startDate=${encodeURIComponent(date1)}
         .then(response => response.json())
         .then(data => {
-            updateLocationDisplay(data);
-            updateMapAndRoute(data.Latitude, data.Longitude, data.Timestamp);
+            if (data.length > 1){
+                updateLocationDisplay(data[0]);
+                updateMapAndRoute(data[0].Latitude, data[0].Longitude, data[0].Timestamp);
+                updateLocationDisplay(data[1], true);
+                updateMapAndRoute2(data[1].Latitude, data[1].Longitude, data[1].Timestamp, true);
+                console.log('fetching both vehicles real time')
+            }else{
+                updateLocationDisplay(data);
+                updateMapAndRoute(data.Latitude, data.Longitude, data.Timestamp);
+            }
+            
         })
         .catch(err => console.error('Error fetching latest location:', err));
 }
 
-function updateLocationDisplay(data) {
-    document.getElementById('latitude').innerText = data.Latitude;
-    document.getElementById('longitude').innerText = data.Longitude;
-    const timestamp = convertToLocalTime(data.Timestamp);
-    const [date, time] = timestamp.split(', ');
-    document.getElementById('date').innerText = date;
-    document.getElementById('time').innerText = time;
+function updateLocationDisplay(data, allVehicles=false) {
+    
+    if(allVehicles === true){
+        document.getElementById('latitude2').innerText = data.Latitude;
+        document.getElementById('longitude2').innerText = data.Longitude;
+        const timestamp = convertToLocalTime(data.Timestamp);
+        const [date, time] = timestamp.split(', ');
+        document.getElementById('date2').innerText = date;
+        document.getElementById('time2').innerText = time;
+        document.getElementById('velocity2').innerText = data.Velocity
+        document.getElementById('rpm2').innerText = data.RPM
+    }else{
+        document.getElementById('latitude').innerText = data.Latitude;
+        document.getElementById('longitude').innerText = data.Longitude;
+        const timestamp = convertToLocalTime(data.Timestamp);
+        const [date, time] = timestamp.split(', ');
+        document.getElementById('date').innerText = date;
+        document.getElementById('time').innerText = time;
+        document.getElementById('velocity').innerText = data.Velocity
+        document.getElementById('rpm').innerText = data.RPM
+    }
 }
 
 function roundCoordinate(coord) {
@@ -342,15 +443,20 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     return distance;
 }
 
-function updateMapAndRoute(lat, lng, timestamp) {
+function updateMapAndRoute(lat, lng, timestamp, allVehicles=false) {
     const newPosition = { lat: parseFloat(lat), lng: parseFloat(lng) };
-    const newTimestamp = new Date(timestamp);
+    const newTimestamp = new Date(timestamp); 
     
-    // Always update HTML display and marker position
-    marker.position = newPosition;
-    map.panTo(newPosition);
+    //Always update HTML display and marker position
+    if(ID == 2){
+        marker2.position = newPosition;
+        //map.panTo(newPosition);
+    }else{
+        marker1.position = newPosition;
+    }
+    //marker1.position = newPosition;
     
-    if (routeCoordinates.length === 0) {
+    if (routeCoordinates.length === 0)  {
         routeCoordinates.push(newPosition);
         lastTimestamp = newTimestamp;
     } else {
@@ -360,7 +466,20 @@ function updateMapAndRoute(lat, lng, timestamp) {
         
         if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 1) {
             routeCoordinates.push(newPosition);
-            drawPolyline(lastPosition, newPosition);
+            console.log('conditional before polyline')
+            if(ID === 1 && !allVehicles){
+                drawPolyline(lastPosition, newPosition);
+                console.log('in vehicle 1')
+            }
+            else if(ID === 2 && !allVehicles){
+                drawPolyline(lastPosition, newPosition, true);
+                console.log('In vehicle 2')
+            }
+            else if(allVehicles){
+                drawPolyline(lastPosition, newPosition, true);
+                console.log('In vehicle 2')
+            }
+            
             //colorIndex = (colorIndex + 1) % colors.length; // choose the next color
         } else if (distance > 1 || timeDiff >= 1) {
             // If distance is greater than 1 kilometer or the time difference is greater (or equal) than 1 minute, 
@@ -376,19 +495,68 @@ function updateMapAndRoute(lat, lng, timestamp) {
         lastTimestamp = newTimestamp;
     }
 }
+function updateMapAndRoute2(lat, lng, timestamp, allVehicles=false) {
+    const newPosition = { lat: parseFloat(lat), lng: parseFloat(lng) };
+    const newTimestamp = new Date(timestamp); 
+    
+    // Always update HTML display and marker position
+    marker2.position = newPosition;
+    
+    if (routeCoordinates2.length === 0)  {
+        routeCoordinates2.push(newPosition);
+        lastTimestamp2 = newTimestamp;
+    } else {
+        const lastPosition = routeCoordinates2[routeCoordinates2.length - 1];
+        const distance = calculateDistance(lastPosition.lat, lastPosition.lng, newPosition.lat, newPosition.lng);
+        const timeDiff = (newTimestamp - lastTimestamp2) / (1000 * 60); // time difference in minutes
+        
+        if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 1) {
+            routeCoordinates2.push(newPosition);
+            console.log('conditional before polyline')
+            
+            drawPolyline(lastPosition, newPosition, true);
+            console.log('In vehicle 2')
+    
+            
+            //colorIndex = (colorIndex + 1) % colors.length; // choose the next color
+        } else if (distance > 1 || timeDiff >= 1) {
+            // If distance is greater than 1 kilometer or the time difference is greater (or equal) than 1 minute, 
+            // Start a new route from that point
+            routeCoordinates2 = [newPosition];
+            // Clear the previous drawn polylines
+            polylines2.forEach(polyline2 => polyline2.setMap(null));
+            polylines2 = [];
+            colorIndex = 0; // reset color index
+            
+        }
+        
+        lastTimestamp2 = newTimestamp;
+    }
+}
 
-function updateMapAndRouteHistorics(lat, lng, timestamp, searchByLocation = false) {
+function updateMapAndRouteHistorics(lat, lng, timestamp, vel,rpm ,searchByLocation = false, allVehicles= false) {
+    console.log(allVehicles);
     const newPosition = { lat: parseFloat(lat), lng: parseFloat(lng) };
     const newTimestamp = new Date(timestamp);
-    const allInfo ={lat:parseFloat(lat),lng:parseFloat(lng),Timestamp:timestamp}
+    const allInfo ={lat:parseFloat(lat),lng:parseFloat(lng),Timestamp:timestamp,vel:parseFloat(vel),rpm:parseFloat(rpm)}
     if (!searchByLocation) {
-        marker.position = newPosition;
-        map.panTo(newPosition);
+        if(allVehicles || ID == 2){
+            marker2.position = newPosition
+        }else{
+            marker1.position = newPosition;
+            //map.panTo(newPosition);
+        }
+        
+        
     }
     
     if (routeCoordinates.length === 0) {
         routeCoordinates.push(newPosition);
         lastTimestamp = newTimestamp;
+        info.push(allInfo);
+        if(all === 1 && ID === 1){
+            info2.push(allInfo);
+        }
     } else {
         const lastPosition = routeCoordinates[routeCoordinates.length - 1];
         const distance = calculateDistance(lastPosition.lat, lastPosition.lng, newPosition.lat, newPosition.lng);
@@ -396,21 +564,55 @@ function updateMapAndRouteHistorics(lat, lng, timestamp, searchByLocation = fals
         
         if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 1) {
             routeCoordinates.push(newPosition);
-            drawPolylineHistorics(lastPosition, newPosition);
-            info.push(allInfo);
+            if(ID === 1 && !allVehicles){
+                drawPolylineHistorics(lastPosition, newPosition);
+                console.log('inside of "ID == 1" polyline historics')
+            }else if(ID === 2 || allVehicles){
+                drawPolylineHistorics(lastPosition, newPosition, true);
+                console.log('inside of "ID == 2" polyline historics')
+            }
+            if(allVehicles ){
+                drawPolylineHistorics(lastPosition, newPosition, true);
+                console.log('inside conditional of second vehicle')
+                //marker2.position = newPosition;
+                
+            }
+            if(allVehicles && ID === 1){
+                info2.push(allInfo);
+            }else{
+                info.push(allInfo);
+            }
+            
+            
         } else if (distance > 1 || timeDiff >= 1) {
             // If distance is greater than 1 kilometer or the time difference is greater (or equal) than 1 minute, 
             // Start a new route from that point
             routeCoordinates = [newPosition];
             info.push(allInfo);
         }
-        document.getElementById('slider').max = info.length;
+        sliderLength();
+        //document.getElementById('slider').max = (info.length - 1);
         lastTimestamp = newTimestamp;
     }
 }
 
+function sliderLength(){
+    console.log('inside of slider lenght function')
+    console.log('info',info)
+    console.log('info1 length',info.length);
+    
+    console.log('info2',info2)
+    console.log('info2 length',info2.length);
+    if(info.length > info2.length){
+        document.getElementById('slider').max = (info.length - 1);
+        console.log('data1 greater than data2')
+    }else{
+        document.getElementById('slider').max = (info2.length - 1);
+        console.log('data2 grater or equal than data1')
+    }  
+}
 
-function updateMapAndRouteLocations(lat, lng, timestamp, searchByLocation = false) {
+function updateMapAndRouteLocations(lat, lng, timestamp, searchByLocation = false, allVehicles=false) {
     const newPosition = { lat: parseFloat(lat), lng: parseFloat(lng) };
     const newTimestamp = new Date(timestamp);
     //const allInfo ={lat:parseFloat(lat),lng:parseFloat(lng),Timestamp:timestamp}
@@ -429,7 +631,12 @@ function updateMapAndRouteLocations(lat, lng, timestamp, searchByLocation = fals
         
         if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 0.3 && newTimestamp > lastTimestamp) {
             routeCoordinates.push(newPosition);
-            drawPolylineHistorics(lastPosition, newPosition);
+            if(ID == 2 || allVehicles){
+                drawPolylineHistorics(lastPosition, newPosition, true);
+            }else{
+                drawPolylineHistorics(lastPosition, newPosition);
+            }
+            
         } else if (distance > 1 || timeDiff >= 0.3) {
             // If distance is greater than 1 kilometer or the time difference is greater (or equal) than 1 minute, 
             // Start a new route from that point
@@ -440,86 +647,171 @@ function updateMapAndRouteLocations(lat, lng, timestamp, searchByLocation = fals
 }
 
 
-function drawPolyline(origin, destination) {
+function drawPolyline(origin, destination, vehicle2=false) {
+    
     const path = [
         new google.maps.LatLng(origin.lat, origin.lng),
         new google.maps.LatLng(destination.lat, destination.lng)
     ];
+    if(vehicle2){
+        const polyline2 = new google.maps.Polyline({
+            path: path,
+            geodesic: true,
+            strokeColor: colors[1] ,
+            strokeOpacity: 1.0,
+            strokeWeight: 4
+        })
+        polyline2.setMap(map);
+        polylines2.push(polyline2);    
+    }else{
+        const polyline = new google.maps.Polyline({
+            path: path,
+            geodesic: true,
+            strokeColor: colors[0],
+            strokeOpacity: 1.0,
+            strokeWeight: 4
+        });
+        polyline.setMap(map);
+        polylines.push(polyline);    
+    }
+    // const polyline = new google.maps.Polyline({
+    //     path: path,
+    //     geodesic: true,
+    //     strokeColor: colors[0],
+    //     strokeOpacity: 1.0,
+    //     strokeWeight: 4
+    // });
 
-    const polyline = new google.maps.Polyline({
-        path: path,
-        geodesic: true,
-        strokeColor: colors[colorIndex],
-        strokeOpacity: 1.0,
-        strokeWeight: 4
-    });
-
-    polyline.setMap(map);
-    polylines.push(polyline);
+    
 }
 
-function drawPolylineHistorics(origin, destination) {
+function drawPolylineHistorics(origin, destination,vehicle2=false) {
+    let lineSymbol
+    let polyline
+    let polyline2
     const path = [
         new google.maps.LatLng(origin.lat, origin.lng),
         new google.maps.LatLng(destination.lat, destination.lng)
     ];
-    
-    // Configuración base de la flecha
-    const lineSymbol = {
-        path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
-        scale: 1,
-        strokeColor: polylineColor,
-        strokeWeight: 3
-    };
-
-    const polyline = new google.maps.Polyline({
-        path: path,
-        geodesic: true,
-        strokeColor: polylineColor,
-        strokeOpacity: 0.8,
-        strokeWeight: 5,
-        icons: [{
-            icon: lineSymbol,
-            repeat: "200px"
-        }]
-    });
-
-    // Función para actualizar las flechas según el zoom
-    function updateArrowsByZoom() {
-        const zoom = map.getZoom();
-        let repeat, scale;
-        if (zoom <= 13) {
-            polyline.setOptions({
-                icons: [] 
-            });
-            return;
-        }
-
-        if (zoom > 13) {
-            scale = 2; 
-        } 
-
-        polyline.setOptions({
+    if(vehicle2){
+        polyline2 = new google.maps.Polyline({
+            path: path,
+            geodesic: true,
+            strokeColor: polylineColor2,
+            strokeOpacity: 0.8,
+            strokeWeight: 5,
             icons: [{
-                icon: {
-                    ...lineSymbol,
-                    scale: scale
-                },
-                offset: "100%",
-                repeat: repeat
+                icon:lineSymbol,
+                repeat: "200px"
             }]
         });
+        lineSymbol = {
+            path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+            scale: 1,
+            strokeColor: polylineColor2,
+            strokeWeight: 3
+        };    
+        
+    }else{
+        polyline = new google.maps.Polyline({
+            path: path,
+            geodesic: true,
+            strokeColor: polylineColor,
+            strokeOpacity: 0.8,
+            strokeWeight: 5,
+            icons: [{
+                icon: lineSymbol,
+                repeat: "200px"
+            }]
+        });
+        lineSymbol = {
+            path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+            scale: 1,
+            strokeColor: polylineColor,
+            strokeWeight: 3
+        };
+    }
+    
+    // Configuración base de la flecha
+    
+
+    if(!vehicle2){
+        function updateArrowsByZoom() {
+            const zoom = map.getZoom();
+            let repeat, scale;
+            if (zoom <= 13) {
+                polyline.setOptions({
+                    icons: [] 
+                });
+                return;
+            }
+    
+            if (zoom > 13) {
+                scale = 2; 
+            } 
+    
+            polyline.setOptions({
+                icons: [{
+                    icon: {
+                        ...lineSymbol,
+                        scale: scale
+                    },
+                    offset: "100%",
+                    repeat: repeat
+                }]
+            });
+        }
+    
+        // Añadir listener para el cambio de zoom
+        google.maps.event.addListener(map, 'zoom_changed', updateArrowsByZoom);
+    
+        // Establecer configuración inicial
+        updateArrowsByZoom();
+    
+        // Añadir la polilínea al mapa
+        polyline.setMap(map);
+        polylines.push(polyline);
+    }
+    if(vehicle2){
+        function updateArrowsByZoom() {
+            const zoom = map.getZoom();
+            let repeat, scale;
+            if (zoom <= 13) {
+                polyline2.setOptions({
+                    icons: [] 
+                });
+                return;
+            }
+    
+            if (zoom > 13) {
+                scale = 2; 
+            } 
+    
+            polyline2.setOptions({
+                icons: [{
+                    icon: {
+                        ...lineSymbol,
+                        scale: scale
+                    },
+                    offset: "100%",
+                    repeat: repeat
+                }]
+            });
+        }
+    
+        // Añadir listener para el cambio de zoom
+        google.maps.event.addListener(map, 'zoom_changed', updateArrowsByZoom);
+    
+        // Establecer configuración inicial
+        updateArrowsByZoom();
+    
+        // Añadir la polilínea al mapa
+        polyline2.setMap(map);
+        polylines2.push(polyline2);
     }
 
-    // Añadir listener para el cambio de zoom
-    google.maps.event.addListener(map, 'zoom_changed', updateArrowsByZoom);
-
-    // Establecer configuración inicial
-    updateArrowsByZoom();
-
-    // Añadir la polilínea al mapa
-    polyline.setMap(map);
-    polylines.push(polyline);
+    // Función para actualizar las flechas según el zoom
+    
 }
 
 function convertToLocalTime(utcDateString) {
@@ -568,16 +860,39 @@ function clearMap() {
     if (circle) circle.setMap(null);
     if (infoWindowMarker) infoWindowMarker.setMap(null);
     if (infoWindow) infoWindow.close();
+    if (infoWindowMarker2) infoWindowMarker2.setMap(null);
+    if (infoWindow2) infoWindow2.close();
     polylines.forEach(polyline => polyline.setMap(null));
     polylines = [];
+    polylines2.forEach(polyline2 => polyline2.setMap(null));
+    polylines2 = [];
     routeCoordinates = [];
     lastTimestamp = null;
     colorIndex = 0;
     info = [];
-}
+    info2 = [];
 
+}
+function clearMapLocations() {
+    marker2.position = null
+    marker1.position = null 
+    if (infoWindowMarker) infoWindowMarker.setMap(null);
+    if (infoWindow) infoWindow.close();
+    if (infoWindowMarker2) infoWindowMarker2.setMap(null);
+    if (infoWindow2) infoWindow2.close();
+    polylines.forEach(polyline => polyline.setMap(null));
+    polylines = [];
+    polylines2.forEach(polyline2 => polyline2.setMap(null));
+    polylines2 = [];
+    routeCoordinates = [];
+
+}
 document.getElementById('fetch-data').addEventListener('click', () => {
+    stopLiveLocation();
+    let url
+    let url2
     console.log(dateMin);
+    console.log('all', all);
     let startDate = document.getElementById('start-date').value;
     let endDate = document.getElementById('end-date').value;
     const correctDates = checkDates(startDate, endDate); //check if start date is earlier than end date
@@ -590,12 +905,22 @@ document.getElementById('fetch-data').addEventListener('click', () => {
 
         // Clear the map before fetching new data
         clearMap();
-
+        if(all === 1){
+            
+            url = `/historics?startDate=${encodeURIComponent(date1)}&endDate=${encodeURIComponent(date2)}&ID=${encodeURI(ID)}`;
+            url2 = `/historics?startDate=${encodeURIComponent(date1)}&endDate=${encodeURIComponent(date2)}&ID=${encodeURI(ID+1)}`;
+            console.log('dos vehiculos')
+        }
+        else{
+            url = `/historics?startDate=${encodeURIComponent(date1)}&endDate=${encodeURIComponent(date2)}&ID=${encodeURI(ID)}`;
+        }
         // Construct the URL with encoded date parameters for fetching historical data
-        const url = `/historics?starDate=${encodeURIComponent(date1)}&endDate=${encodeURIComponent(date2)}`;
-
-        console.log("Encoded URL:", url);  
-        fetch(`/historics?startDate=${encodeURIComponent(date1)}&endDate=${encodeURIComponent(date2)}`) 
+        
+        console.log(all)
+        console.log("Encoded URL:", url);
+        console.log("url 2 = ",url2)  
+        fetch(url)
+             
             .then(response => response.json())
             .then(data => {
                 if (data.length == 0){
@@ -608,13 +933,42 @@ document.getElementById('fetch-data').addEventListener('click', () => {
                     data.forEach(data => {
                         updateLocationDisplay(data);
                         updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp);
+                        console.log('fetching data of firsh vehicle')
                     });}
                 
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
-    } else {
+            
+            if(url2){
+                
+                fetch(url2) 
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.length == 0){
+                            Toast.fire({
+                                icon: 'warning',
+                                title: 'No data found for the selected period'
+                            });
+                            console.log('data of the second vehicle =')
+                        } else{
+                            
+                            data.forEach(data => {
+                                //updateLocationDisplay(data);
+                                updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp, data.Velocity,data.RPM,false, true); //add color for second polyline
+                                console.log('fetching second vehicle data')
+                            });}
+                        
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                    });
+            
+            }
+        }
+     
+    else {
         Toast.fire({
             icon: 'error',
             title: 'Ensure dates are provided and the start date is earlier than the end date.'
@@ -623,6 +977,9 @@ document.getElementById('fetch-data').addEventListener('click', () => {
 });
 
 document.getElementById('fetch-location').addEventListener("click", () => {
+    marker1.position = null
+    marker2.position = null
+    stopLiveLocation();
     clearMap();
     let startDate = document.getElementById('start-date').value;
     let endDate = document.getElementById('end-date').value;
@@ -635,7 +992,14 @@ document.getElementById('fetch-location').addEventListener("click", () => {
     const radius = parseFloat(radiusInput.value);
 
     if (radius > 0) {
-        geocode({ address: document.getElementById('location-input').value }, date1, date2, radius);
+        if (all ===1){
+            geocode({ address: document.getElementById('location-input').value }, date1, date2, radius, true);
+            console.log('location, both vehicles');
+        }else{
+            geocode({ address: document.getElementById('location-input').value }, date1, date2, radius);
+        }
+        //geocode({ address: document.getElementById('location-input').value }, date1, date2, radius);
+        //sliderLength();
         showTab("slider")
         
     } else {
@@ -666,33 +1030,83 @@ async function initializeAutocomplete() {
     });
 }
 
-async function setInfoWindow(lat, lng, timestamp) { 
+async function setInfoWindow(lat, lng, timestamp, vel, rpm, allVehicles=false) { 
     const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
     
     if (infoWindowMarker) infoWindowMarker.setMap(null);
     if (infoWindow) infoWindow.close();
     
+    if(ID ===2 ){
+        pin.background = polylineColor2
+    }if(ID ===1){
+        pin.background = polylineColor
+    }
     infoWindowMarker = new AdvancedMarkerElement({
         map: map,
-        content: pin.element
+        content: pin.element 
     });
 
     infoWindow = new google.maps.InfoWindow({
         content: "",
     });
 
-    infoWindowMarker.setMap(map);
-    // Update infoWindowMarker's position
-    infoWindowMarker.position = new google.maps.LatLng(lat, lng);
+    
 
-    // Set the content for the info window
-    infoWindow.setContent(` ${convertToLocalTime(timestamp)}`);
-
-    // Open the info window on the updated marker
-    infoWindow.open(map, infoWindowMarker);
+    
+    infoWindow.setContent(`
+        <div>
+          <p>Time: ${convertToLocalTime(timestamp)}</p>
+          <p>Velocity: ${parseFloat(vel)} km/h</p>
+          <p> RPM: ${parseFloat(rpm)}<p> 
+        </div>
+      `);
+      infoWindowMarker.setMap(map);
+      infoWindowMarker.position = new google.maps.LatLng(lat, lng);
+      infoWindow.open(map, infoWindowMarker);
+    
 }
 
-function geocode(request, startDate, endDate, radius) {
+async function setInfoWindow2(lat, lng, timestamp, vel, rpm, allVehicles=false) { 
+    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+    if(infoWindowMarker2) infoWindowMarker2.setMap(null);
+    if (infoWindow2) infoWindow2.close();
+    infoWindowMarker2 = new AdvancedMarkerElement({
+        map:map,
+        content: pin_2.element
+    });
+
+    
+
+    infoWindow2 = new google.maps.InfoWindow({
+        content: ""
+    });
+
+    
+    infoWindow2.setContent(`
+        <div>
+          <p>Time: ${convertToLocalTime(timestamp)}</p>
+          <p>Velocity: ${parseFloat(vel)} km/h</p>
+          <p> RPM: ${parseFloat(rpm)}<p> 
+        </div>
+      `);
+
+
+    infoWindowMarker2.setMap(map);
+    infoWindowMarker2.position = new google.maps.LatLng(lat,lng);
+    infoWindow2.open(map,infoWindowMarker2)
+
+      
+
+    // Set the content for the info window
+    
+      //.toFixed(2)
+
+    // Open the info window on the updated marker
+    
+}
+function geocode(request, startDate, endDate, radius,allVehicles=false) {
+    let url
+    let url2
     const geocoder = new google.maps.Geocoder();
     clearMap();
     geocoder
@@ -717,8 +1131,16 @@ function geocode(request, startDate, endDate, radius) {
             // Fetch data after the marker's position is updated
             const lat = center.lat();
             const lng = center.lng();
-            console.log(`/location-request?startDate=${startDate}&endDate=${endDate}&lat=${lat}&lon=${lng}&radius=${radius}`);
-            fetch(`/location-request?startDate=${startDate}&endDate=${endDate}&lat=${lat}&lon=${lng}&radius=${radius}`)
+            if(allVehicles){
+                url = `/location-request?startDate=${startDate}&endDate=${endDate}&lat=${lat}&lon=${lng}&radius=${radius}&ID=${ID}`
+                url2 = `/location-request?startDate=${startDate}&endDate=${endDate}&lat=${lat}&lon=${lng}&radius=${radius}&ID=${ID+1}`
+            }else{
+                url = `/location-request?startDate=${startDate}&endDate=${endDate}&lat=${lat}&lon=${lng}&radius=${radius}&ID=${ID}`
+            }
+            
+            console.log(url);
+            console.log(url2)
+            fetch(url)
                 .then(response => response.json())
                 .then(data => {
                     //document.getElementById('sliderLocations').max = data.length
@@ -732,7 +1154,7 @@ function geocode(request, startDate, endDate, radius) {
                     } else {
                         data.forEach(data => {
                             updateLocationDisplay(data);
-                            updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp, true);
+                            updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp, data.Velocity, data.RPM);
                             
                             //setInfoWindow(data.Latitude, data.Longitude, data.Timestamp);
                         });
@@ -742,14 +1164,46 @@ function geocode(request, startDate, endDate, radius) {
                 .catch(error => {
                     console.error('Error fetching data:', error);
                 });
+
+                if(url2){
+                    fetch(url2)
+                    .then(response => response.json())
+                    .then(data => {
+                    //document.getElementById('sliderLocations').max = data.length
+                        console.log('Data2 fetched:', data);
+
+                        if (data.length == 0) {
+                            Toast.fire({
+                                icon: 'warming',
+                                title: 'No routes were found'
+                        });
+                        } else {
+                        data.forEach(data => {
+                            updateLocationDisplay(data);
+                            updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp, data.Velocity, data.RPM, false,true);
+                            
+                            //setInfoWindow(data.Latitude, data.Longitude, data.Timestamp);
+                        });
+                        
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+                }
+                console.log(info);
+                console.log(info2);
                 
         })
+        
         .catch((e) => {
             Toast.fire({
                 icon: 'info',
                 title: 'It was impossible to use geocoding for this location'
             });
         });
+    
+        
 }
 
 
@@ -767,6 +1221,10 @@ closeButton.addEventListener('click',()=>{
     closeButtonContainer.style.opacity=0;
 })
 document.getElementById('backToHistorics').addEventListener("click", () => {
+    var startPckr = document.getElementById("start-date");
+    var endPickr = document.getElementById("end-date");
+    var startDate = startPckr.value
+    var endDate = endPickr.value
     // Stop the slider animation if it's playing
     if (played === 1) {
         stopSlider();
@@ -781,8 +1239,8 @@ document.getElementById('backToHistorics').addEventListener("click", () => {
     popUpMenu.style.visibility = 'hidden';
     marker.setMap(null);
     showTab("history");
-    document.getElementById('start-date').value = '';
-    document.getElementById('end-date').value = '';
+    startPckr.value = startDate;
+    endPickr.value = endDate;
 });
 
 const toggleButton = document.getElementById('toggleButton');
@@ -801,8 +1259,113 @@ toggleButton.addEventListener('click', () => {
         played = 0;
     }
 });
+
+vehicle1.addEventListener('click', () =>{
+    var reproducer = document.getElementById("reproducer");
+    var startPckr = document.getElementById("start-date");
+    var endPickr = document.getElementById("end-date");
+    var startDate = startPckr.value
+    var endDate = endPickr.value
+    if(reproducer.style.visibility == "visible"){
+        const toggleButton = document.getElementById('toggleButton');
+        //toggleButton.click();
+        showTab("history")
+        startPckr.value = startDate;
+        endPickr.value = endDate;
+        popUpMenu.click();
+    }
+
+    realTimeTab2.style.visibility = "hidden";
+    realTimeTab2.style.opacity="0";
+    realTimeTab2.style.position = "absolute";
+    
+    document.getElementById('vehicle1').disabled = true;
+    document.getElementById('vehicle2').disabled = false;
+    document.getElementById('all').disabled = false;
+    marker2.position = null
+    marker.position = null
+    all= 0;
+    clearMap();
+    stopLiveLocation();
+    ID = 1;
+    console.log(all)
+    startLiveLocation();
+    
+})
+
+vehicle2.addEventListener('click', () =>{
+    var reproducer = document.getElementById("reproducer");
+    var startPckr = document.getElementById("start-date");
+    var endPickr = document.getElementById("end-date");
+    var startDate = startPckr.value
+    var endDate = endPickr.value
+    if(reproducer.style.visibility == "visible"){
+        const toggleButton = document.getElementById('toggleButton');
+        //toggleButton.click();      
+        showTab("history")
+        startPckr.value = startDate;
+        endPickr.value = endDate;
+        popUpMenu.click();
+    }
+
+    document.getElementById('vehicle1').disabled = false;
+    document.getElementById('vehicle2').disabled = true;
+    document.getElementById('all').disabled = false;
+
+    realTimeTab2.style.visibility = "hidden";
+    realTimeTab2.style.opacity="0";
+    realTimeTab2.style.position = "absolute";
+
+    marker1.position = null
+    marker.position = null
+    all = 0;
+    clearMap();
+    stopLiveLocation();
+    ID = 2;
+    startLiveLocation();
+    console.log(all)
+    
+})
+allVehicles.addEventListener('click', () =>{
+    var reproducer = document.getElementById("reproducer");
+    var startPckr = document.getElementById("start-date");
+    var endPickr = document.getElementById("end-date");
+    var startDate = startPckr.value
+    var endDate = endPickr.value
+    if(reproducer.style.visibility == "visible"){
+        const toggleButton = document.getElementById('toggleButton');
+        //toggleButton.click();      
+        showTab("history")
+        startPckr.value = startDate;
+        endPickr.value = endDate;
+        popUpMenu.click();
+
+        
+    }
+    
+    document.getElementById('vehicle1').disabled = false;
+    document.getElementById('vehicle2').disabled = false;
+    document.getElementById('all').disabled = true;
+    if(document.getElementById('realtime').style.visibility === "visible"){
+        realTimeTab2.style.visibility = "visible";
+        realTimeTab2.style.opacity="1";
+        realTimeTab2.style.position = "relative";
+    }
+    
+    
+    marker1.position = null
+    marker2.position = null
+    ID = 1
+    clearMap();
+    stopLiveLocation();
+    all = 1;
+    console.log(all)
+    startLiveLocation();
+    
+})
 // Initialize map when the page loads
 loadName();
-loadMap();
+//loadMap();
+document.addEventListener("DOMContentLoaded", loadMap);
 initMap();
 showTab("realtime");
