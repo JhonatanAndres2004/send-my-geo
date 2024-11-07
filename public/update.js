@@ -312,7 +312,7 @@ async function initMap() {
     let initialPosition = { lat: 0, lng: 0 };
     
     try {
-        const response = await fetchLatestLocation();
+        const response = await fetch(`/latest-location?ID=${encodeURI(ID)}`);
         const data = await response.json();
         initialPosition = { lat: parseFloat(data.Latitude), lng: parseFloat(data.Longitude) };  
     } catch (err) {
@@ -1367,7 +1367,7 @@ allVehicles.addEventListener('click', () =>{
     all = 1;
     console.log(all)
     startLiveLocation();
-    //fetchLatestLocation();
+    fetchLatestLocation();
 })
 // Initialize map when the page loads
 loadName();
