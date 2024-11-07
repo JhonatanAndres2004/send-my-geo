@@ -55,11 +55,15 @@ import java.util.UUID;
 public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_LOCATION = 124;
     private ToggleButton startStopButton;
+    private ToggleButton selectVehicleButton;
+
     private ToggleButton protocolButton;
     private TextView latitudeTextView;
     private TextView longitudeTextView;
     private TextView altitudeTextView;
     private TextView timeTextView;
+    private TextView vehicleIDTextView;
+
     private FusedLocationProviderClient fusedLocationClient;
     private String locationMessage;
     private LocationCallback locationCallback;
@@ -87,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView speedTextView;
     private static final int BUFFER_SIZE = 1024;
     private static final long READ_TIMEOUT = 2000; // 2 seconds timeout
-
+    private int ID=1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,11 +102,12 @@ public class MainActivity extends AppCompatActivity {
 
         handler = new Handler();
         startStopButton = findViewById(R.id.startStopButton);
+        selectVehicleButton=findViewById(R.id.selectVehicleButton);
         latitudeTextView = findViewById(R.id.latitudeTextView);
         longitudeTextView = findViewById(R.id.longitudeTextView);
         altitudeTextView = findViewById(R.id.altitudeTextView);
         timeTextView = findViewById(R.id.timeTextView);
-
+        vehicleIDTextView = findViewById(R.id.vehicleIDTextView);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         createLocationRequest();
         createLocationCallback();
@@ -111,6 +116,13 @@ public class MainActivity extends AppCompatActivity {
                 stopSendingData();
             } else {
                 startSendingData();
+            }
+        });
+        selectVehicleButton.setOnClickListener(view -> {
+            if (ID==1) {
+                ID=2;
+            } else {
+                ID=1;
             }
         });
         setupBluetooth();
@@ -417,8 +429,9 @@ public class MainActivity extends AppCompatActivity {
         timeTextView.setText("Local Time: " + localTime);
         rpmTextView.setText("RPM: " + rpm);
         speedTextView.setText("Speed: " + speed + " km/h");
-
-        locationMessage = latitude + ";" + longitude + ";" + utcTime + ";" + speed + ";" + rpm;
+        vehicleIDTextView.setText("ID: " + ID);
+        locationMessage = latitude + ";" + longitude + ";" + utcTime + ";" + speed + ";" + rpm+ ";" + ID;
+        showToast(locationMessage);
     }
 
     private String resolveDomainName(String hostName) {
