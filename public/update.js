@@ -1339,6 +1339,10 @@ allVehicles.addEventListener('click', () =>{
         startPckr.value = startDate;
         endPickr.value = endDate;
         popUpMenu.click();
+
+    realTimeTab2.style.visibility = "hidden";
+    realTimeTab2.style.opacity="0";
+    realTimeTab2.style.position = "absolute";
     }
     document.getElementById('vehicle1').disabled = false;
     document.getElementById('vehicle2').disabled = false;
