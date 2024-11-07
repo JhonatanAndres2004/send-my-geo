@@ -24,10 +24,10 @@ sock.bind((UDP_IP, UDP_PORT))
 conn = pymysql.connect(**db_config)
 cursor = conn.cursor()
 
-def insert_location(lat, lon, timestamp, velocity, rpm):
+def insert_location(lat, lon, timestamp, velocity, rpm, ID):
     try:
-        sql = "INSERT INTO locations (latitude, longitude, timestamp, Velocity, RPM) VALUES (%s, %s, %s, %s, %s)"
-        cursor.execute(sql, (lat, lon, timestamp, velocity, rpm))
+        sql = "INSERT INTO locations (latitude, longitude, timestamp, Velocity, RPM, ID) VALUES (%s, %s, %s, %s, %s, %s)"
+        cursor.execute(sql, (lat, lon, timestamp, velocity, rpm, ID))
         conn.commit()
     except pymysql.MySQLError as e:
         print(f"Error: {e}")
@@ -39,11 +39,11 @@ while True:
     data, addr = sock.recvfrom(1024)  # Buffer size is 1024 bytes
     message = data.decode('utf-8')
     try:
-        lat, lon, timestamp, velocity, rpm = message.split(';')
+        lat, lon, timestamp, velocity, rpm, ID = message.split(';')
         lat = lat.replace(',', '.')
         lon = lon.replace(',', '.')
-        insert_location(lat, lon, timestamp, velocity,rpm)
-        print(f"Inserted location: Latitude={lat}, Longitude={lon}, Timestamp={timestamp}, Velocity={velocity}, rpm ={rpm}")
+        insert_location(lat, lon, timestamp, velocity,rpm, ID)
+        print(f"Inserted location: Latitude={lat}, Longitude={lon}, Timestamp={timestamp}, Velocity={velocity}, rpm ={rpm}, ID = {ID}")
     except ValueError:
         print("Received invalid data format")
     except Exception as e:
