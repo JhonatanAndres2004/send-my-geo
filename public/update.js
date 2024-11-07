@@ -126,7 +126,7 @@ function showTab(tab) {
         reproducer.style.opacity = "0";
         reproducer.style.position = "absolute";
         clearMap();
-        initMap();
+        //initMap();
         startLiveLocation();
         allVehicles.click();
         if(all === 1){
