@@ -40,7 +40,7 @@ let ID = 1;
 let vehicle1 = document.getElementById('vehicle1');
 let vehicle2 = document.getElementById('vehicle2');
 let allVehicles = document.getElementById('all');
-let all = 0;
+let all = 1;
 slider.value = 0
 
 const Toast = Swal.mixin({
@@ -125,9 +125,15 @@ function showTab(tab) {
         reproducer.style.visibility = "hidden";
         reproducer.style.opacity = "0";
         reproducer.style.position = "absolute";
+        allVehicles.click()
         clearMap();
         initMap();
         startLiveLocation();
+        if(all === 1){
+            realTimeTab2.style.visibility = "visible";
+            realTimeTab2.style.opacity="1";
+            realTimeTab2.style.position = "relative";
+        }
     } else if (tab === "history") {
         historyTab.style.visibility = "visible";
         historyTab.style.opacity = "1";
