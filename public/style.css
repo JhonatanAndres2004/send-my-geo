@@ -133,10 +133,40 @@ button:disabled {
     color: #555;
     font-size: 12px;
 }
+.tab-content2 {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    background-color: #ffffff;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(219, 0, 0, 0.1);
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 0px;
+}
 
+.tab-content2 div span, .tab-content2 label, .tab-content2 input {
+    flex: 1;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color:  #f9f9f9;
+    color: #555;
+    font-size: 12px;
+}
 
 /* Estilos base para la sección de Real Time */
 .location-info.tab-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px;
+    width: 65vw;
+    max-width: 1200px;
+}
+.location-info.tab-content2 {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -186,7 +216,12 @@ body {
     text-align: right;
 }
 
-
+.tab-content2 span:nth-child(odd), .tab-content2 label {
+    text-align: left;
+}
+.tab-content2 span:nth-child(even), .tab-content2 input {
+    text-align: right;
+}
 /* hmm */
 
 #fetch-data, #fetch-location,#backToHistorics {
@@ -423,6 +458,11 @@ body.dark-mode .tab-content {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
+body.dark-mode .tab-content2 {
+    background-color: #00013b;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
 body.dark-mode #fetch-data,
 body.dark-mode #backToHistorics,
 body.dark-mode #fetch-location {
@@ -433,6 +473,12 @@ body.dark-mode #fetch-location {
 body.dark-mode .tab-content span,
 body.dark-mode .tab-content label,
 body.dark-mode .tab-content input {
+    background-color: #333;
+    color: #e2e2e2;
+}
+body.dark-mode .tab-content2 span,
+body.dark-mode .tab-content2 label,
+body.dark-mode .tab-content2 input {
     background-color: #333;
     color: #e2e2e2;
 }
@@ -603,6 +649,17 @@ min-width: 70px;
         align-items: flex-start;
     }
     .tab-content{
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        width: 80%;
+    }
+    .location-info.tab-content2 {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: flex-start;
+    }
+    .tab-content2{
         flex-direction: row;
         flex-wrap: wrap;
         align-items: flex-start;

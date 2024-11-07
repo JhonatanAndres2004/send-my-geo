@@ -25,6 +25,7 @@ let closeButtonContainer=document.getElementById("close-popup-container")
 let closeButton=document.getElementById("close-popup")
 let slider = document.getElementById('slider');
 let valueSlider = document.getElementById('valueSlider')
+let realTimeTab2 = document.getElementById('realtime2')
 let info= [];
 let info2 = [];
 let previous;
@@ -110,6 +111,9 @@ function showTab(tab) {
         realTimeTab.style.visibility = "visible";
         realTimeTab.style.opacity = "1";
         realTimeTab.style.position = "relative";
+        realTimeTab2.style.visibility = "hidden";
+        realTimeTab2.style.opacity="0";
+        realTimeTab2.style.position = "absolute";
         historyTab.style.visibility = "hidden";
         historyTab.style.opacity = "0";
         historyTab.style.position = "absolute";
@@ -131,6 +135,9 @@ function showTab(tab) {
         realTimeTab.style.visibility = "hidden";
         realTimeTab.style.opacity = "0";
         realTimeTab.style.position = "absolute";
+        realTimeTab2.style.visibility = "hidden";
+        realTimeTab2.style.opacity="0";
+        realTimeTab2.style.position = "absolute";
         document.getElementById('realtime-button').disabled = false;
         document.getElementById('history-button').disabled = true;
         document.getElementById('start-date').value = "";
@@ -146,6 +153,9 @@ function showTab(tab) {
         realTimeTab.style.visibility = "hidden";
         realTimeTab.style.opacity = "0";
         realTimeTab.style.position = "absolute";
+        realTimeTab2.style.visibility = "hidden";
+        realTimeTab2.style.opacity="0";
+        realTimeTab2.style.position = "absolute";
         historyTab.style.visibility = "hidden";
         historyTab.style.opacity = "0";
         historyTab.style.position = "absolute";
@@ -163,6 +173,9 @@ function showTab(tab) {
         realTimeTab.style.visibility = "hidden";
         realTimeTab.style.opacity = "0";
         realTimeTab.style.position = "absolute";
+        realTimeTab2.style.visibility = "hidden";
+        realTimeTab2.style.opacity="0";
+        realTimeTab2.style.position = "absolute";
         historyTab.style.visibility = "hidden";
         historyTab.style.opacity = "0";
         historyTab.style.position = "absolute";
@@ -373,7 +386,7 @@ function fetchLatestLocation(id,) {
             if (data.length > 1){
                 updateLocationDisplay(data[0]);
                 updateMapAndRoute(data[0].Latitude, data[0].Longitude, data[0].Timestamp);
-                //updateLocationDisplay(data);
+                updateLocationDisplay(data[1], true);
                 updateMapAndRoute2(data[1].Latitude, data[1].Longitude, data[1].Timestamp, true);
                 console.log('fetching both vehicles real time')
             }else{
@@ -385,15 +398,27 @@ function fetchLatestLocation(id,) {
         .catch(err => console.error('Error fetching latest location:', err));
 }
 
-function updateLocationDisplay(data) {
-    document.getElementById('latitude').innerText = data.Latitude;
-    document.getElementById('longitude').innerText = data.Longitude;
-    const timestamp = convertToLocalTime(data.Timestamp);
-    const [date, time] = timestamp.split(', ');
-    document.getElementById('date').innerText = date;
-    document.getElementById('time').innerText = time;
-    document.getElementById('velocity').innerText = data.Velocity
-    document.getElementById('rpm').innerText = data.RPM
+function updateLocationDisplay(data, allVehicles=false) {
+    
+    if(allVehicles === true){
+        document.getElementById('latitude2').innerText = data.Latitude;
+        document.getElementById('longitude2').innerText = data.Longitude;
+        const timestamp = convertToLocalTime(data.Timestamp);
+        const [date, time] = timestamp.split(', ');
+        document.getElementById('date2').innerText = date;
+        document.getElementById('time2').innerText = time;
+        document.getElementById('velocity2').innerText = data.Velocity
+        document.getElementById('rpm2').innerText = data.RPM
+    }else{
+        document.getElementById('latitude').innerText = data.Latitude;
+        document.getElementById('longitude').innerText = data.Longitude;
+        const timestamp = convertToLocalTime(data.Timestamp);
+        const [date, time] = timestamp.split(', ');
+        document.getElementById('date').innerText = date;
+        document.getElementById('time').innerText = time;
+        document.getElementById('velocity').innerText = data.Velocity
+        document.getElementById('rpm').innerText = data.RPM
+    }
 }
 
 function roundCoordinate(coord) {
@@ -1249,6 +1274,10 @@ vehicle1.addEventListener('click', () =>{
         endPickr.value = endDate;
         popUpMenu.click();
     }
+
+    realTimeTab2.style.visibility = "hidden";
+    realTimeTab2.style.opacity="0";
+    realTimeTab2.style.position = "absolute";
     
     document.getElementById('vehicle1').disabled = true;
     document.getElementById('vehicle2').disabled = false;
@@ -1283,6 +1312,10 @@ vehicle2.addEventListener('click', () =>{
     document.getElementById('vehicle2').disabled = true;
     document.getElementById('all').disabled = false;
 
+    realTimeTab2.style.visibility = "hidden";
+    realTimeTab2.style.opacity="0";
+    realTimeTab2.style.position = "absolute";
+
     marker1.position = null
     marker.position = null
     all = 0;
@@ -1310,6 +1343,10 @@ allVehicles.addEventListener('click', () =>{
     document.getElementById('vehicle1').disabled = false;
     document.getElementById('vehicle2').disabled = false;
     document.getElementById('all').disabled = true;
+
+    realTimeTab2.style.visibility = "visible";
+    realTimeTab2.style.opacity="1";
+    realTimeTab2.style.position = "relative";
     
     marker1.position = null
     marker2.position = null
