@@ -1339,14 +1339,19 @@ allVehicles.addEventListener('click', () =>{
         startPckr.value = startDate;
         endPickr.value = endDate;
         popUpMenu.click();
+
+        
     }
+    
     document.getElementById('vehicle1').disabled = false;
     document.getElementById('vehicle2').disabled = false;
     document.getElementById('all').disabled = true;
-
-    realTimeTab2.style.visibility = "visible";
-    realTimeTab2.style.opacity="1";
-    realTimeTab2.style.position = "relative";
+    if(document.getElementById('realtime').style.visibility === "visible"){
+        realTimeTab2.style.visibility = "visible";
+        realTimeTab2.style.opacity="1";
+        realTimeTab2.style.position = "relative";
+    }
+    
     
     marker1.position = null
     marker2.position = null
