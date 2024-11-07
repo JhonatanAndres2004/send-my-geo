@@ -127,7 +127,7 @@ function showTab(tab) {
         reproducer.style.position = "absolute";
         clearMap();
         initMap();
-        //startLiveLocation();
+        startLiveLocation();
         allVehicles.click();
         if(all === 1){
             realTimeTab2.style.visibility = "visible";
@@ -1313,7 +1313,7 @@ vehicle2.addEventListener('click', () =>{
         endPickr.value = endDate;
         popUpMenu.click();
     }
-
+    fetchLatestLocation();
     document.getElementById('vehicle1').disabled = false;
     document.getElementById('vehicle2').disabled = true;
     document.getElementById('all').disabled = false;
@@ -1358,7 +1358,7 @@ allVehicles.addEventListener('click', () =>{
         realTimeTab2.style.position = "relative";
     }
     
-    
+     
     marker1.position = null
     marker2.position = null
     ID = 1
@@ -1367,7 +1367,7 @@ allVehicles.addEventListener('click', () =>{
     all = 1;
     console.log(all)
     startLiveLocation();
-    
+    fetchLatestLocation();
 })
 // Initialize map when the page loads
 loadName();
