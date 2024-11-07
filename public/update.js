@@ -126,8 +126,8 @@ function showTab(tab) {
         reproducer.style.opacity = "0";
         reproducer.style.position = "absolute";
         clearMap();
-        //initMap();
-        startLiveLocation();
+        initMap();
+        //startLiveLocation();
         allVehicles.click();
         if(all === 1){
             realTimeTab2.style.visibility = "visible";
