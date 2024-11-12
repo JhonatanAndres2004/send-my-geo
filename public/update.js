@@ -418,8 +418,11 @@ function fetchLatestLocation() {
                 updateLocationDisplay(data[1], true);
                 updateMapAndRoute2(data[1].Latitude, data[1].Longitude, data[1].Timestamp, true);
                 console.log('fetching both vehicles real time')
-            }else{
+            }else if (ID === 2 && data.length ===1){
                 console.log('fetching one vehicle real time')
+                updateLocationDisplay(data, true);
+                updateMapAndRoute2(data.Latitude, data.Longitude, data.Timestamp);
+            }else if (ID === 1 && data.length ===1){
                 updateLocationDisplay(data, true);
                 updateMapAndRoute(data.Latitude, data.Longitude, data.Timestamp);
             }
@@ -496,7 +499,7 @@ function updateMapAndRoute(lat, lng, timestamp, allVehicles=false) {
 
         if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 1) {
             routeCoordinates.push(newPosition);
-            console.log('conditional before polyline')
+            console.log('Vehicle1')
             // if(ID === 1 && !allVehicles){
             //     drawPolyline(lastPosition, newPosition);
             //     console.log('in vehicle 1')
