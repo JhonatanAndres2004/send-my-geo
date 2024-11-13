@@ -1498,12 +1498,27 @@ document.getElementById("all").addEventListener("click", ()=>{
 })
 document.getElementById("history-button").addEventListener("click",()=>{
     mainContainer.style.height="95vh"
+    document.getElementById("history-button").style.visibility="hidden"
+    document.getElementById("history-button").style.opacity="0"
+    document.getElementById("history-button").style.position="absolute"
+
+    document.getElementById("realtime-button").style.visibility="visible"
+    document.getElementById("realtime-button").style.opacity="1"
+    document.getElementById("realtime-button").style.position="relative"
+
 })
 document.getElementById("realtime-button").addEventListener("click",()=>{
     rtstate=true
     if(allpressed && screen.width<515){
         mainContainer.style.height="135vh"
     }
+    document.getElementById("realtime-button").style.visibility="hidden"
+    document.getElementById("realtime-button").style.opacity="0"
+    document.getElementById("realtime-button").style.position="absolute"
+
+    document.getElementById("history-button").style.visibility="visible"
+    document.getElementById("history-button").style.opacity="1"
+    document.getElementById("history-button").style.position="relative"
 })
 //cuando estoy en historicos, en celular y presiono all
 
