@@ -1500,6 +1500,7 @@ document.getElementById("history-button").addEventListener("click",()=>{
     mainContainer.style.height="95vh"
 })
 document.getElementById("realtime-button").addEventListener("click",()=>{
+    rtstate=true
     if(allpressed && screen.width<515){
         mainContainer.style.height="135vh"
     }
