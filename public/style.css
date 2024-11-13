@@ -11,7 +11,7 @@ body{
     justify-content: center;
     align-items: flex-start;
     height: 100vh;
-    background: url("images/background2.jpg")  center / cover no-repeat fixed; 
+    background: url("images/background3.jpg")  center / cover no-repeat fixed; 
 
 }
 .container{
@@ -459,7 +459,7 @@ body.dark-mode .tab-content {
 }
 
 body.dark-mode .tab-content2 {
-    background-color: #01035b;
+    background-color: #3e286f;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
