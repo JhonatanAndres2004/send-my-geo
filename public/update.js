@@ -418,12 +418,12 @@ function fetchLatestLocation() {
                 updateLocationDisplay(data[1], true);
                 updateMapAndRoute2(data[1].Latitude, data[1].Longitude, data[1].Timestamp, true);
                 console.log('fetching both vehicles real time')
-            }else if (ID === 2 && data.length ===1){
+            }else if (ID === 2 && !(data.length >1)){
                 console.log('fetching one vehicle real time')
-                updateLocationDisplay(data, true);
+                updateLocationDisplay(data);
                 updateMapAndRoute2(data.Latitude, data.Longitude, data.Timestamp);
-            }else if (ID === 1 && data.length ===1){
-                updateLocationDisplay(data, true);
+            }else if (ID === 1 && !(data.length ===1)){
+                updateLocationDisplay(data);
                 updateMapAndRoute(data.Latitude, data.Longitude, data.Timestamp);
             }
 
@@ -1317,8 +1317,7 @@ vehicle1.addEventListener('click', () =>{
     document.getElementById('vehicle1').disabled = true;
     document.getElementById('vehicle2').disabled = false;
     document.getElementById('all').disabled = false;
-    marker2.position = null
-    //marker.position = null
+    
     all= 0;
     ID = 1;
     if(realTimeTab.style.visibility == "visible"){
