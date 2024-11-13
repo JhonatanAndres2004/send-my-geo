@@ -109,7 +109,7 @@ function showTab(tab) {
     }
 
     if (tab === "realtime") {
-        
+        let onCreatioDisabHist=true
         popUpMenu.style.visibility = 'hidden';
         realTimeTab.style.visibility = "visible";
         realTimeTab.style.opacity = "1";
@@ -128,6 +128,12 @@ function showTab(tab) {
         reproducer.style.visibility = "hidden";
         reproducer.style.opacity = "0";
         reproducer.style.position = "absolute";
+        if(onCreatioDisabHist){
+            onCreatioDisabHist=false
+            document.getElementById("history-button").style.visibility="hidden"
+            document.getElementById("history-button").style.opacity="0"
+            document.getElementById("history-button").style.position="absolute"
+        }
         clearMap();
         initMap();
         allVehicles.click();
