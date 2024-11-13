@@ -707,9 +707,7 @@ min-width: 70px;
 }
 
 @media screen and (max-width: 550px) {
-    body{
-        overflow: visible;
-    }
+
     .info-item-historics-location{
         justify-content: center;
         align-items: center;
@@ -734,6 +732,11 @@ min-width: 70px;
     }
 
     
+}
+@media screen and (max-width:515px){
+    body{
+        overflow: visible;
+    }
 }
 
 
