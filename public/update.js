@@ -418,9 +418,12 @@ function fetchLatestLocation() {
                 updateLocationDisplay(data[1], true);
                 updateMapAndRoute2(data[1].Latitude, data[1].Longitude, data[1].Timestamp, true);
                 console.log('fetching both vehicles real time')
-            }else{
+            }else if (ID === 2 && !(data.length >1)){
                 console.log('fetching one vehicle real time')
-                updateLocationDisplay(data, true);
+                updateLocationDisplay(data);
+                updateMapAndRoute2(data.Latitude, data.Longitude, data.Timestamp);
+            }else if (ID === 1 && !(data.length ===1)){
+                updateLocationDisplay(data);
                 updateMapAndRoute(data.Latitude, data.Longitude, data.Timestamp);
             }
 
@@ -496,20 +499,20 @@ function updateMapAndRoute(lat, lng, timestamp, allVehicles=false) {
 
         if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 1) {
             routeCoordinates.push(newPosition);
-            console.log('conditional before polyline')
-            if(ID === 1 && !allVehicles){
-                drawPolyline(lastPosition, newPosition);
-                console.log('in vehicle 1')
-            }
-            else if(ID === 2 && !allVehicles){
-                drawPolyline(lastPosition, newPosition, true);
-                console.log('In vehicle 2')
-            }
-            else if(allVehicles){
-                drawPolyline(lastPosition, newPosition, true);
-                console.log('In vehicle 2')
-            }
-
+            console.log('Vehicle1')
+            // if(ID === 1 && !allVehicles){
+            //     drawPolyline(lastPosition, newPosition);
+            //     console.log('in vehicle 1')
+            // }
+            // else if(ID === 2 && !allVehicles){
+            //     drawPolyline(lastPosition, newPosition, true);
+            //     console.log('In vehicle 2')
+            // }
+            // else if(allVehicles){
+            //     drawPolyline(lastPosition, newPosition, true);
+            //     console.log('In vehicle 2')
+            // }
+            drawPolyline(lastPosition,newPosition)
             //colorIndex = (colorIndex + 1) % colors.length; // choose the next color
         } else if (distance > 1 || timeDiff >= 1) {
             // If distance is greater than 1 kilometer or the time difference is greater (or equal) than 1 minute,
@@ -1314,8 +1317,7 @@ vehicle1.addEventListener('click', () =>{
     document.getElementById('vehicle1').disabled = true;
     document.getElementById('vehicle2').disabled = false;
     document.getElementById('all').disabled = false;
-    marker2.position = null
-    //marker.position = null
+    
     all= 0;
     ID = 1;
     if(realTimeTab.style.visibility == "visible"){
