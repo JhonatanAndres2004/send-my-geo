@@ -1453,14 +1453,14 @@ let mainContainer=document.getElementById("mainContainer")
 console.log(screen.width)
 document.getElementById("vehicle1").addEventListener("click", ()=>{
     if(frontfix!==0 && screen.width<=515){
-        mainContainer.style.height="135vh"
+        mainContainer.style.height="1200px"
         mainContainer.style.paddingTop="120px"
     }
     frontfix=0
 })
 document.getElementById("vehicle2").addEventListener("click", ()=>{
     if(frontfix!==0 && screen.width<=515){
-        mainContainer.style.height="135vh"
+        mainContainer.style.height="1200px"
         mainContainer.style.paddingTop="120px"
     }
     frontfix=0
