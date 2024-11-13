@@ -1448,19 +1448,26 @@ allVehicles.addEventListener('click', () =>{
     }
 
 })
-let frontfix=0
+let frontfix=10
+let mainContainer=document.getElementById("mainContainer")
 console.log(screen.width)
 document.getElementById("vehicle1").addEventListener("click", ()=>{
+    if(frontfix!==0){
+        mainContainer.style.height="120vh"
+    }
     frontfix=0
-    console.log(frontfix)
 })
 document.getElementById("vehicle2").addEventListener("click", ()=>{
+    if(frontfix!==0){
+        mainContainer.style.height="120vh"
+    }
     frontfix=0
-    console.log(frontfix)
 })
 document.getElementById("all").addEventListener("click", ()=>{
+    if(frontfix!==1){
+        mainContainer.style.height="95vh"
+    }
     frontfix=1
-    console.log(frontfix)
 })
 // Initialize map when the page loads
 loadName();
