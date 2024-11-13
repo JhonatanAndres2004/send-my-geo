@@ -1458,7 +1458,7 @@ document.getElementById("vehicle1").addEventListener("click", ()=>{
     frontfix=0
 })
 document.getElementById("vehicle2").addEventListener("click", ()=>{
-    if(frontfix!==0 %% screen.width<=515){
+    if(frontfix!==0 && screen.width<=515){
         mainContainer.style.height="125vh"
     }
     frontfix=0
