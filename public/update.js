@@ -1485,6 +1485,9 @@ document.getElementById("all").addEventListener("click", ()=>{
         mainContainer.style.paddingTop="35px"
 
     }
+    if(screen.width<=515 && !rtstate){
+        mainContainer.style.height="95vh"
+    }
     onepressed=false
     twopressed=false
     allpressed=true
@@ -1494,10 +1497,12 @@ document.getElementById("history-button").addEventListener("click",()=>{
     mainContainer.style.height="95vh"
 })
 document.getElementById("realtime-button").addEventListener("click",()=>{
-    if(allpressed){
+    if(allpressed && screen.width<515){
         mainContainer.style.height="135vh"
     }
 })
+//cuando estoy en historicos, en celular y presiono all
+
 // Initialize map when the page loads
 loadName();
 //loadMap();
