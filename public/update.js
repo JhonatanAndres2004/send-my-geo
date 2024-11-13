@@ -1450,24 +1450,28 @@ allVehicles.addEventListener('click', () =>{
 })
 let frontfix=10
 let mainContainer=document.getElementById("mainContainer")
-console.log(screen.width)
+let validate=true
+if(screen.width<=515 && validate){
+    mainContainer.style.height="135vh"
+    validate=false
+}
 document.getElementById("vehicle1").addEventListener("click", ()=>{
     if(frontfix!==0 && screen.width<=515){
-        mainContainer.style.height="1200px"
+        mainContainer.style.height="95vh"
         mainContainer.style.paddingTop="120px"
     }
     frontfix=0
 })
 document.getElementById("vehicle2").addEventListener("click", ()=>{
     if(frontfix!==0 && screen.width<=515){
-        mainContainer.style.height="1200px"
+        mainContainer.style.height="95vh"
         mainContainer.style.paddingTop="120px"
     }
     frontfix=0
 })
 document.getElementById("all").addEventListener("click", ()=>{
     if(frontfix!==1){
-        mainContainer.style.height="95vh"
+        mainContainer.style.height="135vh"
     }
     frontfix=1
 })
