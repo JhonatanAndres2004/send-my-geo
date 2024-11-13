@@ -1480,7 +1480,7 @@ document.getElementById("vehicle2").addEventListener("click", ()=>{
     frontfix=0
 })
 document.getElementById("all").addEventListener("click", ()=>{
-    if(frontfix!==1 and screen.width<=515){
+    if(frontfix!==1 && screen.width<=515){
         mainContainer.style.height="135vh"
         mainContainer.style.paddingTop="35px"
 
