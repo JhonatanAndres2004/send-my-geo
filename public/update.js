@@ -130,9 +130,9 @@ function showTab(tab) {
         reproducer.style.position = "absolute";
         if(onCreatioDisabHist){
             onCreatioDisabHist=false
-            document.getElementById("history-button").style.visibility="hidden"
-            document.getElementById("history-button").style.opacity="0"
-            document.getElementById("history-button").style.position="absolute"
+            document.getElementById("realtime-button").style.visibility="hidden"
+            document.getElementById("realtime-button").style.opacity="0"
+            document.getElementById("realtime-button").style.position="absolute"
         }
         clearMap();
         initMap();
