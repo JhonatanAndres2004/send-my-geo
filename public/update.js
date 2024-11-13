@@ -1488,6 +1488,9 @@ document.getElementById("all").addEventListener("click", ()=>{
     if(screen.width<=515 && !rtstate){
         mainContainer.style.height="95vh"
     }
+    if(screen.width<=515 && rtstate){
+        mainContainer.style.height="135vh"
+    }
     onepressed=false
     twopressed=false
     allpressed=true
