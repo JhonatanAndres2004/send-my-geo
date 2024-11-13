@@ -1452,6 +1452,9 @@ allVehicles.addEventListener('click', () =>{
 let frontfix=10
 let mainContainer=document.getElementById("mainContainer")
 let validate=true
+let onepressed=false
+let twopressed=false
+let allpressed=true
 if(screen.width<=515 && validate){
     mainContainer.style.height="135vh"
     validate=false
@@ -1459,27 +1462,41 @@ if(screen.width<=515 && validate){
 document.getElementById("vehicle1").addEventListener("click", ()=>{
     if(frontfix!==0 && screen.width<=515){
         mainContainer.style.height="95vh"
-        mainContainer.style.paddingTop="35px"
+        mainContainer.style.paddingTop="40px"
     }
+    onepressed=true
+    twopressed=false
+    allpressed=false
     frontfix=0
 })
 document.getElementById("vehicle2").addEventListener("click", ()=>{
     if(frontfix!==0 && screen.width<=515){
         mainContainer.style.height="95vh"
-        mainContainer.style.paddingTop="35px"
+        mainContainer.style.paddingTop="40px"
     }
+    onepressed=false
+    twopressed=true
+    allpressed=false
     frontfix=0
 })
 document.getElementById("all").addEventListener("click", ()=>{
-    if(frontfix!==1){
+    if(frontfix!==1 and screen.width<=515){
         mainContainer.style.height="135vh"
         mainContainer.style.paddingTop="35px"
 
     }
+    onepressed=false
+    twopressed=false
+    allpressed=true
     frontfix=1
 })
 document.getElementById("history-button").addEventListener("click",()=>{
     mainContainer.style.height="95vh"
+})
+document.getElementById("realtime-button").addEventListener("click",()=>{
+    if(allpressed){
+        mainContainer.style.height="135vh"
+    }
 })
 // Initialize map when the page loads
 loadName();
