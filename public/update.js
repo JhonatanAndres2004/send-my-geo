@@ -1448,6 +1448,15 @@ allVehicles.addEventListener('click', () =>{
     }
 
 })
+
+if(screen.width<515 && allvariable==1){
+    let container=document.queryselector(".container")
+    container.style.height="120vh"
+    console.log("Detected small device")
+}else{
+    container.style.height="95vh"
+
+}
 // Initialize map when the page loads
 loadName();
 //loadMap();
