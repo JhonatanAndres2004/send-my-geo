@@ -400,10 +400,11 @@ function startLiveLocation() {
 
     live = setInterval(() => fetchLatestLocation(), 10000); // Pass `ID` argument to `fetchLatestLocation`
 }
-
+let rtstate=true
 function stopLiveLocation() {
     clearInterval(live);
     console.log('stopped')
+    rtstate=false
 }
 
 function fetchLatestLocation() {
@@ -1458,20 +1459,27 @@ if(screen.width<=515 && validate){
 document.getElementById("vehicle1").addEventListener("click", ()=>{
     if(frontfix!==0 && screen.width<=515){
         mainContainer.style.height="95vh"
+        mainContainer.style.paddingTop="35px"
     }
     frontfix=0
 })
 document.getElementById("vehicle2").addEventListener("click", ()=>{
     if(frontfix!==0 && screen.width<=515){
         mainContainer.style.height="95vh"
+        mainContainer.style.paddingTop="35px"
     }
     frontfix=0
 })
 document.getElementById("all").addEventListener("click", ()=>{
     if(frontfix!==1){
         mainContainer.style.height="135vh"
+        mainContainer.style.paddingTop="35px"
+
     }
     frontfix=1
+})
+document.getElementById("history-button").addEventListener("click",()=>{
+    mainContainer.style.height="95vh"
 })
 // Initialize map when the page loads
 loadName();
