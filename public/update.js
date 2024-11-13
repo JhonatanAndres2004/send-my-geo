@@ -1448,15 +1448,20 @@ allVehicles.addEventListener('click', () =>{
     }
 
 })
-
-if(screen.width<515 && allvariable==1){
-    let container=document.queryselector(".container")
-    container.style.height="120vh"
-    console.log("Detected small device")
-}else{
-    container.style.height="95vh"
-
-}
+let frontfix=0
+console.log(screen.width)
+document.getElementById("vehicle1").addEventListener("click", ()=>{
+    frontfix=0
+    console.log(frontfix)
+})
+document.getElementById("vehicle2").addEventListener("click", ()=>{
+    frontfix=0
+    console.log(frontfix)
+})
+document.getElementById("all").addEventListener("click", ()=>{
+    frontfix=1
+    console.log(frontfix)
+})
 // Initialize map when the page loads
 loadName();
 //loadMap();
