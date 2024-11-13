@@ -5,7 +5,7 @@
 }
 
 body{
-    overflow: hidden;
+    overflow: scroll;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -630,11 +630,26 @@ min-width: 70px;
 #pop-up-info{
     width: 80%;
 }
+@media screen and (max-width: 850px) {
+
+    #realtime{
+        height: 116px;
+    }
+    #realtime2{
+        height: 116px;
+    }
+}
+
 
 @media screen and (max-width: 750px) {
 
     #realtime{
         width: 80%;
+        height: 81px;
+    }
+    #realtime2{
+        width: 80%;
+        height: 81px;
     }
 }
 
@@ -728,6 +743,11 @@ min-width: 70px;
     }
 
     
+}
+@media screen and (max-width:515px){
+    .container{
+        height: 120vh !important;
+    }
 }
 
 @media screen and (max-width:510px){
