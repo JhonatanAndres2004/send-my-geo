@@ -967,7 +967,7 @@ document.getElementById('fetch-data').addEventListener('click', () => {
                     });
                 } else{
                     popUpMenu.style.visibility='visible';
-                    pooUpMenu.classList.add("animate__wobble")
+                    popUpMenu.classList.add("animate__wobble")
                     data.forEach(data => {
                         //updateLocationDisplay(data);
                         updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp);
