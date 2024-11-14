@@ -272,12 +272,15 @@ body {
     background-color: #ffffffe3 !important;
     color: #000000 !important;
 }
-#fetch-data:hover, #fetch-location:hover, h3:hover, #backToHistorics:hover{
+#fetch-data:hover, #fetch-location:hover, h3:hover{
     background-color: #4b0082 !important;
     transition: 0.3s;
 }
-#fetch-location:hover{
+
+#backToHistorics:hover{
     background-color: #a90548 !important;
+    transition: 0.3s;
+
 }
 
 /* For Webkit browsers like Chrome, Safari, Edge */
