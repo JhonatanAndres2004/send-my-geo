@@ -248,8 +248,8 @@ body {
 #toggleButton {
     justify-self: center; 
     padding: 5px 10px;
-    background-color: #ffffff;
-    color: rgb(0, 0, 0);
+    background-color:   #D12D70;
+    color: whitesmoke;
     border: none;
     border-radius: 10px;
     cursor: pointer;
@@ -258,7 +258,7 @@ body {
 
 /* Hover effect */
 #toggleButton:hover, #stopButton:hover {
-    background-color: #000000e3;
+    background-color: #a90548;
     color: #ffffff;
     transition: 0.3s;
 }
@@ -269,7 +269,7 @@ body {
     color: #000000 !important;
 }
 #fetch-data:hover, #fetch-location:hover, h3:hover, #backToHistorics:hover{
-    background-color: #4b0082 !important;
+    background-color: #a90548 !important;
     transition: 0.3s;
 }
 
@@ -455,7 +455,7 @@ body.dark-mode h1 {
 }
 
 body.dark-mode .tab-content {
-    background-color: #1e1e1e;
+    background-color: #3E2870;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
