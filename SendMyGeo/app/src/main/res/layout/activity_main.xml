@@ -45,6 +45,27 @@
         android:textOn="Detener envío"
         android:textSize="19sp" />
 
+
+    <ToggleButton
+        android:id="@+id/selectVehicleButton"
+        android:layout_width="164dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/rounded_button"
+        android:checked="true"
+        android:paddingLeft="15dp"
+        android:paddingTop="10dp"
+        android:paddingRight="15dp"
+        android:paddingBottom="10dp"
+        android:shadowColor="#12232121"
+        android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+        android:textColor="@color/white"
+        android:textColorLink="#00FFFFFF"
+        android:textOff="Usar vehiculo 1"
+        android:textOn="Usar vehiculo 2"
+        android:textSize="19sp" />
     <TextView
         android:id="@+id/latitudeTextView"
         android:layout_width="wrap_content"
@@ -88,12 +109,12 @@
         android:textColor="#999999"
         />
     <TextView
-        android:id="@+id/dataTextView"
+        android:id="@+id/rpmTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="8dp"
-        android:text="RPM: 0"
+        android:text="RPM:"
         android:textSize="20sp"
         android:textColor="#999999"
         />
@@ -103,7 +124,17 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="8dp"
-        android:text="Speed: 0 km/h"
+        android:text="Speed:"
+        android:textSize="20sp"
+        android:textColor="#999999"
+        />
+    <TextView
+        android:id="@+id/vehicleIDTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:text="ID:"
         android:textSize="20sp"
         android:textColor="#999999"
         />

@@ -34,6 +34,7 @@ body{
     flex-direction: column;
     align-items: center;
     height: auto;
+    padding-top:15px;
 }
 
 #title {
@@ -234,6 +235,10 @@ body {
     cursor: pointer;
     font-size: 15px;
 }
+#backToHistorics{
+    background-color:   #D12D70 !important;
+}
+
 #playButton {
     justify-self: center; 
     padding: 5px 10px;
@@ -247,8 +252,8 @@ body {
 #toggleButton {
     justify-self: center; 
     padding: 5px 10px;
-    background-color: #ffffff;
-    color: rgb(0, 0, 0);
+    background-color:   #D12D70;
+    color: whitesmoke;
     border: none;
     border-radius: 10px;
     cursor: pointer;
@@ -257,7 +262,7 @@ body {
 
 /* Hover effect */
 #toggleButton:hover, #stopButton:hover {
-    background-color: #000000e3;
+    background-color: #a90548;
     color: #ffffff;
     transition: 0.3s;
 }
@@ -267,9 +272,15 @@ body {
     background-color: #ffffffe3 !important;
     color: #000000 !important;
 }
-#fetch-data:hover, #fetch-location:hover, h3:hover, #backToHistorics:hover{
+#fetch-data:hover, #fetch-location:hover, h3:hover{
     background-color: #4b0082 !important;
     transition: 0.3s;
+}
+
+#backToHistorics:hover{
+    background-color: #a90548 !important;
+    transition: 0.3s;
+
 }
 
 /* For Webkit browsers like Chrome, Safari, Edge */
@@ -457,6 +468,9 @@ body.dark-mode .tab-content {
     background-color: #1e1e1e;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
+#reproducer{
+    background-color: #3E2870 !important;
+}
 
 body.dark-mode .tab-content2 {
     background-color: #3e286f;
@@ -636,6 +650,9 @@ min-width: 70px;
     #realtime{
         width: 80%;
     }
+    #realtime2{
+        width: 80%;
+    }
 }
 
 /* Media query para pantallas menores a 650px */
@@ -729,6 +746,12 @@ min-width: 70px;
 
     
 }
+@media screen and (max-width:515px){
+    body{
+        overflow: visible;
+    }
+}
+
 
 @media screen and (max-width:510px){
     #map-container{

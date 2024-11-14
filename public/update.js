@@ -109,7 +109,7 @@ function showTab(tab) {
     }
 
     if (tab === "realtime") {
-        
+        let onCreatioDisabHist=true
         popUpMenu.style.visibility = 'hidden';
         realTimeTab.style.visibility = "visible";
         realTimeTab.style.opacity = "1";
@@ -128,6 +128,12 @@ function showTab(tab) {
         reproducer.style.visibility = "hidden";
         reproducer.style.opacity = "0";
         reproducer.style.position = "absolute";
+        if(onCreatioDisabHist){
+            onCreatioDisabHist=false
+            document.getElementById("realtime-button").style.visibility="hidden"
+            document.getElementById("realtime-button").style.opacity="0"
+            document.getElementById("realtime-button").style.position="absolute"
+        }
         clearMap();
         initMap();
         allVehicles.click();
@@ -400,10 +406,11 @@ function startLiveLocation() {
 
     live = setInterval(() => fetchLatestLocation(), 10000); // Pass `ID` argument to `fetchLatestLocation`
 }
-
+let rtstate=true
 function stopLiveLocation() {
     clearInterval(live);
     console.log('stopped')
+    rtstate=false
 }
 
 function fetchLatestLocation() {
@@ -1448,6 +1455,79 @@ allVehicles.addEventListener('click', () =>{
     }
 
 })
+let frontfix=10
+let mainContainer=document.getElementById("mainContainer")
+let validate=true
+let onepressed=false
+let twopressed=false
+let allpressed=true
+if(screen.width<=515 && validate){
+    mainContainer.style.height="135vh"
+    validate=false
+}
+document.getElementById("vehicle1").addEventListener("click", ()=>{
+    if(frontfix!==0 && screen.width<=515){
+        mainContainer.style.height="95vh"
+        mainContainer.style.paddingTop="40px"
+    }
+    onepressed=true
+    twopressed=false
+    allpressed=false
+    frontfix=0
+})
+document.getElementById("vehicle2").addEventListener("click", ()=>{
+    if(frontfix!==0 && screen.width<=515){
+        mainContainer.style.height="95vh"
+        mainContainer.style.paddingTop="40px"
+    }
+    onepressed=false
+    twopressed=true
+    allpressed=false
+    frontfix=0
+})
+document.getElementById("all").addEventListener("click", ()=>{
+    if(frontfix!==1 && screen.width<=515){
+        mainContainer.style.height="135vh"
+        mainContainer.style.paddingTop="35px"
+
+    }
+    if(screen.width<=515 && !rtstate){
+        mainContainer.style.height="95vh"
+    }
+    if(screen.width<=515 && rtstate){
+        mainContainer.style.height="135vh"
+    }
+    onepressed=false
+    twopressed=false
+    allpressed=true
+    frontfix=1
+})
+document.getElementById("history-button").addEventListener("click",()=>{
+    mainContainer.style.height="95vh"
+    document.getElementById("history-button").style.visibility="hidden"
+    document.getElementById("history-button").style.opacity="0"
+    document.getElementById("history-button").style.position="absolute"
+
+    document.getElementById("realtime-button").style.visibility="visible"
+    document.getElementById("realtime-button").style.opacity="1"
+    document.getElementById("realtime-button").style.position="relative"
+
+})
+document.getElementById("realtime-button").addEventListener("click",()=>{
+    rtstate=true
+    if(allpressed && screen.width<515){
+        mainContainer.style.height="135vh"
+    }
+    document.getElementById("realtime-button").style.visibility="hidden"
+    document.getElementById("realtime-button").style.opacity="0"
+    document.getElementById("realtime-button").style.position="absolute"
+
+    document.getElementById("history-button").style.visibility="visible"
+    document.getElementById("history-button").style.opacity="1"
+    document.getElementById("history-button").style.position="relative"
+})
+//cuando estoy en historicos, en celular y presiono all
+
 // Initialize map when the page loads
 loadName();
 //loadMap();
