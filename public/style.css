@@ -455,8 +455,11 @@ body.dark-mode h1 {
 }
 
 body.dark-mode .tab-content {
-    background-color: #3E2870;
+    background-color: #1e1e1e;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+#reproducer{
+    background-color: #3E2870 !important;
 }
 
 body.dark-mode .tab-content2 {
