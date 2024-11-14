@@ -235,6 +235,10 @@ body {
     cursor: pointer;
     font-size: 15px;
 }
+#backToHistorics{
+    background-color:   #D12D70 !important;
+}
+
 #playButton {
     justify-self: center; 
     padding: 5px 10px;
@@ -269,8 +273,11 @@ body {
     color: #000000 !important;
 }
 #fetch-data:hover, #fetch-location:hover, h3:hover, #backToHistorics:hover{
-    background-color: #a90548 !important;
+    background-color: #4b0082 !important;
     transition: 0.3s;
+}
+#fetch-location:hover{
+    background-color: #a90548 !important;
 }
 
 /* For Webkit browsers like Chrome, Safari, Edge */
