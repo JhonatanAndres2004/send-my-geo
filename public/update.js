@@ -505,7 +505,7 @@ function updateMapAndRoute(lat, lng, timestamp, allVehicles=false) {
         const distance = calculateDistance(lastPosition.lat, lastPosition.lng, newPosition.lat, newPosition.lng);
         const timeDiff = (newTimestamp - lastTimestamp) / (1000 * 60); // time difference in minutes
 
-        if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 1) {
+        if (!isSameLocation(newPosition, lastPosition) && distance <= 1 ) {
             routeCoordinates.push(newPosition);
             console.log('Vehicle1')
             // if(ID === 1 && !allVehicles){
@@ -522,7 +522,7 @@ function updateMapAndRoute(lat, lng, timestamp, allVehicles=false) {
             // }
             drawPolyline(lastPosition,newPosition)
             //colorIndex = (colorIndex + 1) % colors.length; // choose the next color
-        } else if (distance > 1 || timeDiff >= 1) {
+        } else if (distance > 1) {
             // If distance is greater than 1 kilometer or the time difference is greater (or equal) than 1 minute,
             // Start a new route from that point
             routeCoordinates = [newPosition];
