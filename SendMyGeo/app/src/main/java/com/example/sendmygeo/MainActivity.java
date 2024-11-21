@@ -1,8 +1,12 @@
 package com.example.sendmygeo;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -60,9 +64,9 @@ public class MainActivity extends AppCompatActivity {
     private ToggleButton protocolButton;
     private TextView latitudeTextView;
     private TextView longitudeTextView;
-    private TextView altitudeTextView;
     private TextView timeTextView;
     private TextView vehicleIDTextView;
+    private BroadcastReceiver locationReceiver;
 
     private FusedLocationProviderClient fusedLocationClient;
     private String locationMessage;
@@ -105,18 +109,16 @@ public class MainActivity extends AppCompatActivity {
         selectVehicleButton=findViewById(R.id.selectVehicleButton);
         latitudeTextView = findViewById(R.id.latitudeTextView);
         longitudeTextView = findViewById(R.id.longitudeTextView);
-        altitudeTextView = findViewById(R.id.altitudeTextView);
         timeTextView = findViewById(R.id.timeTextView);
         vehicleIDTextView = findViewById(R.id.vehicleIDTextView);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         createLocationRequest();
         createLocationCallback();
         startStopButton.setOnClickListener(view -> {
-            if (isSendingData) {
-                stopSendingData();
-            } else {
-                startSendingData();
-            }
+            isSendingData = !isSendingData;
+            Intent intent = new Intent(this, LocationService.class);
+            intent.putExtra("SEND_PACKETS", isSendingData); // Send the updated state to the service
+            startService(intent); // Send the Intent
         });
         selectVehicleButton.setOnClickListener(view -> {
             if (ID==1) {
@@ -124,10 +126,51 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 ID=1;
             }
+            Intent intent = new Intent(this, LocationService.class);
+            intent.putExtra("VEHICLE_ID", ID);
+            startService(intent);
         });
         setupBluetooth();
-        startSendingData();
-        startLocationUpdates();
+
+        Intent intent = new Intent(this, LocationService.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent);
+        } else {
+            startService(intent);
+        }
+
+        locationReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent != null) {
+                    String latitude = intent.getStringExtra("LATITUDE");
+                    String longitude = intent.getStringExtra("LONGITUDE");
+                    String utcTime = intent.getStringExtra("TIME");
+                    String speed = intent.getStringExtra("SPEED");
+                    String rpm = intent.getStringExtra("RPM");
+                    String vehicleID = intent.getStringExtra("VEHICLE_ID");
+
+                    // Update the UI with the received data
+                    latitudeTextView.setText("Latitude: " + latitude);
+                    longitudeTextView.setText("Longitude: " + longitude);
+                    timeTextView.setText("Time: " + utcTime);
+                    speedTextView.setText("Speed: " + speed + " km/h");
+                    rpmTextView.setText("RPM: " + rpm);
+                    vehicleIDTextView.setText("ID: " + vehicleID);
+                }
+            }
+        };
+
+        // Register the receiver to listen for updates
+        IntentFilter filter = new IntentFilter("com.example.sendmygeo.LOCATION_UPDATE");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(locationReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
+        }
+
+        // Start the background service to handle location and OBD data
+        Intent serviceIntent = new Intent(this, LocationService.class);
+        startService(serviceIntent);
+
     }
 
     private void checkAndRequestPermissions() {
@@ -348,18 +391,19 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         handler.post(runnable);
-        isSendingData = true;
     }
 
     private void stopSendingData() {
         handler.removeCallbacks(runnable);
-        isSendingData = false;
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        stopSendingData();
+        // Unregister the receiver to avoid memory leaks
+        if (locationReceiver != null) {
+            unregisterReceiver(locationReceiver);
+        }
     }
 
     private void createLocationRequest() {
@@ -425,7 +469,6 @@ public class MainActivity extends AppCompatActivity {
         
         latitudeTextView.setText("Latitude: " + latitude);
         longitudeTextView.setText("Longitude: " + longitude);
-        altitudeTextView.setText("Altitude: " + altitude + " meters");
         timeTextView.setText("Local Time: " + localTime);
         rpmTextView.setText("RPM: " + rpm);
         speedTextView.setText("Speed: " + speed + " km/h");

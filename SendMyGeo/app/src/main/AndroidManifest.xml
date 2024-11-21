@@ -11,17 +11,11 @@
         android:name="android.hardware.telephony"
         android:required="false" />
     <uses-permission android:name="android.permission.SEND_SMS" />
-    <!--
-     SENS_SMS Y TELEPHONY ARE REQUIRED TO ENABLE SMS COMMUNICATION
-     -->
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <!--
-    COARSE TO OBTAIN APPROXIMATED POSITION,
-    RECOMMENDED IN VEHICLE APPLICATIONS WHERE PRECISION
-    ISN'T REQUIRED AT ITS FULLEST
-    -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -41,6 +35,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service
+            android:name=".LocationService"
+            android:foregroundServiceType="location">
+        </service>
     </application>
 
 </manifest>
