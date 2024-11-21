@@ -404,6 +404,7 @@ public class MainActivity extends AppCompatActivity {
         if (locationReceiver != null) {
             unregisterReceiver(locationReceiver);
         }
+        stopService(new Intent(this, LocationService.class));
     }
 
     private void createLocationRequest() {

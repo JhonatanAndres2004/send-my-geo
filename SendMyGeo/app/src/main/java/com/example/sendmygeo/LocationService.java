@@ -322,9 +322,12 @@ public class LocationService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        stopForeground(true); // Stop the foreground service and remove the notification
         fusedLocationProviderClient.removeLocationUpdates(locationCallback);
-        closeBluetoothConnection();
+        closeBluetoothConnection(); // Close Bluetooth connection if active
+        isSendingPackets = false; // Stop sending packets if the service is destroyed
     }
+
 
     @Nullable
     @Override
