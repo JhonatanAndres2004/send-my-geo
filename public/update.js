@@ -1083,7 +1083,7 @@ document.getElementById('fetch-data').addEventListener('click', () => {
             title: 'Ensure dates are provided and the start date is earlier than the end date.'
         });
     }
-
+    popUpMenu.click()
     
 });
 
