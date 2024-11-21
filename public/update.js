@@ -404,7 +404,8 @@ async function initMap() {
 function startLiveLocation() {
     fetchLatestLocation()
 
-    live = setInterval(() => fetchLatestLocation(), 10000); // Pass `ID` argument to `fetchLatestLocation`
+    live = setInterval(() => fetchLatestLocation(), 10000);
+    console.log("Fetcheado-------") // Pass `ID` argument to `fetchLatestLocation`
 }
 let rtstate=true
 function stopLiveLocation() {
