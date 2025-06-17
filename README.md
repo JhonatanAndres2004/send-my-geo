@@ -1,9 +1,14 @@
-SendMyGeo 🚗📍
+# SendMyGeo 🚗📍
+
 A comprehensive vehicle tracking platform that allows you to monitor your fleet in real-time and access historical location data with detailed vehicle diagnostics.
-🌟 Overview
+
+# 🌟 Overview
+
 Have you ever wondered about the current location of your vehicles or where they were at a specific moment? If you want better control over them and more security guarantees, our system is what you need.
 With SendMyGeo, all those problems are a thing of the past. Our platform allows you to track the exact location of your vehicles in real-time, and with just one visit to our website, you'll know where they are and where they're heading.
-🚀 Key Features
+
+# 🚀 Key Features
+
 Real-Time Tracking
 
 Live location monitoring of your vehicles
@@ -30,7 +35,8 @@ Small entrepreneurs with growing fleets
 Large companies with dozens of vehicles
 Individual users seeking total vehicle control
 
-🛠️ Technical Architecture
+# 🛠️ Technical Architecture
+
 Mobile Application
 
 Platform: Android Studio
@@ -53,7 +59,8 @@ CI/CD: GitHub Runner implementation
 Deployment: Continuous integration and deployment on AWS server
 Infrastructure: Complete cloud-based solution
 
-📱 System Components
+# 📱 System Components
+
 Android Mobile App
 The mobile application connects to your vehicle's OBDII diagnostic system via Bluetooth and continuously sends location data and vehicle diagnostics to our servers.
 Web Platform
@@ -72,7 +79,8 @@ Scalable data processing
 Secure data storage
 Real-time data synchronization
 
-🎯 Use Cases
+# 🎯 Use Cases 
+
 Business Applications
 
 Fleet Management: Monitor company vehicles and optimize routes
@@ -87,7 +95,8 @@ Theft Prevention: Monitor vehicle location for security
 Usage Tracking: Understand driving patterns and habits
 Maintenance Alerts: Stay informed about vehicle condition
 
-🔧 Installation & Setup
+# 🔧 Installation & Setup
+
 Prerequisites
 
 Android device with Bluetooth capability
@@ -111,7 +120,8 @@ Access historical data
 Monitor vehicle diagnostics
 Generate reports
 
-📊 Data & Analytics
+# 📊 Data & Analytics
+
 Real-Time Metrics
 
 Current GPS coordinates
@@ -128,14 +138,15 @@ Stop duration and frequency
 Mileage tracking
 Usage patterns
 
-🔒 Security & Privacy
+# 🔒 Security & Privacy
 
 Secure data transmission between mobile app and servers
 Encrypted storage of all vehicle and location data
 User authentication and access control
 Privacy controls for data sharing and retention
 
-👥 Development Team
+# 👥 Development Team
+
 Kevin Torregrosa
 
 Role: Infrastructure & DevOps Engineer
@@ -172,23 +183,6 @@ System architecture planning
 
 
 
-🏗️ Technology Stack
+# 🏗️ Technology Stack
+
 ComponentTechnologyMobile AppAndroid Studio, JavaBackendNode.js, Express, PythonDatabaseMySQLCloud InfrastructureAWSMapsGoogle Maps APIVehicle IntegrationOBDII, BluetoothVersion ControlGitHubCI/CDGitHub Actions
-🚀 Getting Started
-
-Connect your OBDII adapter to your vehicle
-Download and install the SendMyGeo mobile app
-Pair your device with the OBDII adapter via Bluetooth
-Start the tracking service from the mobile app
-Access the web platform to view your vehicle data
-Monitor in real-time or review historical data
-
-🔮 Future Roadmap
-
-Multi-vehicle dashboard for fleet management
-Advanced analytics and reporting tools
-Mobile notifications for alerts and geofences
-API integration for third-party services
-Enhanced security features and user management
-Mobile app for iOS platform
-Integration with more vehicle systems
