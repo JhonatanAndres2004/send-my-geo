@@ -183,6 +183,4 @@ System architecture planning
 
 
 
-# 🏗️ Technology Stack
 
-ComponentTechnologyMobile AppAndroid Studio, JavaBackendNode.js, Express, PythonDatabaseMySQLCloud InfrastructureAWSMapsGoogle Maps APIVehicle IntegrationOBDII, BluetoothVersion ControlGitHubCI/CDGitHub Actions
