@@ -233,14 +233,36 @@ slider.oninput = function() {
     for (let i= 0;i<max1; i++){
         updateMapAndRouteLocations(info[i].lat, info[i].lng, info[i].Timestamp, true);
         setInfoWindow(info[i].lat, info[i].lng, info[i].Timestamp, info[i].vel, info[i].rpm);
+        console.log("vehicle1 SLIDER")
     }
 
 
     for (let i=0;i<max2;i++ ){
         updateMapAndRouteLocations(info2[i].lat, info2[i].lng, info2[i].Timestamp, true, true);
         setInfoWindow2(info2[i].lat, info2[i].lng, info2[i].Timestamp, info2[i].vel, info2[i].rpm);
+        console.log("vehicle2 SLIDER")
     }
         
+    if(ID ===1){
+
+        polylines.forEach(polyline => polyline.setMap(map));
+        polylines2.forEach(polyline2 => polyline2.setMap(null));
+    
+        
+    }
+    if (ID=== 2 ){
+
+        polylines.forEach(polyline => polyline.setMap(null));
+        polylines2.forEach(polyline2 => polyline2.setMap(map));
+        console.log("deleting vehicle1")
+        
+    }
+    if (all === 1){
+        polylines.forEach(polyline => polyline.setMap(map));
+        polylines2.forEach(polyline2 => polyline2.setMap(map));
+        
+        
+    }
 };
 
 function playSlider() {
@@ -507,7 +529,7 @@ function updateMapAndRoute(lat, lng, timestamp, allVehicles=false) {
 
         if (!isSameLocation(newPosition, lastPosition) && distance <= 1 ) {
             routeCoordinates.push(newPosition);
-            console.log('Vehicle1')
+            //console.log('Vehicle1')
             // if(ID === 1 && !allVehicles){
             //     drawPolyline(lastPosition, newPosition);
             //     console.log('in vehicle 1')
@@ -553,10 +575,10 @@ function updateMapAndRoute2(lat, lng, timestamp, allVehicles=false) {
 
         if (!isSameLocation(newPosition, lastPosition) && distance <= 1 && timeDiff < 1) {
             routeCoordinates2.push(newPosition);
-            console.log('conditional before polyline')
+            //console.log('conditional before polyline')
 
             drawPolyline(lastPosition, newPosition, true);
-            console.log('In vehicle 2')
+            //console.log('In vehicle 2')
 
 
             //colorIndex = (colorIndex + 1) % colors.length; // choose the next color
@@ -576,7 +598,7 @@ function updateMapAndRoute2(lat, lng, timestamp, allVehicles=false) {
 }
 
 function updateMapAndRouteHistorics(lat, lng, timestamp, vel,rpm ,searchByLocation = false, allVehicles= false) {
-    console.log(allVehicles);
+    //console.log(allVehicles);
     const newPosition = { lat: parseFloat(lat), lng: parseFloat(lng) };
     const newTimestamp = new Date(timestamp);
     const allInfo ={lat:parseFloat(lat),lng:parseFloat(lng),Timestamp:timestamp,vel:parseFloat(vel),rpm:parseFloat(rpm)}
@@ -607,10 +629,10 @@ function updateMapAndRouteHistorics(lat, lng, timestamp, vel,rpm ,searchByLocati
             routeCoordinates.push(newPosition);
             if(!allVehicles){
                 drawPolylineHistorics(lastPosition, newPosition);
-                console.log('inside of "ID == 1" polyline historics')
+                //console.log('inside of "ID == 1" polyline historics')
             }else if(allVehicles){
                 drawPolylineHistorics(lastPosition, newPosition, true);
-                console.log('inside of "ID == 2" polyline historics')
+                //console.log('inside of "ID == 2" polyline historics')
             }
             // if(allVehicles ){
             //     drawPolylineHistorics(lastPosition, newPosition, true);
@@ -638,12 +660,12 @@ function updateMapAndRouteHistorics(lat, lng, timestamp, vel,rpm ,searchByLocati
 }
 
 function sliderLength(){
-    console.log('inside of slider lenght function')
-    console.log('info',info)
-    console.log('info1 length',info.length);
+    //console.log('inside of slider lenght function')
+    // console.log('info',info)
+    // console.log('info1 length',info.length);
 
-    console.log('info2',info2)
-    console.log('info2 length',info2.length);
+    // console.log('info2',info2)
+    // console.log('info2 length',info2.length);
     if(info.length > info2.length){
         document.getElementById('slider').max = (info.length - 1);
         console.log('data1 greater than data2')
@@ -929,6 +951,7 @@ function clearMapLocations() {
 
 }
 document.getElementById('fetch-data').addEventListener('click', () => {
+    
     stopLiveLocation();
     let url
     let url2
@@ -971,7 +994,31 @@ document.getElementById('fetch-data').addEventListener('click', () => {
                     data.forEach(data => {
                         //updateLocationDisplay(data);
                         updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp);
-                        console.log('fetching data of firsh vehicle')
+                        
+                        if (ID === 1){
+                            marker1.setMap(map)
+                            marker2.setMap(null)
+                            polylines.forEach(polyline => polyline.setMap(map));
+                            polylines2.forEach(polyline2 => polyline2.setMap(null));
+                            console.log("deleting vehicle2")
+                        }
+                        if (ID ===2){
+                            marker1.setMap(null)
+                            marker2.setMap(map)
+                            polylines.forEach(polyline => polyline.setMap(null));
+                            polylines2.forEach(polyline2 => polyline2.setMap(map));
+                            console.log("deleting vehicle1")
+                        }
+                        if(all === 1){
+                            marker1.setMap(map)
+                            marker2.setMap(map)
+                            polylines.forEach(polyline => polyline.setMap(map));
+                            polylines2.forEach(polyline2 => polyline2.setMap(map));
+                            console.log("not deleting vehicles")
+                        }
+                        
+    
+                        //console.log('fetching data of firsh vehicle')
                     });}
 
             })
@@ -989,13 +1036,38 @@ document.getElementById('fetch-data').addEventListener('click', () => {
                                 icon: 'warning',
                                 title: 'No data found for the selected period'
                             });
-                            console.log('data of the second vehicle =')
+                            //console.log('data of the second vehicle =')
                         } else{
 
                             data.forEach(data => {
+                                
                                 //updateLocationDisplay(data);
-                                updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp, data.Velocity,data.RPM,false, true); //add color for second polyline
-                                console.log('fetching second vehicle data')
+                                updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp, data.Velocity,data.RPM,false, true);
+                                if (ID === 1){
+                                    marker1.setMap(map)
+                                    marker2.setMap(null)
+                                    polylines.forEach(polyline => polyline.setMap(map));
+                                    polylines2.forEach(polyline2 => polyline2.setMap(null));
+                                    console.log("deleting vehicle2")
+                                }
+                                if (ID ===2){
+                                    marker1.setMap(null)
+                                    marker2.setMap(map)
+                                    polylines.forEach(polyline => polyline.setMap(null));
+                                    polylines2.forEach(polyline2 => polyline2.setMap(map));
+                                    console.log("deleting vehicle1")
+                                }
+                                if(all === 1){
+                                    marker1.setMap(map)
+                                    marker2.setMap(map)
+                                    polylines.forEach(polyline => polyline.setMap(map));
+                                    polylines2.forEach(polyline2 => polyline2.setMap(map));
+                                    console.log("not deleting vehicles")
+                                }
+                                
+                                
+                                //add color for second polyline
+                                //console.log('fetching second vehicle data')
                             });}
 
                     })
@@ -1012,6 +1084,8 @@ document.getElementById('fetch-data').addEventListener('click', () => {
             title: 'Ensure dates are provided and the start date is earlier than the end date.'
         });
     }
+    popUpMenu.click()
+    
 });
 
 document.getElementById('fetch-location').addEventListener("click", () => {
@@ -1081,7 +1155,6 @@ async function setInfoWindow(lat, lng, timestamp, vel, rpm, allVehicles=false) {
     pin.background = polylineColor
     
     infoWindowMarker = new AdvancedMarkerElement({
-        map: map,
         content: pin.element
     });
 
@@ -1099,18 +1172,22 @@ async function setInfoWindow(lat, lng, timestamp, vel, rpm, allVehicles=false) {
           <p> RPM: ${parseFloat(rpm)}<p>
         </div>
       `);
-      infoWindowMarker.setMap(map);
-      infoWindowMarker.position = new google.maps.LatLng(lat, lng);
-      infoWindow.open(map, infoWindowMarker);
+
+      infoWindowMarker.position = new google.maps.LatLng(lat,lng);
+      if(ID === 1 || all === 1){
+        infoWindowMarker.setMap(map);
+        
+        infoWindow.open(map,infoWindowMarker)
+    }
 
 }
 
 async function setInfoWindow2(lat, lng, timestamp, vel, rpm, allVehicles=false) {
-    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+    
+    const {AdvancedMarkerElement} =await google.maps.importLibrary("marker");
     if(infoWindowMarker2) infoWindowMarker2.setMap(null);
     if (infoWindow2) infoWindow2.close();
     infoWindowMarker2 = new AdvancedMarkerElement({
-        map:map,
         content: pin_2.element
     });
 
@@ -1129,10 +1206,16 @@ async function setInfoWindow2(lat, lng, timestamp, vel, rpm, allVehicles=false) 
         </div>
       `);
 
-
-    infoWindowMarker2.setMap(map);
-    infoWindowMarker2.position = new google.maps.LatLng(lat,lng);
-    infoWindow2.open(map,infoWindowMarker2)
+    
+      infoWindowMarker2.position = new google.maps.LatLng(lat,lng);
+      if(ID === 2 || all === 1){
+        infoWindowMarker2.setMap(map);
+        
+        infoWindow2.open(map,infoWindowMarker2)
+    }
+    
+    
+    
 
 
 
@@ -1181,7 +1264,7 @@ function geocode(request, startDate, endDate, radius,allVehicles=false) {
                 .then(response => response.json())
                 .then(data => {
                     //document.getElementById('sliderLocations').max = data.length
-                    console.log('Data fetched:', data);
+                    //console.log('Data fetched:', data);
 
                     if (data.length == 0) {
                         Toast.fire({
@@ -1192,7 +1275,27 @@ function geocode(request, startDate, endDate, radius,allVehicles=false) {
                         data.forEach(data => {
                             updateLocationDisplay(data);
                             updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp, data.Velocity, data.RPM);
-
+                            if (ID === 1){
+                                marker1.setMap(map)
+                                marker2.setMap(null)
+                                polylines.forEach(polyline => polyline.setMap(map));
+                                polylines2.forEach(polyline2 => polyline2.setMap(null));
+                                console.log("deleting vehicle2")
+                            }
+                            if (ID ===2){
+                                marker1.setMap(null)
+                                marker2.setMap(map)
+                                polylines.forEach(polyline => polyline.setMap(null));
+                                polylines2.forEach(polyline2 => polyline2.setMap(map));
+                                console.log("deleting vehicle1")
+                            }
+                            if(all === 1){
+                                marker1.setMap(map)
+                                marker2.setMap(map)
+                                polylines.forEach(polyline => polyline.setMap(map));
+                                polylines2.forEach(polyline2 => polyline2.setMap(map));
+                                console.log("not deleting vehicles")
+                            }
                             //setInfoWindow(data.Latitude, data.Longitude, data.Timestamp);
                         });
 
@@ -1207,7 +1310,7 @@ function geocode(request, startDate, endDate, radius,allVehicles=false) {
                     .then(response => response.json())
                     .then(data => {
                     //document.getElementById('sliderLocations').max = data.length
-                        console.log('Data2 fetched:', data);
+                        //console.log('Data2 fetched:', data);
 
                         if (data.length == 0) {
                             Toast.fire({
@@ -1218,7 +1321,27 @@ function geocode(request, startDate, endDate, radius,allVehicles=false) {
                         data.forEach(data => {
                             updateLocationDisplay(data);
                             updateMapAndRouteHistorics(data.Latitude, data.Longitude, data.Timestamp, data.Velocity, data.RPM, false,true);
-
+                            if (ID === 1){
+                                marker1.setMap(map)
+                                marker2.setMap(null)
+                                polylines.forEach(polyline => polyline.setMap(map));
+                                polylines2.forEach(polyline2 => polyline2.setMap(null));
+                                console.log("deleting vehicle2")
+                            }
+                            if (ID ===2){
+                                marker1.setMap(null)
+                                marker2.setMap(map)
+                                polylines.forEach(polyline => polyline.setMap(null));
+                                polylines2.forEach(polyline2 => polyline2.setMap(map));
+                                console.log("deleting vehicle1")
+                            }
+                            if(all === 1){
+                                marker1.setMap(map)
+                                marker2.setMap(map)
+                                polylines.forEach(polyline => polyline.setMap(map));
+                                polylines2.forEach(polyline2 => polyline2.setMap(map));
+                                console.log("not deleting vehicles")
+                            }
                             //setInfoWindow(data.Latitude, data.Longitude, data.Timestamp);
                         });
 
@@ -1339,9 +1462,8 @@ vehicle1.addEventListener('click', () =>{
     }else if(reproducer.style.visibility == "visible"){
         polylines.forEach(polyline => polyline.setMap(map));
         polylines2.forEach(polyline2 => polyline2.setMap(null));
-        marker1.setMap(null);
-        marker2.setMap(null);
         infoWindowMarker.setMap(map);
+        console.log(infoWindowMarker.map)
         infoWindow.open(map,infoWindowMarker);
         infoWindowMarker2.setMap(null);
         infoWindow2.close();
@@ -1392,11 +1514,10 @@ vehicle2.addEventListener('click', () =>{
     }else if(reproducer.style.visibility == "visible"){
         polylines.forEach(polyline => polyline.setMap(null));
         polylines2.forEach(polyline2 => polyline2.setMap(map));
-        marker1.setMap(null);
-        marker2.setMap(null);
         infoWindowMarker.setMap(null);
         infoWindow.close();
         infoWindowMarker2.setMap(map);
+        console.log(infoWindowMarker2.map)
         infoWindow2.open(map,infoWindowMarker2);
     }
 
@@ -1447,8 +1568,6 @@ allVehicles.addEventListener('click', () =>{
     }else if(reproducer.style.visibility == "visible"){
         polylines.forEach(polyline => polyline.setMap(map));
         polylines2.forEach(polyline2 => polyline2.setMap(map));
-        marker1.setMap(null);
-        marker2.setMap(null);
         infoWindowMarker.setMap(map);
         infoWindow.open(map,infoWindowMarker);
         infoWindowMarker2.setMap(map);
